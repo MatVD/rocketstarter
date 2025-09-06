@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Settings as SettingsIcon, Save } from 'lucide-react';
-import Card from '../components/UI/Card';
-import { mockProject } from '../data/mockData';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Settings as SettingsIcon, Save } from "lucide-react";
+import Card from "../components/UI/Card";
+import { mockProject } from "../data/mockData";
 
 export default function Settings() {
   const [projectName, setProjectName] = useState(mockProject.name);
@@ -15,7 +15,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="p-6 max-w-2xl">
+    <div className="p-4 md:p-6 max-w-2xl">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -27,7 +27,9 @@ export default function Settings() {
             <SettingsIcon className="w-6 h-6 text-gray-600" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Paramètres</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+              Paramètres
+            </h1>
             <p className="text-gray-600">Configurez votre projet Web3</p>
           </div>
         </div>
@@ -38,12 +40,17 @@ export default function Settings() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Configuration du projet</h3>
-          
-          <div className="space-y-6">
+        <Card className="p-4 md:p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 md:mb-6">
+            Configuration du projet
+          </h3>
+
+          <div className="space-y-4 md:space-y-6">
             <div>
-              <label htmlFor="projectName" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="projectName"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Nom du projet
               </label>
               <input
@@ -57,23 +64,27 @@ export default function Settings() {
             </div>
 
             <div>
-              <label htmlFor="environment" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="environment"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Environnement
               </label>
               <select
                 id="environment"
                 value={environment}
-                onChange={(e) => setEnvironment(e.target.value as 'testnet' | 'mainnet')}
+                onChange={(e) =>
+                  setEnvironment(e.target.value as "testnet" | "mainnet")
+                }
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               >
                 <option value="testnet">Testnet (Développement)</option>
                 <option value="mainnet">Mainnet (Production)</option>
               </select>
               <p className="text-sm text-gray-500 mt-2">
-                {environment === 'testnet' 
-                  ? 'Utilisez le testnet pour développer et tester sans frais réels'
-                  : 'Le mainnet utilise de vraies cryptomonnaies - soyez prudent'
-                }
+                {environment === "testnet"
+                  ? "Utilisez le testnet pour développer et tester sans frais réels"
+                  : "Le mainnet utilise de vraies cryptomonnaies - soyez prudent"}
               </p>
             </div>
 
@@ -81,15 +92,15 @@ export default function Settings() {
               <motion.button
                 onClick={handleSave}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
-                  saved 
-                    ? 'bg-green-600 text-white' 
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                  saved
+                    ? "bg-green-600 text-white"
+                    : "bg-blue-600 text-white hover:bg-blue-700"
                 }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <Save className="w-4 h-4" />
-                <span>{saved ? 'Sauvegardé !' : 'Enregistrer'}</span>
+                <span>{saved ? "Sauvegardé !" : "Enregistrer"}</span>
               </motion.button>
             </div>
           </div>
@@ -103,11 +114,15 @@ export default function Settings() {
         className="mt-6"
       >
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Informations du projet</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Informations du projet
+          </h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-gray-500">Statut :</span>
-              <span className="ml-2 font-medium text-gray-900">En développement</span>
+              <span className="ml-2 font-medium text-gray-900">
+                En développement
+              </span>
             </div>
             <div>
               <span className="text-gray-500">Blockchain :</span>
@@ -119,7 +134,9 @@ export default function Settings() {
             </div>
             <div>
               <span className="text-gray-500">Créé le :</span>
-              <span className="ml-2 font-medium text-gray-900">15 Jan 2025</span>
+              <span className="ml-2 font-medium text-gray-900">
+                15 Jan 2025
+              </span>
             </div>
           </div>
         </Card>

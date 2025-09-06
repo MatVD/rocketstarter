@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Route } from 'lucide-react';
-import FlowStep from '../components/Parcours/FlowStep';
-import { flowSteps } from '../data/mockData';
+import React from "react";
+import { motion } from "framer-motion";
+import { Route } from "lucide-react";
+import FlowStep from "../components/Parcours/FlowStep";
+import { flowSteps } from "../data/mockData";
 
 export default function Parcours() {
   const handleStepDetails = (stepId: string) => {
@@ -10,7 +10,7 @@ export default function Parcours() {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -22,13 +22,17 @@ export default function Parcours() {
             <Route className="w-6 h-6 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Parcours de transition</h1>
-            <p className="text-gray-600">Visualisez votre progression étape par étape</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+              Parcours de transition
+            </h1>
+            <p className="text-gray-600">
+              Visualisez votre progression étape par étape
+            </p>
           </div>
         </div>
       </motion.div>
 
-      <div className="bg-gray-50 rounded-xl p-8 overflow-x-auto">
+      <div className="bg-gray-50 rounded-xl p-4 md:p-8 overflow-x-auto">
         <div className="flex items-center space-x-0 min-w-max">
           {flowSteps.map((step, index) => (
             <motion.div
@@ -53,10 +57,13 @@ export default function Parcours() {
         transition={{ duration: 0.5, delay: 0.5 }}
         className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6"
       >
-        <h3 className="text-lg font-semibold text-blue-900 mb-2">Étape actuelle : Smart contracts</h3>
+        <h3 className="text-lg font-semibold text-blue-900 mb-2">
+          Étape actuelle : Smart contracts
+        </h3>
         <p className="text-blue-700 mb-4">
-          Vous êtes en train de développer les smart contracts pour votre projet. 
-          Cette étape inclut la création, les tests et l'optimisation de vos contrats.
+          Vous êtes en train de développer les smart contracts pour votre
+          projet. Cette étape inclut la création, les tests et l'optimisation de
+          vos contrats.
         </p>
         <div className="flex space-x-3">
           <motion.button

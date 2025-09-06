@@ -1,34 +1,40 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { TrendingUp, CheckCircle, Clock } from 'lucide-react';
-import Card from '../components/UI/Card';
-import ProgressBar from '../components/UI/ProgressBar';
-import StepCard from '../components/Dashboard/StepCard';
-import { mockProject, completedSteps, nextActions } from '../data/mockData';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { TrendingUp, CheckCircle, Clock } from "lucide-react";
+import Card from "../components/UI/Card";
+import ProgressBar from "../components/UI/ProgressBar";
+import StepCard from "../components/Dashboard/StepCard";
+import { mockProject, completedSteps, nextActions } from "../data/mockData";
 
 export default function Dashboard() {
   const [actions, setActions] = useState(nextActions);
 
   const handleCompleteAction = (stepId: string) => {
-    setActions(prev => prev.map(action => 
-      action.id === stepId 
-        ? { ...action, status: 'completed' as const, completed: true }
-        : action
-    ));
+    setActions((prev) =>
+      prev.map((action) =>
+        action.id === stepId
+          ? { ...action, status: "completed" as const, completed: true }
+          : action
+      )
+    );
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-        <p className="text-gray-600">Suivez l'avancement de votre transition Web3</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+          Dashboard
+        </h1>
+        <p className="text-gray-600">
+          Suivez l'avancement de votre transition Web3
+        </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Progrès du projet */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -41,13 +47,17 @@ export default function Dashboard() {
                 <TrendingUp className="w-6 h-6 text-blue-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Progrès du projet</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Progrès du projet
+                </h3>
                 <p className="text-sm text-gray-600">Avancement global</p>
               </div>
             </div>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-2xl font-bold text-gray-900">{mockProject.progress}%</span>
+                <span className="text-2xl font-bold text-gray-900">
+                  {mockProject.progress}%
+                </span>
                 <span className="text-sm text-gray-500">3/5 étapes</span>
               </div>
               <ProgressBar progress={mockProject.progress} />
@@ -68,8 +78,12 @@ export default function Dashboard() {
                 <CheckCircle className="w-6 h-6 text-green-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Dernières étapes réalisées</h3>
-                <p className="text-sm text-gray-600">Étapes récemment terminées</p>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Dernières étapes réalisées
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Étapes récemment terminées
+                </p>
               </div>
             </div>
             <div className="space-y-3">
@@ -100,7 +114,9 @@ export default function Dashboard() {
                 <Clock className="w-6 h-6 text-orange-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Prochaines actions</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Prochaines actions
+                </h3>
                 <p className="text-sm text-gray-600">Étapes à réaliser</p>
               </div>
             </div>
@@ -112,9 +128,9 @@ export default function Dashboard() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                 >
-                  <StepCard 
-                    step={action} 
-                    showButton 
+                  <StepCard
+                    step={action}
+                    showButton
                     onComplete={handleCompleteAction}
                   />
                 </motion.div>
