@@ -1,62 +1,107 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Check, Clock, Circle } from 'lucide-react';
-import { Step } from '../../types';
-import Card from '../UI/Card';
+import { Step, Template, Project } from '../types';
 
-interface StepCardProps {
-  step: Step;
-  showButton?: boolean;
-  onComplete?: (stepId: string) => void;
-}
+export const mockProject: Project = {
+  name: "Mon Projet Web3",
+  progress: 65,
+  environment: 'testnet'
+};
 
-export default function StepCard({ step, showButton = false, onComplete }: StepCardProps) {
-  const getStatusIcon = () => {
-    switch (step.status) {
-      case 'completed':
-        return <Check className="w-5 h-5 text-green-600" />;
-      case 'in-progress':
-        return <Clock className="w-5 h-5 text-orange-500" />;
-      default:
-        return <Circle className="w-5 h-5 text-gray-400" />;
-    }
-  };
+export const completedSteps: Step[] = [
+  {
+    id: '1',
+    title: 'Configuration initiale',
+    description: 'Paramétrage de base du projet',
+    status: 'completed',
+    completed: true
+  },
+  {
+    id: '2',
+    title: 'Choix du template',
+    description: 'Sélection du template ERC-20',
+    status: 'completed',
+    completed: true
+  },
+  {
+    id: '3',
+    title: 'Configuration smart contract',
+    description: 'Paramètres du token de fidélité',
+    status: 'completed',
+    completed: true
+  }
+];
 
-  const getStatusColor = () => {
-    switch (step.status) {
-      case 'completed':
-        return 'border-green-200 bg-green-50';
-      case 'in-progress':
-        return 'border-orange-200 bg-orange-50';
-      default:
-        return 'border-gray-200 bg-gray-50';
-    }
-  };
+export const nextActions: Step[] = [
+  {
+    id: '4',
+    title: 'Tests sur testnet',
+    description: 'Déploiement et tests du contrat',
+    status: 'in-progress',
+    completed: false
+  },
+  {
+    id: '5',
+    title: 'Interface utilisateur',
+    description: 'Création de l\'interface Web3',
+    status: 'todo',
+    completed: false
+  }
+];
 
-  return (
-    <Card hover className="p-4">
-      <div className="flex items-start justify-between">
-        <div className="flex items-start space-x-3 flex-1">
-          <div className={`p-2 rounded-lg ${getStatusColor()}`}>
-            {getStatusIcon()}
-          </div>
-          <div className="flex-1">
-            <h4 className="font-medium text-gray-900">{step.title}</h4>
-            <p className="text-sm text-gray-600 mt-1">{step.description}</p>
-          </div>
-        </div>
-        
-        {showButton && step.status !== 'completed' && (
-          <motion.button
-            onClick={() => onComplete?.(step.id)}
-            className="ml-4 px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Terminer
-          </motion.button>
-        )}
-      </div>
-    </Card>
-  );
-}
+export const flowSteps: Step[] = [
+  {
+    id: '1',
+    title: 'Analyse des besoins',
+    description: 'Définir les objectifs Web3',
+    status: 'completed'
+  },
+  {
+    id: '2',
+    title: 'Choix de l\'architecture',
+    description: 'Sélectionner blockchain et outils',
+    status: 'completed'
+  },
+  {
+    id: '3',
+    title: 'Smart contracts',
+    description: 'Développement des contrats',
+    status: 'in-progress'
+  },
+  {
+    id: '4',
+    title: 'Tests & audit',
+    description: 'Validation de la sécurité',
+    status: 'todo'
+  },
+  {
+    id: '5',
+    title: 'Déploiement',
+    description: 'Mise en production',
+    status: 'todo'
+  }
+];
+
+export const templates: Template[] = [
+  {
+    id: '1',
+    title: 'ERC-20 fidélité',
+    title: 'Smart Contracts',
+    description: 'Contract development',
+    difficulty: 'Beginner'
+  },
+  {
+    id: '2',
+    title: 'Simple NFT Drop',
+    description: 'NFT collection with public mint, whitelist and IPFS metadata',
+    title: 'Testing & Audit',
+    difficulty: 'Intermediate'
+  },
+  {
+    id: '3',
+    title: 'DAO + Multi-sig Treasury',
+    description: 'Decentralized organization with governance and secure treasury',
+    description: 'Production release',
+    difficulty: 'Advanced'
+  }
+];
+    title: 'ERC-20 Loyalty',
+    description: 'Loyalty token to reward your customers with exchangeable points',
