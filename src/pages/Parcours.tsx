@@ -1,107 +1,80 @@
-import { Step, Template, Project } from '../types';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Route } from 'lucide-react';
+import FlowStep from '../components/Parcours/FlowStep';
+import { flowSteps } from '../data/mockData';
 
-export const mockProject: Project = {
-  name: "Mon Projet Web3",
-  progress: 65,
-  environment: 'testnet'
-};
+export default function Parcours() {
+  const handleStepDetails = (stepId: string) => {
+    alert(`Détails de l'étape ${stepId} - Fonctionnalité à implémenter`);
+  };
 
-export const completedSteps: Step[] = [
-  {
-    id: '1',
-    title: 'Configuration initiale',
-    description: 'Paramétrage de base du projet',
-    status: 'completed',
-    completed: true
-  },
-  {
-    id: '2',
-    title: 'Choix du template',
-    description: 'Sélection du template ERC-20',
-    status: 'completed',
-    completed: true
-  },
-  {
-    id: '3',
-    title: 'Configuration smart contract',
-    description: 'Paramètres du token de fidélité',
-    status: 'completed',
-    completed: true
-  }
-];
+  return (
+    <div className="p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-8"
+      >
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="p-2 bg-blue-100 rounded-lg">
+            <Route className="w-6 h-6 text-blue-600" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Parcours de transition</h1>
+            <p className="text-gray-600">Visualisez votre progression étape par étape</p>
+          </div>
+        </div>
+      </motion.div>
 
-export const nextActions: Step[] = [
-  {
-    id: '4',
-    title: 'Tests sur testnet',
-    description: 'Déploiement et tests du contrat',
-    status: 'in-progress',
-    completed: false
-  },
-  {
-    id: '5',
-    title: 'Interface utilisateur',
-    description: 'Création de l\'interface Web3',
-    status: 'todo',
-    completed: false
-  }
-];
+      <div className="bg-gray-50 rounded-xl p-8 overflow-x-auto">
+        <div className="flex items-center space-x-0 min-w-max">
+          {flowSteps.map((step, index) => (
+            <motion.div
+              key={step.id}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <FlowStep
+                step={step}
+                isLast={index === flowSteps.length - 1}
+                onDetails={handleStepDetails}
+              />
+            </motion.div>
+          ))}
+        </div>
+      </div>
 
-export const flowSteps: Step[] = [
-  {
-    id: '1',
-    title: 'Analyse des besoins',
-    description: 'Définir les objectifs Web3',
-    status: 'completed'
-  },
-  {
-    id: '2',
-    title: 'Choix de l\'architecture',
-    description: 'Sélectionner blockchain et outils',
-    status: 'completed'
-  },
-  {
-    id: '3',
-    title: 'Smart contracts',
-    description: 'Développement des contrats',
-    status: 'in-progress'
-  },
-  {
-    id: '4',
-    title: 'Tests & audit',
-    description: 'Validation de la sécurité',
-    status: 'todo'
-  },
-  {
-    id: '5',
-    title: 'Déploiement',
-    description: 'Mise en production',
-    status: 'todo'
-  }
-];
-
-export const templates: Template[] = [
-  {
-            View Documentation
-    title: 'ERC-20 fidélité',
-    title: 'Smart Contracts',
-    description: 'Contract development',
-    difficulty: 'Beginner'
-  },
-  {
-    id: '2',
-    title: 'Simple NFT Drop',
-    description: 'NFT collection with public mint, whitelist and IPFS metadata',
-    title: 'Testing & Audit',
-    difficulty: 'Intermediate'
-  },
-  {
-    id: '3',
-    title: 'DAO + Multi-sig Treasury',
-    description: 'Decentralized organization with governance and secure treasury',
-    description: 'Production release',
-    difficulty: 'Advanced'
-  }
-];
-    title: 'ERC-20 Loyalty',
-    description: 'Loyalty token to reward your customers with exchangeable points',
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
+        className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6"
+      >
+        <h3 className="text-lg font-semibold text-blue-900 mb-2">Étape actuelle : Smart contracts</h3>
+        <p className="text-blue-700 mb-4">
+          Vous êtes en train de développer les smart contracts pour votre projet. 
+          Cette étape inclut la création, les tests et l'optimisation de vos contrats.
+        </p>
+        <div className="flex space-x-3">
+          <motion.button
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Continuer l'étape
+          </motion.button>
+          <motion.button
+            className="px-4 py-2 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Voir la documentation
+          </motion.button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}

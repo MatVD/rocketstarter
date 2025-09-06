@@ -1,107 +1,69 @@
-import { Step, Template, Project } from '../types';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { BookTemplate as FileTemplate } from 'lucide-react';
+import TemplateCard from '../components/Templates/TemplateCard';
+import { templates } from '../data/mockData';
 
-export const mockProject: Project = {
-  name: "Mon Projet Web3",
-  progress: 65,
-  environment: 'testnet'
-};
+export default function Templates() {
+  const handleLaunchTemplate = (templateId: string) => {
+    const template = templates.find(t => t.id === templateId);
+    alert(`Lancement du template "${template?.title}" - Fonctionnalité à implémenter`);
+  };
 
-export const completedSteps: Step[] = [
-  {
-    id: '1',
-    title: 'Configuration initiale',
-    description: 'Paramétrage de base du projet',
-    status: 'completed',
-    completed: true
-  },
-  {
-    id: '2',
-    title: 'Choix du template',
-    description: 'Sélection du template ERC-20',
-    status: 'completed',
-    completed: true
-  },
-  {
-    id: '3',
-    title: 'Configuration smart contract',
-    description: 'Paramètres du token de fidélité',
-    status: 'completed',
-    completed: true
-  }
-];
+  return (
+    <div className="p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-8"
+      >
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="p-2 bg-purple-100 rounded-lg">
+            <FileTemplate className="w-6 h-6 text-purple-600" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Templates Web3</h1>
+            <p className="text-gray-600">Choisissez un template pour démarrer rapidement votre projet</p>
+          </div>
+        </div>
+      </motion.div>
 
-export const nextActions: Step[] = [
-  {
-    id: '4',
-    title: 'Tests sur testnet',
-    description: 'Déploiement et tests du contrat',
-    status: 'in-progress',
-    completed: false
-  },
-  {
-    id: '5',
-    title: 'Interface utilisateur',
-    description: 'Création de l\'interface Web3',
-    status: 'todo',
-    completed: false
-  }
-];
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {templates.map((template, index) => (
+          <motion.div
+            key={template.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+          >
+            <TemplateCard
+              template={template}
+              onLaunch={handleLaunchTemplate}
+            />
+          </motion.div>
+        ))}
+      </div>
 
-export const flowSteps: Step[] = [
-  {
-    id: '1',
-    title: 'Analyse des besoins',
-    description: 'Définir les objectifs Web3',
-    status: 'completed'
-  },
-  {
-    id: '2',
-    title: 'Choix de l\'architecture',
-    description: 'Sélectionner blockchain et outils',
-    status: 'completed'
-  },
-  {
-    id: '3',
-    title: 'Smart contracts',
-    description: 'Développement des contrats',
-    status: 'in-progress'
-  },
-  {
-    id: '4',
-    title: 'Tests & audit',
-    description: 'Validation de la sécurité',
-    status: 'todo'
-  },
-  {
-    id: '5',
-    title: 'Déploiement',
-    description: 'Mise en production',
-    status: 'todo'
-  }
-];
-
-export const templates: Template[] = [
-  {
-    id: '1',
-    title: 'ERC-20 fidélité',
-    title: 'Smart Contracts',
-    description: 'Contract development',
-    difficulty: 'Beginner'
-  },
-  {
-    id: '2',
-    title: 'Simple NFT Drop',
-    description: 'NFT collection with public mint, whitelist and IPFS metadata',
-    title: 'Testing & Audit',
-    difficulty: 'Intermediate'
-  },
-  {
-    id: '3',
-    title: 'DAO + Multi-sig Treasury',
-    description: 'Decentralized organization with governance and secure treasury',
-    description: 'Production release',
-    difficulty: 'Advanced'
-  }
-];
-    title: 'ERC-20 Loyalty',
-    description: 'Loyalty token to reward your customers with exchangeable points',
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        className="mt-12 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-xl p-8"
+      >
+        <h3 className="text-xl font-semibold text-gray-900 mb-3">Besoin d'un template personnalisé ?</h3>
+        <p className="text-gray-600 mb-6">
+          Notre équipe peut créer un template sur mesure adapté à vos besoins spécifiques. 
+          Contactez-nous pour discuter de votre projet.
+        </p>
+        <motion.button
+          className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 font-medium"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Demander un template personnalisé
+        </motion.button>
+      </motion.div>
+    </div>
+  );
+}

@@ -1,102 +1,128 @@
-import { Step, Template, Project } from '../types';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { TrendingUp, CheckCircle, Clock } from 'lucide-react';
+import Card from '../components/UI/Card';
+import ProgressBar from '../components/UI/ProgressBar';
+import StepCard from '../components/Dashboard/StepCard';
+import { mockProject, completedSteps, nextActions } from '../data/mockData';
 
-export const mockProject: Project = {
-  name: "Mon Projet Web3",
-  progress: 65,
-  environment: 'testnet'
-};
+export default function Dashboard() {
+  const [actions, setActions] = useState(nextActions);
 
-export const completedSteps: Step[] = [
-  {
-    id: '1',
-    title: 'Configuration initiale',
-    description: 'Paramétrage de base du projet',
-    status: 'completed',
-    completed: true
-  },
-  {
-    id: '2',
-    title: 'Choix du template',
-    description: 'Sélection du template ERC-20',
-    status: 'completed',
-    completed: true
-  },
-  {
-    id: '3',
-    title: 'Configuration smart contract',
-    description: 'Paramètres du token de fidélité',
-    status: 'completed',
-    completed: true
-  }
-];
+  const handleCompleteAction = (stepId: string) => {
+    setActions(prev => prev.map(action => 
+      action.id === stepId 
+        ? { ...action, status: 'completed' as const, completed: true }
+        : action
+    ));
+  };
 
-export const nextActions: Step[] = [
-  {
-    id: '4',
-    title: 'Tests sur testnet',
-    description: 'Déploiement et tests du contrat',
-    status: 'in-progress',
-    completed: false
-  },
-  {
-    id: '5',
-    title: 'Interface utilisateur',
-    description: 'Création de l\'interface Web3',
-    status: 'todo',
-    completed: false
-  }
-];
+  return (
+    <div className="p-6 space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+        <p className="text-gray-600">Suivez l'avancement de votre transition Web3</p>
+      </motion.div>
 
-export const flowSteps: Step[] = [
-  {
-    id: '1',
-    title: 'Analyse des besoins',
-    description: 'Définir les objectifs Web3',
-    status: 'completed'
-  },
-  {
-    id: '2',
-    title: 'Choix de l\'architecture',
-    description: 'Sélectionner blockchain et outils',
-    status: 'completed'
-  },
-  {
-    id: '3',
-    title: 'Smart contracts',
-    description: 'Développement des contrats',
-    status: 'in-progress'
-  },
-  {
-    id: '4',
-    title: 'Tests & audit',
-    description: 'Validation de la sécurité',
-    status: 'todo'
-  },
-  {
-    id: '5',
-    title: 'Déploiement',
-    description: 'Mise en production',
-    status: 'todo'
-  }
-];
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Progrès du projet */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <Card className="p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Progrès du projet</h3>
+                <p className="text-sm text-gray-600">Avancement global</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-2xl font-bold text-gray-900">{mockProject.progress}%</span>
+                <span className="text-sm text-gray-500">3/5 étapes</span>
+              </div>
+              <ProgressBar progress={mockProject.progress} />
+            </div>
+          </Card>
+        </motion.div>
 
-export const templates: Template[] = [
-  {
-    id: '1',
-    title: 'ERC-20 Loyalty',
-    description: 'Loyalty token to reward your customers with exchangeable points',
-    difficulty: 'Beginner'
-  },
-  {
-    id: '2',
-    title: 'Simple NFT Drop',
-    description: 'NFT collection with public mint, whitelist and IPFS metadata',
-    difficulty: 'Intermediate'
-  },
-  {
-    id: '3',
-    title: 'DAO + Multi-sig Treasury',
-    description: 'Decentralized organization with governance and secure treasury',
-    difficulty: 'Advanced'
-  }
-];
+        {/* Dernières étapes réalisées */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="lg:col-span-2"
+        >
+          <Card className="p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Dernières étapes réalisées</h3>
+                <p className="text-sm text-gray-600">Étapes récemment terminées</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              {completedSteps.map((step, index) => (
+                <motion.div
+                  key={step.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <StepCard step={step} />
+                </motion.div>
+              ))}
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Prochaines actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="lg:col-span-3"
+        >
+          <Card className="p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="p-2 bg-orange-100 rounded-lg">
+                <Clock className="w-6 h-6 text-orange-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Prochaines actions</h3>
+                <p className="text-sm text-gray-600">Étapes à réaliser</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {actions.map((action, index) => (
+                <motion.div
+                  key={action.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <StepCard 
+                    step={action} 
+                    showButton 
+                    onComplete={handleCompleteAction}
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </Card>
+        </motion.div>
+      </div>
+    </div>
+  );
+}

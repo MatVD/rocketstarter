@@ -1,107 +1,75 @@
-import { Step, Template, Project } from '../types';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Check, Clock, Circle, ArrowRight } from 'lucide-react';
+import { Step } from '../../types';
+import Card from '../UI/Card';
 
-export const mockProject: Project = {
-  name: "Mon Projet Web3",
-  progress: 65,
-  environment: 'testnet'
-};
+interface FlowStepProps {
+  step: Step;
+  isLast?: boolean;
+  onDetails: (stepId: string) => void;
+}
 
-export const completedSteps: Step[] = [
-  {
-    id: '1',
-    title: 'Configuration initiale',
-    description: 'Paramétrage de base du projet',
-    status: 'completed',
-    completed: true
-  },
-  {
-    id: '2',
-    title: 'Choix du template',
-    description: 'Sélection du template ERC-20',
-    status: 'completed',
-    completed: true
-  },
-  {
-    id: '3',
-    title: 'Configuration smart contract',
-    description: 'Paramètres du token de fidélité',
-    status: 'completed',
-    completed: true
-  }
-];
+export default function FlowStep({ step, isLast = false, onDetails }: FlowStepProps) {
+  const getStatusIcon = () => {
+    switch (step.status) {
+      case 'completed':
+        return <Check className="w-5 h-5 text-white" />;
+      case 'in-progress':
+        return <Clock className="w-5 h-5 text-white" />;
+      default:
+        return <Circle className="w-5 h-5 text-white" />;
+    }
+  };
 
-export const nextActions: Step[] = [
-  {
-    id: '4',
-    title: 'Tests sur testnet',
-    description: 'Déploiement et tests du contrat',
-    status: 'in-progress',
-    completed: false
-  },
-  {
-    id: '5',
-    title: 'Interface utilisateur',
-    description: 'Création de l\'interface Web3',
-    status: 'todo',
-    completed: false
-  }
-];
+  const getStatusColor = () => {
+    switch (step.status) {
+      case 'completed':
+        return 'bg-green-500';
+      case 'in-progress':
+        return 'bg-orange-500';
+      default:
+        return 'bg-gray-400';
+    }
+  };
 
-export const flowSteps: Step[] = [
-  {
-    id: '1',
-    title: 'Analyse des besoins',
-    description: 'Définir les objectifs Web3',
-    status: 'completed'
-  },
-  {
-    id: '2',
-    title: 'Choix de l\'architecture',
-    description: 'Sélectionner blockchain et outils',
-    status: 'completed'
-  },
-  {
-    id: '3',
-    title: 'Smart contracts',
-    description: 'Développement des contrats',
-    status: 'in-progress'
-  },
-  {
-    id: '4',
-    title: 'Tests & audit',
-    description: 'Validation de la sécurité',
-    status: 'todo'
-  },
-  {
-    id: '5',
-    title: 'Déploiement',
-    description: 'Mise en production',
-    status: 'todo'
-  }
-];
+  const getBorderColor = () => {
+    switch (step.status) {
+      case 'completed':
+        return 'border-green-200';
+      case 'in-progress':
+        return 'border-orange-200';
+      default:
+        return 'border-gray-200';
+    }
+  };
 
-export const templates: Template[] = [
-  {
-    id: '1',
-    title: 'ERC-20 fidélité',
-    title: 'Smart Contracts',
-    description: 'Contract development',
-    difficulty: 'Beginner'
-  },
-  {
-    id: '2',
-    title: 'Simple NFT Drop',
-    description: 'NFT collection with public mint, whitelist and IPFS metadata',
-    title: 'Testing & Audit',
-    difficulty: 'Intermediate'
-  },
-  {
-    id: '3',
-    title: 'DAO + Multi-sig Treasury',
-    description: 'Decentralized organization with governance and secure treasury',
-    description: 'Production release',
-    difficulty: 'Advanced'
-  }
-];
-    title: 'ERC-20 Loyalty',
-    description: 'Loyalty token to reward your customers with exchangeable points',
+  return (
+    <div className="flex items-center">
+      <Card hover className={`p-4 min-w-[280px] border-2 ${getBorderColor()}`}>
+        <div className="flex items-start space-x-3">
+          <div className={`p-2 rounded-full ${getStatusColor()}`}>
+            {getStatusIcon()}
+          </div>
+          <div className="flex-1">
+            <h4 className="font-semibold text-gray-900 mb-1">{step.title}</h4>
+            <p className="text-sm text-gray-600 mb-3">{step.description}</p>
+            <motion.button
+              onClick={() => onDetails(step.id)}
+              className="text-blue-600 text-sm font-medium hover:text-blue-700 transition-colors"
+              whileHover={{ scale: 1.05 }}
+            >
+              Voir détails →
+            </motion.button>
+          </div>
+        </div>
+      </Card>
+      
+      {!isLast && (
+        <div className="flex items-center mx-4">
+          <ArrowRight className="w-6 h-6 text-gray-400" />
+        </div>
+      )}
+    </div>
+  );
+}

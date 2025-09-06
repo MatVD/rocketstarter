@@ -50,13 +50,13 @@ export const nextActions: Step[] = [
 export const flowSteps: Step[] = [
   {
     id: '1',
-    title: 'Analyse des besoins',
+    title: 'Analyse besoins',
     description: 'Définir les objectifs Web3',
     status: 'completed'
   },
   {
     id: '2',
-    title: 'Choix de l\'architecture',
+    title: 'Choix architecture',
     description: 'Sélectionner blockchain et outils',
     status: 'completed'
   },
@@ -69,7 +69,7 @@ export const flowSteps: Step[] = [
   {
     id: '4',
     title: 'Tests & audit',
-    description: 'Validation de la sécurité',
+    description: 'Validation sécurité',
     status: 'todo'
   },
   {
@@ -84,24 +84,22 @@ export const templates: Template[] = [
   {
     id: '1',
     title: 'ERC-20 fidélité',
-    title: 'Smart Contracts',
-    description: 'Contract development',
-    difficulty: 'Beginner'
+    description: 'Token de fidélité pour récompenser vos clients avec des points échangeables',
+    icon: 'coins',
+    difficulty: 'Débutant'
   },
   {
     id: '2',
-    title: 'Simple NFT Drop',
-    description: 'NFT collection with public mint, whitelist and IPFS metadata',
-    title: 'Testing & Audit',
-    difficulty: 'Intermediate'
+    title: 'Drop NFT simple',
+    description: 'Collection NFT avec mint public, whitelist et métadonnées IPFS',
+    icon: 'image',
+    difficulty: 'Intermédiaire'
   },
   {
     id: '3',
-    title: 'DAO + Multi-sig Treasury',
-    description: 'Decentralized organization with governance and secure treasury',
-    description: 'Production release',
-    difficulty: 'Advanced'
+    title: 'DAO + trésor multi-sig',
+    description: 'Organisation décentralisée avec gouvernance et trésorerie sécurisée',
+    icon: 'users',
+    difficulty: 'Avancé'
   }
 ];
-    title: 'ERC-20 Loyalty',
-    description: 'Loyalty token to reward your customers with exchangeable points',
