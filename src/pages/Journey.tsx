@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { Route } from "lucide-react";
 import FlowStep from "../components/Flow/FlowStep";

@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { BookTemplate as FileTemplate } from "lucide-react";
 import TemplateCard from "../components/Templates/TemplateCard";

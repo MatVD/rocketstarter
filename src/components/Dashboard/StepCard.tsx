@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { Check, Clock, Circle } from "lucide-react";
 import { Step } from "../../types";

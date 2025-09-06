@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { Coins, Image, Users, ArrowRight } from "lucide-react";
 import { Template } from "../../types";

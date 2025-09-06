@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Settings as SettingsIcon, Save } from "lucide-react";
 import Card from "../components/UI/Card";

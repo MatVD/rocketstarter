@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, CheckCircle, Clock } from "lucide-react";
 import Card from "../components/UI/Card";
