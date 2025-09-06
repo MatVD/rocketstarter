@@ -23,11 +23,11 @@ export default function TemplateCard({
 
   const getDifficultyColor = () => {
     switch (template.difficulty) {
-      case "Débutant":
+      case "Beginner":
         return "bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400";
-      case "Intermédiaire":
+      case "Intermediate":
         return "bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-400";
-      case "Avancé":
+      case "Advanced":
         return "bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400";
       default:
         return "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-400";
@@ -60,7 +60,7 @@ export default function TemplateCard({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
       >
-        <span>Lancer ce template</span>
+        <span>Launch template</span>
         <ArrowRight className="w-4 h-4" />
       </motion.button>
     </Card>

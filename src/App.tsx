@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Sidebar from "./components/Layout/Sidebar";
 import Header from "./components/Layout/Header";
 import Dashboard from "./pages/Dashboard";
-import Parcours from "./pages/Parcours";
+import Journey from "./pages/Journey";
 import Templates from "./pages/Templates";
 import Settings from "./pages/Settings";
 import { mockProject } from "./data/mockData";
@@ -16,8 +16,8 @@ function App() {
     switch (activeTab) {
       case "dashboard":
         return <Dashboard />;
-      case "parcours":
-        return <Parcours />;
+      case "journey":
+        return <Journey />;
       case "templates":
         return <Templates />;
       case "settings":
@@ -50,7 +50,7 @@ function App() {
               }}
               onClose={() => setIsMobileMenuOpen(false)}
             />
-            {/* Zone de clic pour fermer - à droite de la sidebar */}
+            {/* Click area to close - to the right of the sidebar */}
             <div
               className="flex-1"
               onClick={() => setIsMobileMenuOpen(false)}

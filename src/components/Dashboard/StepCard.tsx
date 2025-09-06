@@ -63,7 +63,7 @@ export default function StepCard({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Terminer
+            Complete
           </motion.button>
         )}
       </div>

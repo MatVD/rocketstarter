@@ -17,9 +17,9 @@ interface SidebarProps {
 
 const menuItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "parcours", label: "Parcours", icon: Route },
+  { id: "journey", label: "Journey", icon: Route },
   { id: "templates", label: "Templates", icon: FileTemplate },
-  { id: "settings", label: "Paramètres", icon: Settings },
+  { id: "settings", label: "Settings", icon: Settings },
 ];
 
 export default function Sidebar({

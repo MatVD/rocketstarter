@@ -30,7 +30,7 @@ export default function Dashboard() {
           Dashboard
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Suivez l'avancement de votre transition Web3
+          Track the progress of your Web3 transition
         </p>
       </motion.div>
 
@@ -48,10 +48,10 @@ export default function Dashboard() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Progrès du projet
+                  Project progress
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Avancement global
+                  Overall progress
                 </p>
               </div>
             </div>
@@ -61,7 +61,7 @@ export default function Dashboard() {
                   {mockProject.progress}%
                 </span>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
-                  3/5 étapes
+                  3/5 steps
                 </span>
               </div>
               <ProgressBar progress={mockProject.progress} />
@@ -69,7 +69,7 @@ export default function Dashboard() {
           </Card>
         </motion.div>
 
-        {/* Dernières étapes réalisées */}
+        {/* Recent completed steps */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -83,10 +83,10 @@ export default function Dashboard() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Dernières étapes réalisées
+                  Recent completed steps
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Étapes récemment terminées
+                  Steps recently finished
                 </p>
               </div>
             </div>
@@ -119,10 +119,10 @@ export default function Dashboard() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Prochaines actions
+                  Next actions
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Étapes à réaliser
+                  Steps to complete
                 </p>
               </div>
             </div>

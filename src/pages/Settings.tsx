@@ -28,10 +28,10 @@ export default function Settings() {
           </div>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-              Paramètres
+              Settings
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Configurez votre projet Web3
+              Configure your Web3 project
             </p>
           </div>
         </div>
@@ -44,7 +44,7 @@ export default function Settings() {
       >
         <Card className="p-4 md:p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 md:mb-6">
-            Configuration du projet
+            Project configuration
           </h3>
 
           <div className="space-y-4 md:space-y-6">
@@ -53,7 +53,7 @@ export default function Settings() {
                 htmlFor="projectName"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
-                Nom du projet
+                Project name
               </label>
               <input
                 type="text"
@@ -61,7 +61,7 @@ export default function Settings() {
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors"
-                placeholder="Entrez le nom de votre projet"
+                placeholder="Enter your project name"
               />
             </div>
 
@@ -70,7 +70,7 @@ export default function Settings() {
                 htmlFor="environment"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
-                Environnement
+                Environment
               </label>
               <select
                 id="environment"
@@ -80,13 +80,13 @@ export default function Settings() {
                 }
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors"
               >
-                <option value="testnet">Testnet (Développement)</option>
+                <option value="testnet">Testnet (Development)</option>
                 <option value="mainnet">Mainnet (Production)</option>
               </select>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
                 {environment === "testnet"
-                  ? "Utilisez le testnet pour développer et tester sans frais réels"
-                  : "Le mainnet utilise de vraies cryptomonnaies - soyez prudent"}
+                  ? "Use the testnet to develop and test without real fees"
+                  : "The mainnet uses real cryptocurrencies - be cautious"}
               </p>
             </div>
 
@@ -102,7 +102,7 @@ export default function Settings() {
                 whileTap={{ scale: 0.95 }}
               >
                 <Save className="w-4 h-4" />
-                <span>{saved ? "Sauvegardé !" : "Enregistrer"}</span>
+                <span>{saved ? "Saved!" : "Save"}</span>
               </motion.button>
             </div>
           </div>
@@ -117,13 +117,13 @@ export default function Settings() {
       >
         <Card className="p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Informations du projet
+            Project information
           </h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="text-gray-500 dark:text-gray-400">Statut :</span>
+              <span className="text-gray-500 dark:text-gray-400">Status :</span>
               <span className="ml-2 font-medium text-gray-900 dark:text-white">
-                En développement
+                In development
               </span>
             </div>
             <div>
@@ -144,7 +144,7 @@ export default function Settings() {
             </div>
             <div>
               <span className="text-gray-500 dark:text-gray-400">
-                Créé le :
+                Created on:
               </span>
               <span className="ml-2 font-medium text-gray-900 dark:text-white">
                 15 Jan 2025

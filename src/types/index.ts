@@ -2,7 +2,7 @@ export interface Step {
   id: string;
   title: string;
   description: string;
-  status: 'todo' | 'in-progress' | 'completed';
+  status: "todo" | "in-progress" | "completed";
   completed?: boolean;
 }
 
@@ -11,11 +11,11 @@ export interface Template {
   title: string;
   description: string;
   icon: string;
-  difficulty: 'Débutant' | 'Intermédiaire' | 'Avancé';
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
 }
 
 export interface Project {
   name: string;
   progress: number;
-  environment: 'testnet' | 'mainnet';
+  environment: "testnet" | "mainnet";
 }
