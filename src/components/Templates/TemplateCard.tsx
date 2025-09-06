@@ -1,69 +1,107 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Coins, Image, Users, ArrowRight } from 'lucide-react';
-import { Template } from '../../types';
+import { Step, Template, Project } from '../types';
 
-interface TemplateCardProps {
-  template: Template;
-  onLaunch: (templateId: string) => void;
-}
-
-const getTemplateIcon = (title: string) => {
-  if (title.includes('ERC-20')) return Coins;
-  if (title.includes('NFT')) return Image;
-  if (title.includes('DAO')) return Users;
-  return Coins;
+export const mockProject: Project = {
+  name: "Mon Projet Web3",
+  progress: 65,
+  environment: 'testnet'
 };
 
-const getDifficultyColor = (difficulty: string) => {
-  switch (difficulty) {
-    case 'Beginner':
-      return 'bg-green-100 text-green-800';
-    case 'Intermediate':
-      return 'bg-orange-100 text-orange-800';
-    case 'Advanced':
-      return 'bg-red-100 text-red-800';
-    default:
-      return 'bg-gray-100 text-gray-800';
+export const completedSteps: Step[] = [
+  {
+    id: '1',
+    title: 'Configuration initiale',
+    description: 'Paramétrage de base du projet',
+    status: 'completed',
+    completed: true
+  },
+  {
+    id: '2',
+    title: 'Choix du template',
+    description: 'Sélection du template ERC-20',
+    status: 'completed',
+    completed: true
+  },
+  {
+    id: '3',
+    title: 'Configuration smart contract',
+    description: 'Paramètres du token de fidélité',
+    status: 'completed',
+    completed: true
   }
-};
+];
 
-export const TemplateCard: React.FC<TemplateCardProps> = ({ template, onLaunch }) => {
-  const Icon = getTemplateIcon(template.title);
+export const nextActions: Step[] = [
+  {
+    id: '4',
+    title: 'Tests sur testnet',
+    description: 'Déploiement et tests du contrat',
+    status: 'in-progress',
+    completed: false
+  },
+  {
+    id: '5',
+    title: 'Interface utilisateur',
+    description: 'Création de l\'interface Web3',
+    status: 'todo',
+    completed: false
+  }
+];
 
-  return (
-    <motion.div
-      className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.02 }}
-      transition={{ duration: 0.2 }}
-    >
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <Icon className="w-6 h-6 text-blue-600" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-gray-900">{template.title}</h3>
-            <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getDifficultyColor(template.difficulty)}`}>
-              {template.difficulty}
-            </span>
-          </div>
-        </div>
-      </div>
-      
-      <p className="text-gray-600 text-sm mb-6">{template.description}</p>
-      
-      <motion.button
-        onClick={() => onLaunch(template.id)}
-        className="w-full flex items-center justify-center space-x-2 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-      >
-        <span>Launch Template</span>
-        <ArrowRight className="w-4 h-4" />
-      </motion.button>
-    </motion.div>
-  );
-};
+export const flowSteps: Step[] = [
+  {
+    id: '1',
+    title: 'Analyse des besoins',
+    description: 'Définir les objectifs Web3',
+    status: 'completed'
+  },
+  {
+    id: '2',
+    title: 'Choix de l\'architecture',
+    description: 'Sélectionner blockchain et outils',
+    status: 'completed'
+  },
+  {
+    id: '3',
+    title: 'Smart contracts',
+    description: 'Développement des contrats',
+    status: 'in-progress'
+  },
+  {
+    id: '4',
+    title: 'Tests & audit',
+    description: 'Validation de la sécurité',
+    status: 'todo'
+  },
+  {
+    id: '5',
+    title: 'Déploiement',
+    description: 'Mise en production',
+    status: 'todo'
+  }
+];
+
+export const templates: Template[] = [
+  {
+    id: '1',
+    title: 'ERC-20 fidélité',
+    title: 'Smart Contracts',
+    description: 'Contract development',
+    difficulty: 'Beginner'
+  },
+  {
+    id: '2',
+    title: 'Simple NFT Drop',
+    description: 'NFT collection with public mint, whitelist and IPFS metadata',
+    title: 'Testing & Audit',
+    difficulty: 'Intermediate'
+  },
+  {
+    id: '3',
+    title: 'DAO + Multi-sig Treasury',
+    description: 'Decentralized organization with governance and secure treasury',
+    description: 'Production release',
+    difficulty: 'Advanced'
+  }
+];
+    title: 'ERC-20 Loyalty',
+    description: 'Loyalty token to reward your customers with exchangeable points',

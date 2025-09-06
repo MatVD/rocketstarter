@@ -1,84 +1,107 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Check, Clock, Circle, ArrowRight } from 'lucide-react';
-import { Step } from '../../types';
+import { Step, Template, Project } from '../types';
 
-interface FlowStepProps {
-  step: Step;
-  isLast?: boolean;
-  onViewDetails: (stepId: string) => void;
-}
-
-export const FlowStep: React.FC<FlowStepProps> = ({ step, isLast = false, onViewDetails }) => {
-  const getStatusIcon = () => {
-    switch (step.status) {
-      case 'completed':
-        return <Check className="w-5 h-5 text-white" />;
-      case 'in-progress':
-        return <Clock className="w-5 h-5 text-white" />;
-      default:
-        return <Circle className="w-5 h-5 text-white" />;
-    }
-  };
-
-  const getStatusColor = () => {
-    switch (step.status) {
-      case 'completed':
-        return 'bg-green-500';
-      case 'in-progress':
-        return 'bg-orange-500';
-      default:
-        return 'bg-gray-400';
-    }
-  };
-
-  const getBorderColor = () => {
-    switch (step.status) {
-      case 'completed':
-        return 'border-green-200';
-      case 'in-progress':
-        return 'border-orange-200';
-      default:
-        return 'border-gray-200';
-    }
-  };
-
-  return (
-    <div className="flex items-center">
-      <motion.div
-        className={`bg-white rounded-lg border-2 ${getBorderColor()} p-6 min-w-[280px]`}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        whileHover={{ scale: 1.02 }}
-        transition={{ duration: 0.2 }}
-      >
-        <div className="flex items-start space-x-4">
-          <div className={`w-10 h-10 rounded-full ${getStatusColor()} flex items-center justify-center`}>
-            {getStatusIcon()}
-          </div>
-          
-          <div className="flex-1">
-            <h3 className="font-semibold text-gray-900 mb-2">{step.title}</h3>
-            <p className="text-sm text-gray-600 mb-4">{step.description}</p>
-            
-            <motion.button
-              onClick={() => onViewDetails(step.id)}
-              className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center space-x-1"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span>View Details</span>
-              <ArrowRight className="w-3 h-3" />
-            </motion.button>
-          </div>
-        </div>
-      </motion.div>
-      
-      {!isLast && (
-        <div className="flex items-center mx-4">
-          <ArrowRight className="w-6 h-6 text-gray-400" />
-        </div>
-      )}
-    </div>
-  );
+export const mockProject: Project = {
+  name: "Mon Projet Web3",
+  progress: 65,
+  environment: 'testnet'
 };
+
+export const completedSteps: Step[] = [
+  {
+    id: '1',
+    title: 'Configuration initiale',
+    description: 'Paramétrage de base du projet',
+    status: 'completed',
+    completed: true
+  },
+  {
+    id: '2',
+    title: 'Choix du template',
+    description: 'Sélection du template ERC-20',
+    status: 'completed',
+    completed: true
+  },
+  {
+    id: '3',
+    title: 'Configuration smart contract',
+    description: 'Paramètres du token de fidélité',
+    status: 'completed',
+    completed: true
+  }
+];
+
+export const nextActions: Step[] = [
+  {
+    id: '4',
+    title: 'Tests sur testnet',
+    description: 'Déploiement et tests du contrat',
+    status: 'in-progress',
+    completed: false
+  },
+  {
+    id: '5',
+    title: 'Interface utilisateur',
+    description: 'Création de l\'interface Web3',
+    status: 'todo',
+    completed: false
+  }
+];
+
+export const flowSteps: Step[] = [
+  {
+    id: '1',
+    title: 'Analyse des besoins',
+    description: 'Définir les objectifs Web3',
+    status: 'completed'
+  },
+  {
+    id: '2',
+    title: 'Choix de l\'architecture',
+    description: 'Sélectionner blockchain et outils',
+    status: 'completed'
+  },
+  {
+    id: '3',
+    title: 'Smart contracts',
+    description: 'Développement des contrats',
+    status: 'in-progress'
+  },
+  {
+    id: '4',
+    title: 'Tests & audit',
+    description: 'Validation de la sécurité',
+    status: 'todo'
+  },
+  {
+    id: '5',
+    title: 'Déploiement',
+    description: 'Mise en production',
+    status: 'todo'
+  }
+];
+
+export const templates: Template[] = [
+  {
+    id: '1',
+    title: 'ERC-20 fidélité',
+    title: 'Smart Contracts',
+    description: 'Contract development',
+    difficulty: 'Beginner'
+  },
+  {
+    id: '2',
+    title: 'Simple NFT Drop',
+    description: 'NFT collection with public mint, whitelist and IPFS metadata',
+    title: 'Testing & Audit',
+    difficulty: 'Intermediate'
+  },
+  {
+    id: '3',
+    title: 'DAO + Multi-sig Treasury',
+    description: 'Decentralized organization with governance and secure treasury',
+    description: 'Production release',
+    difficulty: 'Advanced'
+  }
+];
+    title: 'ERC-20 Loyalty',
+    description: 'Loyalty token to reward your customers with exchangeable points',
