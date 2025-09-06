@@ -7,7 +7,7 @@ interface CardProps {
   hover?: boolean;
 }
 
-export default function Card({ children, className = '', hover = false }: CardProps) {
+exportx function Card({ children, className = '', hover = false }: CardProps) {
   return (
     <motion.div
       className={`bg-white rounded-xl shadow-sm border border-gray-200 ${className}`}
