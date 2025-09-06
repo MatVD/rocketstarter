@@ -28,11 +28,15 @@ export default function Sidebar({
   onClose,
 }: SidebarProps) {
   return (
-    <div className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col">
-      <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+    <div className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 h-screen flex flex-col">
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Web3 Builder</h1>
-          <p className="text-sm text-gray-500 mt-1">Transition Platform</p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+            Web3 Builder
+          </h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Transition Platform
+          </p>
         </div>
         {onClose && (
           <motion.button
@@ -58,20 +62,22 @@ export default function Sidebar({
                   onClick={() => setActiveTab(item.id)}
                   className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
                     isActive
-                      ? "bg-blue-50 text-blue-700 border border-blue-200"
-                      : "text-gray-700 hover:bg-gray-50"
+                      ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <Icon
                     className={`w-5 h-5 mr-3 ${
-                      isActive ? "text-blue-600" : "text-gray-500"
+                      isActive
+                        ? "text-blue-600 dark:text-blue-400"
+                        : "text-gray-500 dark:text-gray-400"
                     }`}
                   />
                   <span className="font-medium">{item.label}</span>
                   {isActive && (
-                    <ChevronRight className="w-4 h-4 ml-auto text-blue-600" />
+                    <ChevronRight className="w-4 h-4 ml-auto text-blue-600 dark:text-blue-400" />
                   )}
                 </motion.button>
               </li>

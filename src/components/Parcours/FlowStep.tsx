@@ -40,11 +40,11 @@ export default function FlowStep({
   const getBorderColor = () => {
     switch (step.status) {
       case "completed":
-        return "border-green-200";
+        return "border-green-200 dark:border-green-800";
       case "in-progress":
-        return "border-orange-200";
+        return "border-orange-200 dark:border-orange-800";
       default:
-        return "border-gray-200";
+        return "border-gray-200 dark:border-gray-700";
     }
   };
 
@@ -59,11 +59,15 @@ export default function FlowStep({
             {getStatusIcon()}
           </div>
           <div className="flex-1">
-            <h4 className="font-semibold text-gray-900 mb-1">{step.title}</h4>
-            <p className="text-sm text-gray-600 mb-3">{step.description}</p>
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+              {step.title}
+            </h4>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+              {step.description}
+            </p>
             <motion.button
               onClick={() => onDetails(step.id)}
-              className="text-blue-600 text-sm font-medium hover:text-blue-700 transition-colors"
+              className="text-blue-600 dark:text-blue-400 text-sm font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
               whileHover={{ scale: 1.05 }}
             >
               Voir détails →
@@ -74,7 +78,7 @@ export default function FlowStep({
 
       {!isLast && (
         <div className="flex items-center mx-4">
-          <ArrowRight className="w-6 h-6 text-gray-400" />
+          <ArrowRight className="w-6 h-6 text-gray-400 dark:text-gray-500" />
         </div>
       )}
     </div>

@@ -23,14 +23,16 @@ export default function Settings() {
         className="mb-8"
       >
         <div className="flex items-center space-x-3 mb-4">
-          <div className="p-2 bg-gray-100 rounded-lg">
-            <SettingsIcon className="w-6 h-6 text-gray-600" />
+          <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            <SettingsIcon className="w-6 h-6 text-gray-600 dark:text-gray-400" />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
               Paramètres
             </h1>
-            <p className="text-gray-600">Configurez votre projet Web3</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Configurez votre projet Web3
+            </p>
           </div>
         </div>
       </motion.div>
@@ -41,7 +43,7 @@ export default function Settings() {
         transition={{ duration: 0.5, delay: 0.1 }}
       >
         <Card className="p-4 md:p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 md:mb-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 md:mb-6">
             Configuration du projet
           </h3>
 
@@ -49,7 +51,7 @@ export default function Settings() {
             <div>
               <label
                 htmlFor="projectName"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
                 Nom du projet
               </label>
@@ -58,7 +60,7 @@ export default function Settings() {
                 id="projectName"
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors"
                 placeholder="Entrez le nom de votre projet"
               />
             </div>
@@ -66,7 +68,7 @@ export default function Settings() {
             <div>
               <label
                 htmlFor="environment"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
                 Environnement
               </label>
@@ -76,25 +78,25 @@ export default function Settings() {
                 onChange={(e) =>
                   setEnvironment(e.target.value as "testnet" | "mainnet")
                 }
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors"
               >
                 <option value="testnet">Testnet (Développement)</option>
                 <option value="mainnet">Mainnet (Production)</option>
               </select>
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
                 {environment === "testnet"
                   ? "Utilisez le testnet pour développer et tester sans frais réels"
                   : "Le mainnet utilise de vraies cryptomonnaies - soyez prudent"}
               </p>
             </div>
 
-            <div className="pt-4 border-t border-gray-200">
+            <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
               <motion.button
                 onClick={handleSave}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
                   saved
                     ? "bg-green-600 text-white"
-                    : "bg-blue-600 text-white hover:bg-blue-700"
+                    : "bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white"
                 }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -114,27 +116,37 @@ export default function Settings() {
         className="mt-6"
       >
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Informations du projet
           </h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="text-gray-500">Statut :</span>
-              <span className="ml-2 font-medium text-gray-900">
+              <span className="text-gray-500 dark:text-gray-400">Statut :</span>
+              <span className="ml-2 font-medium text-gray-900 dark:text-white">
                 En développement
               </span>
             </div>
             <div>
-              <span className="text-gray-500">Blockchain :</span>
-              <span className="ml-2 font-medium text-gray-900">Ethereum</span>
+              <span className="text-gray-500 dark:text-gray-400">
+                Blockchain :
+              </span>
+              <span className="ml-2 font-medium text-gray-900 dark:text-white">
+                Ethereum
+              </span>
             </div>
             <div>
-              <span className="text-gray-500">Version :</span>
-              <span className="ml-2 font-medium text-gray-900">1.0.0</span>
+              <span className="text-gray-500 dark:text-gray-400">
+                Version :
+              </span>
+              <span className="ml-2 font-medium text-gray-900 dark:text-white">
+                1.0.0
+              </span>
             </div>
             <div>
-              <span className="text-gray-500">Créé le :</span>
-              <span className="ml-2 font-medium text-gray-900">
+              <span className="text-gray-500 dark:text-gray-400">
+                Créé le :
+              </span>
+              <span className="ml-2 font-medium text-gray-900 dark:text-white">
                 15 Jan 2025
               </span>
             </div>

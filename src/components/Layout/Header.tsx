@@ -1,6 +1,7 @@
 import React from "react";
-import { Bell, User, Menu } from "lucide-react";
+import { Bell, User, Menu, Sun, Moon } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTheme } from "../../contexts/ThemeContext";
 
 interface HeaderProps {
   projectName: string;
@@ -8,8 +9,10 @@ interface HeaderProps {
 }
 
 export default function Header({ projectName, onMenuClick }: HeaderProps) {
+  const { theme, toggleTheme } = useTheme();
+
   return (
-    <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4">
+    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 md:px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           {/* Bouton menu mobile */}
@@ -23,10 +26,10 @@ export default function Header({ projectName, onMenuClick }: HeaderProps) {
           </motion.button>
 
           <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
               {projectName}
             </h2>
-            <p className="text-xs md:text-sm text-gray-500">
+            <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
               Plateforme de transition Web2 → Web3
             </p>
           </div>
@@ -34,7 +37,20 @@ export default function Header({ projectName, onMenuClick }: HeaderProps) {
 
         <div className="flex items-center space-x-2 md:space-x-4">
           <motion.button
-            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+            onClick={toggleTheme}
+            className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {theme === "light" ? (
+              <Moon className="w-5 h-5" />
+            ) : (
+              <Sun className="w-5 h-5" />
+            )}
+          </motion.button>
+
+          <motion.button
+            className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -42,15 +58,17 @@ export default function Header({ projectName, onMenuClick }: HeaderProps) {
           </motion.button>
 
           <motion.div
-            className="hidden md:flex items-center space-x-3 bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-100 transition-colors"
+            className="hidden md:flex items-center space-x-3 bg-gray-50 dark:bg-gray-700 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
             whileHover={{ scale: 1.02 }}
           >
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
               <User className="w-4 h-4 text-white" />
             </div>
             <div className="text-sm">
-              <p className="font-medium text-gray-900">Utilisateur</p>
-              <p className="text-gray-500">Admin</p>
+              <p className="font-medium text-gray-900 dark:text-white">
+                Utilisateur
+              </p>
+              <p className="text-gray-500 dark:text-gray-400">Admin</p>
             </div>
           </motion.div>
 

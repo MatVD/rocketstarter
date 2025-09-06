@@ -26,10 +26,10 @@ export default function Dashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
           Dashboard
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-400">
           Suivez l'avancement de votre transition Web3
         </p>
       </motion.div>
@@ -43,22 +43,26 @@ export default function Dashboard() {
         >
           <Card className="p-6">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-blue-600" />
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   Progrès du projet
                 </h3>
-                <p className="text-sm text-gray-600">Avancement global</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Avancement global
+                </p>
               </div>
             </div>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-2xl font-bold text-gray-900">
+                <span className="text-2xl font-bold text-gray-900 dark:text-white">
                   {mockProject.progress}%
                 </span>
-                <span className="text-sm text-gray-500">3/5 étapes</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  3/5 étapes
+                </span>
               </div>
               <ProgressBar progress={mockProject.progress} />
             </div>
@@ -74,14 +78,14 @@ export default function Dashboard() {
         >
           <Card className="p-6">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+              <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
+                <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   Dernières étapes réalisées
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Étapes récemment terminées
                 </p>
               </div>
@@ -110,14 +114,16 @@ export default function Dashboard() {
         >
           <Card className="p-6">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Clock className="w-6 h-6 text-orange-600" />
+              <div className="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
+                <Clock className="w-6 h-6 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   Prochaines actions
                 </h3>
-                <p className="text-sm text-gray-600">Étapes à réaliser</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Étapes à réaliser
+                </p>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
