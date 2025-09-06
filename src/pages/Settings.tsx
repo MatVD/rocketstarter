@@ -1,102 +1,74 @@
-import { Step, Template, Project } from '../types';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Save } from 'lucide-react';
+import { Card } from '../components/UI/Card';
+import { mockProject } from '../data/mockData';
 
-export const mockProject: Project = {
-  name: "Mon Projet Web3",
-  progress: 65,
-  environment: 'testnet'
+export const Settings: React.FC = () => {
+  const [projectName, setProjectName] = useState(mockProject.name);
+  const [environment, setEnvironment] = useState(mockProject.environment);
+
+  const handleSave = () => {
+    console.log('Saving settings:', { projectName, environment });
+  };
+
+  return (
+    <div className="p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Settings</h1>
+          <p className="text-gray-600">Configure your project settings</p>
+        </div>
+
+        <div className="max-w-2xl">
+          <Card title="Project Configuration" className="p-6">
+            <div className="space-y-6">
+              <div>
+                <label htmlFor="projectName" className="block text-sm font-medium text-gray-700 mb-2">
+                  Project Name
+                </label>
+                <input
+                  type="text"
+                  id="projectName"
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter project name"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="environment" className="block text-sm font-medium text-gray-700 mb-2">
+                  Environment
+                </label>
+                <select
+                  id="environment"
+                  value={environment}
+                  onChange={(e) => setEnvironment(e.target.value as 'testnet' | 'mainnet')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="testnet">Testnet</option>
+                  <option value="mainnet">Mainnet</option>
+                </select>
+              </div>
+
+              <motion.button
+                onClick={handleSave}
+                className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Save className="w-4 h-4" />
+                <span>Save</span>
+              </motion.button>
+            </div>
+          </Card>
+        </div>
+      </motion.div>
+    </div>
+  );
 };
-
-export const completedSteps: Step[] = [
-  {
-    id: '1',
-    title: 'Configuration initiale',
-    description: 'Paramétrage de base du projet',
-    status: 'completed',
-    completed: true
-  },
-  {
-    id: '2',
-    title: 'Choix du template',
-    description: 'Sélection du template ERC-20',
-    status: 'completed',
-    completed: true
-  },
-  {
-    id: '3',
-    title: 'Configuration smart contract',
-    description: 'Paramètres du token de fidélité',
-    status: 'completed',
-    completed: true
-  }
-];
-
-export const nextActions: Step[] = [
-  {
-    id: '4',
-    title: 'Tests sur testnet',
-    description: 'Déploiement et tests du contrat',
-    status: 'in-progress',
-    completed: false
-  },
-  {
-    id: '5',
-    title: 'Interface utilisateur',
-    description: 'Création de l\'interface Web3',
-    status: 'todo',
-    completed: false
-  }
-];
-
-export const flowSteps: Step[] = [
-  {
-    id: '1',
-    title: 'Analyse des besoins',
-    description: 'Définir les objectifs Web3',
-    status: 'completed'
-  },
-  {
-    id: '2',
-    title: 'Choix de l\'architecture',
-    description: 'Sélectionner blockchain et outils',
-    status: 'completed'
-  },
-  {
-    id: '3',
-    title: 'Smart contracts',
-    description: 'Développement des contrats',
-    status: 'in-progress'
-  },
-  {
-    id: '4',
-    title: 'Tests & audit',
-    description: 'Validation de la sécurité',
-    status: 'todo'
-  },
-  {
-    id: '5',
-    title: 'Déploiement',
-    description: 'Mise en production',
-    status: 'todo'
-  }
-];
-
-export const templates: Template[] = [
-  {
-    id: '1',
-    title: 'ERC-20 Loyalty',
-    description: 'Loyalty token to reward your customers with exchangeable points',
-    difficulty: 'Beginner'
-  },
-  {
-    id: '2',
-    title: 'Simple NFT Drop',
-    description: 'NFT collection with public mint, whitelist and IPFS metadata',
-    difficulty: 'Intermediate'
-  },
-  {
-    id: '3',
-    title: 'DAO + Multi-sig Treasury',
-    description: 'Decentralized organization with governance and secure treasury',
-    difficulty: 'Advanced'
-  }
-];
