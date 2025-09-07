@@ -30,7 +30,7 @@ export default function Header({ projectName, onMenuClick }: HeaderProps) {
               {projectName}
             </h2>
             <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
-              Plateforme de transition Web2 → Web3
+              Transition Web2 → Web3
             </p>
           </div>
         </div>
