@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { Check, Clock, Circle, ArrowRight } from "lucide-react";
 import { Step } from "../../types";
@@ -67,10 +66,23 @@ export default function FlowStep({
             </p>
             <motion.button
               onClick={() => onDetails(step.id)}
-              className="text-blue-600 dark:text-blue-400 text-sm font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+              className="inline-flex items-center space-x-2 text-blue-600 dark:text-blue-400 text-sm font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors group"
               whileHover={{ scale: 1.05 }}
             >
-              View details →
+              <span>View details</span>
+              <svg
+                className="w-4 h-4 transition-transform group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
             </motion.button>
           </div>
         </div>

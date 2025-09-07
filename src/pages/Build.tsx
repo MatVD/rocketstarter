@@ -3,11 +3,23 @@ import { motion } from "framer-motion";
 import { Hammer } from "lucide-react";
 import TaskTable from "../components/Build/TaskTable";
 import KanbanBoard from "../components/Build/KanbanBoard";
-import { tasks as initialTasks } from "../data/mockData";
+import StepNavigation from "../components/Build/StepNavigation";
+import StepDetails from "../components/Build/StepDetails";
+import { tasks as initialTasks, flowSteps } from "../data/mockData";
 import { Task } from "../types";
 
-export default function Build() {
+interface BuildProps {
+  activeStepId?: string | null;
+  onStepChange?: (stepId: string) => void;
+}
+
+export default function Build({ activeStepId, onStepChange }: BuildProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
+
+  // Find the current step based on activeStepId, default to first step if none provided
+  const currentStep = activeStepId
+    ? flowSteps.find((step) => step.id === activeStepId) || flowSteps[0]
+    : flowSteps[0];
 
   const handleAddTask = (newTask: Omit<Task, "id">) => {
     const task: Task = {
@@ -57,11 +69,37 @@ export default function Build() {
         </div>
       </motion.div>
 
+      {/* Step Navigation */}
+      {onStepChange && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <StepNavigation
+            currentStep={currentStep}
+            allSteps={flowSteps}
+            onStepChange={onStepChange}
+          />
+        </motion.div>
+      )}
+
+      {/* Current Step Context */}
+      {currentStep && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <StepDetails step={currentStep} />
+        </motion.div>
+      )}
+
       {/* Upper section - Task management */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
       >
         <TaskTable
           tasks={tasks}
@@ -75,7 +113,7 @@ export default function Build() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
       >
         <KanbanBoard tasks={tasks} onMoveTask={handleMoveTask} />
       </motion.div>

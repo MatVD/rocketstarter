@@ -12,15 +12,23 @@ import { mockProject } from "./data/mockData";
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeStepId, setActiveStepId] = useState<string | null>(null);
+
+  const handleNavigateToStep = (stepId: string) => {
+    setActiveStepId(stepId);
+    setActiveTab("build");
+  };
 
   const renderContent = () => {
     switch (activeTab) {
       case "dashboard":
         return <Dashboard />;
       case "journey":
-        return <Journey />;
+        return <Journey onNavigateToStep={handleNavigateToStep} />;
       case "build":
-        return <Build />;
+        return (
+          <Build activeStepId={activeStepId} onStepChange={setActiveStepId} />
+        );
       case "templates":
         return <Templates />;
       case "settings":

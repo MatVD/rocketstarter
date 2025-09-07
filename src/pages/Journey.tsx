@@ -3,9 +3,13 @@ import { Route } from "lucide-react";
 import FlowStep from "../components/Flow/FlowStep";
 import { flowSteps } from "../data/mockData";
 
-export default function Journey() {
+interface JourneyProps {
+  onNavigateToStep: (stepId: string) => void;
+}
+
+export default function Journey({ onNavigateToStep }: JourneyProps) {
   const handleStepDetails = (stepId: string) => {
-    alert(`Step details ${stepId} - Feature to implement`);
+    onNavigateToStep(stepId);
   };
 
   return (
@@ -25,7 +29,8 @@ export default function Journey() {
               Transition Journey
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Visualize your progress step by step
+              Visualize your progress step by step - Click "View details" to
+              manage tasks for each step
             </p>
           </div>
         </div>
