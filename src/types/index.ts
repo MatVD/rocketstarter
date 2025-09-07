@@ -19,3 +19,12 @@ export interface Project {
   progress: number;
   environment: "testnet" | "mainnet";
 }
+
+export interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: "todo" | "in-progress" | "done";
+  assignee: string;
+  createdAt: string;
+}

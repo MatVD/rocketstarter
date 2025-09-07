@@ -105,3 +105,54 @@ export const templates: Template[] = [
     difficulty: "Advanced",
   },
 ];
+
+export const tasks: Task[] = [
+  {
+    id: "1",
+    title: "Configurer le smart contract ERC-20",
+    description: "Définir les paramètres du token de fidélité",
+    status: "done",
+    assignee: "Alice Martin",
+    createdAt: "2025-01-10",
+  },
+  {
+    id: "2",
+    title: "Tests unitaires des contrats",
+    description: "Écrire et exécuter les tests pour valider les fonctionnalités",
+    status: "in-progress",
+    assignee: "Bob Dupont",
+    createdAt: "2025-01-12",
+  },
+  {
+    id: "3",
+    title: "Interface utilisateur Web3",
+    description: "Développer l'interface de connexion wallet",
+    status: "in-progress",
+    assignee: "Claire Rousseau",
+    createdAt: "2025-01-14",
+  },
+  {
+    id: "4",
+    title: "Audit de sécurité",
+    description: "Faire auditer les smart contracts par un expert",
+    status: "todo",
+    assignee: "David Chen",
+    createdAt: "2025-01-15",
+  },
+  {
+    id: "5",
+    title: "Documentation technique",
+    description: "Rédiger la documentation complète du projet",
+    status: "todo",
+    assignee: "Emma Wilson",
+    createdAt: "2025-01-16",
+  },
+  {
+    id: "6",
+    title: "Déploiement sur testnet",
+    description: "Déployer et tester sur le réseau de test",
+    status: "done",
+    assignee: "Alice Martin",
+    createdAt: "2025-01-08",
+  },
+];

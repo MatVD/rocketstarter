@@ -4,6 +4,7 @@ import Sidebar from "./components/Layout/Sidebar";
 import Header from "./components/Layout/Header";
 import Dashboard from "./pages/Dashboard";
 import Journey from "./pages/Journey";
+import Build from "./pages/Build";
 import Templates from "./pages/Templates";
 import Settings from "./pages/Settings";
 import { mockProject } from "./data/mockData";
@@ -18,6 +19,8 @@ function App() {
         return <Dashboard />;
       case "journey":
         return <Journey />;
+      case "build":
+        return <Build />;
       case "templates":
         return <Templates />;
       case "settings":
