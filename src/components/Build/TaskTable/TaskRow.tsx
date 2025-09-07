@@ -2,10 +2,12 @@ import { motion } from "framer-motion";
 import { Edit, Trash2, User } from "lucide-react";
 import { Task } from "../../../types";
 import { getStatusBadge } from "./taskStatusUtils";
+import type { Column } from "../KanbanBoard/kanbanUtils";
 
 interface TaskRowProps {
   task: Task;
   index: number;
+  columns: Column[];
   onEdit: (taskId: string) => void;
   onDelete: (taskId: string) => void;
 }
@@ -13,6 +15,7 @@ interface TaskRowProps {
 export default function TaskRow({
   task,
   index,
+  columns,
   onEdit,
   onDelete,
 }: TaskRowProps) {
@@ -33,7 +36,7 @@ export default function TaskRow({
           {task.description}
         </div>
       </td>
-      <td className="py-3 px-4">{getStatusBadge(task.status)}</td>
+      <td className="py-3 px-4">{getStatusBadge(task.status, columns)}</td>
       <td className="py-3 px-4">
         <div className="flex items-center space-x-2">
           <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">

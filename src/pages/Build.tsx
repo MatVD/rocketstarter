@@ -7,6 +7,10 @@ import StepNavigation from "../components/Build/StepNavigation";
 import StepDetails from "../components/Build/StepDetails";
 import { tasks as initialTasks, flowSteps } from "../data/mockData";
 import { Task } from "../types";
+import {
+  DEFAULT_COLUMNS,
+  Column,
+} from "../components/Build/KanbanBoard/kanbanUtils";
 
 interface BuildProps {
   activeStepId?: string | null;
@@ -15,6 +19,7 @@ interface BuildProps {
 
 export default function Build({ activeStepId, onStepChange }: BuildProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
 
   // Find the current step based on activeStepId, default to first step if none provided
   const currentStep = activeStepId
@@ -103,6 +108,7 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
       >
         <TaskTable
           tasks={tasks}
+          columns={columns}
           onAddTask={handleAddTask}
           onEditTask={handleEditTask}
           onDeleteTask={handleDeleteTask}
@@ -115,7 +121,12 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
       >
-        <KanbanBoard tasks={tasks} onMoveTask={handleMoveTask} />
+        <KanbanBoard
+          tasks={tasks}
+          columns={columns}
+          setColumns={setColumns}
+          onMoveTask={handleMoveTask}
+        />
       </motion.div>
     </div>
   );

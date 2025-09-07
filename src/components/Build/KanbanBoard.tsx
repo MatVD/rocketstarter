@@ -15,23 +15,30 @@ import { Task } from "../../types";
 import Card from "../UI/Card";
 import TaskCard from "./KanbanBoard/TaskCard";
 import DroppableColumn from "./KanbanBoard/DroppableColumn";
-import KanbanColumnHeader, { Column } from "./KanbanBoard/KanbanColumnHeader";
+import KanbanColumnHeader from "./KanbanBoard/KanbanColumnHeader";
 import { useKanbanSensors } from "./KanbanBoard/useKanbanSensors";
 import {
-  DEFAULT_COLUMNS,
   createNewColumn,
   updateColumn,
   deleteColumn,
 } from "./KanbanBoard/kanbanUtils";
 
+import type { Column } from "./KanbanBoard/kanbanUtils";
+
 interface KanbanBoardProps {
   tasks: Task[];
+  columns: Column[];
+  setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
   onMoveTask: (taskId: string, newStatus: Task["status"]) => void;
 }
 
-export default function KanbanBoard({ tasks, onMoveTask }: KanbanBoardProps) {
+export default function KanbanBoard({
+  tasks,
+  columns,
+  setColumns,
+  onMoveTask,
+}: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
 
   const sensors = useKanbanSensors();
 
@@ -41,16 +48,18 @@ export default function KanbanBoard({ tasks, onMoveTask }: KanbanBoardProps) {
 
   const handleAddColumn = () => {
     const newColumn = createNewColumn();
-    setColumns([...columns, newColumn]);
+    setColumns((prev) => [...prev, newColumn]);
   };
 
   const handleEditColumn = (id: string, title: string) => {
-    setColumns(updateColumn(columns, id, title));
+    setColumns((prev) => updateColumn(prev, id, title));
   };
 
   const handleDeleteColumn = (id: string) => {
-    if (columns.length === 1) return;
-    setColumns(deleteColumn(columns, id));
+    setColumns((prev) => {
+      if (prev.length === 1) return prev;
+      return deleteColumn(prev, id);
+    });
   };
 
   const handleDragStart = (event: DragStartEvent) => {

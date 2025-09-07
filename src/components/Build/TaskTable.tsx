@@ -5,9 +5,11 @@ import { Task } from "../../types";
 import Card from "../UI/Card";
 import TaskForm from "./TaskTable/TaskForm";
 import TaskRow from "./TaskTable/TaskRow";
+import type { Column } from "./KanbanBoard/kanbanUtils";
 
 interface TaskTableProps {
   tasks: Task[];
+  columns: Column[];
   onAddTask: (task: Omit<Task, "id">) => void;
   onEditTask: (taskId: string) => void;
   onDeleteTask: (taskId: string) => void;
@@ -15,6 +17,7 @@ interface TaskTableProps {
 
 export default function TaskTable({
   tasks,
+  columns,
   onAddTask,
   onEditTask,
   onDeleteTask,
@@ -77,6 +80,7 @@ export default function TaskTable({
                 key={task.id}
                 task={task}
                 index={index}
+                columns={columns}
                 onEdit={onEditTask}
                 onDelete={onDeleteTask}
               />
