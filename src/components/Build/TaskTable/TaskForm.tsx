@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Task } from "../../../types";
 
 interface TaskFormProps {
-  onSubmit: (task: Omit<Task, "id">) => void;
+  onSubmit: (task: Omit<Task, "id" | "stepId">) => void;
   onCancel: () => void;
 }
 

@@ -27,4 +27,5 @@ export interface Task {
   status: string; // Accept any column id
   assignee: string;
   createdAt: string;
+  stepId: string; // Associate task with a specific step
 }

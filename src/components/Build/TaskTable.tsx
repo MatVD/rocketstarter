@@ -10,7 +10,7 @@ import type { Column } from "./KanbanBoard/kanbanUtils";
 interface TaskTableProps {
   tasks: Task[];
   columns: Column[];
-  onAddTask: (task: Omit<Task, "id">) => void;
+  onAddTask: (task: Omit<Task, "id" | "stepId">) => void;
   onEditTask: (taskId: string) => void;
   onDeleteTask: (taskId: string) => void;
 }
@@ -24,7 +24,7 @@ export default function TaskTable({
 }: TaskTableProps) {
   const [showAddForm, setShowAddForm] = useState(false);
 
-  const handleAddTask = (newTask: Omit<Task, "id">) => {
+  const handleAddTask = (newTask: Omit<Task, "id" | "stepId">) => {
     onAddTask(newTask);
     setShowAddForm(false);
   };

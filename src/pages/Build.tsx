@@ -26,10 +26,16 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
     ? flowSteps.find((step) => step.id === activeStepId) || flowSteps[0]
     : flowSteps[0];
 
-  const handleAddTask = (newTask: Omit<Task, "id">) => {
+  // Filter tasks for the current step
+  const currentStepTasks = tasks.filter(
+    (task) => task.stepId === currentStep.id
+  );
+
+  const handleAddTask = (newTask: Omit<Task, "id" | "stepId">) => {
     const task: Task = {
       ...newTask,
       id: Date.now().toString(),
+      stepId: currentStep.id, // Associate new task with current step
     };
     setTasks([...tasks, task]);
   };
@@ -65,10 +71,10 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
           </div>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-              Build
+              Build - {currentStep.title}
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Manage your tasks and track project progress
+              Manage tasks for the current step: {currentStep.description}
             </p>
           </div>
         </div>
@@ -96,7 +102,7 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <StepDetails step={currentStep} />
+          <StepDetails step={currentStep} tasks={tasks} />
         </motion.div>
       )}
 
@@ -107,7 +113,7 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
         transition={{ duration: 0.5, delay: 0.3 }}
       >
         <TaskTable
-          tasks={tasks}
+          tasks={currentStepTasks}
           columns={columns}
           onAddTask={handleAddTask}
           onEditTask={handleEditTask}
@@ -122,7 +128,7 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
         transition={{ duration: 0.5, delay: 0.4 }}
       >
         <KanbanBoard
-          tasks={tasks}
+          tasks={currentStepTasks}
           columns={columns}
           setColumns={setColumns}
           onMoveTask={handleMoveTask}

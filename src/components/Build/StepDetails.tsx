@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Step } from "../../types";
+import { Step, Task } from "../../types";
 import { getStepGuidelines } from "./StepDetails/stepGuidelinesData";
 import {
   getStatusIcon,
@@ -10,10 +10,16 @@ import GuidelineSection from "./StepDetails/GuidelineSection";
 
 interface StepDetailsProps {
   step: Step;
+  tasks?: Task[];
 }
 
-export default function StepDetails({ step }: StepDetailsProps) {
+export default function StepDetails({ step, tasks = [] }: StepDetailsProps) {
   const guidelines = getStepGuidelines(step.id);
+  const stepTasks = tasks.filter((task) => task.stepId === step.id);
+  const completedTasks = stepTasks.filter(
+    (task) => task.status === "done"
+  ).length;
+  const totalTasks = stepTasks.length;
 
   return (
     <motion.div
@@ -31,12 +37,19 @@ export default function StepDetails({ step }: StepDetailsProps) {
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             {step.description}
           </p>
-          <div
-            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusStyles(
-              step.status
-            )}`}
-          >
-            {getStatusLabel(step.status)}
+          <div className="flex items-center space-x-4">
+            <div
+              className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusStyles(
+                step.status
+              )}`}
+            >
+              {getStatusLabel(step.status)}
+            </div>
+            {totalTasks > 0 && (
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {completedTasks}/{totalTasks} tasks completed
+              </div>
+            )}
           </div>
         </div>
       </div>
