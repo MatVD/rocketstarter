@@ -12,19 +12,19 @@ export default function KanbanBoard({ tasks, onMoveTask }: KanbanBoardProps) {
   const columns = [
     {
       id: "todo" as const,
-      title: "À faire",
+      title: "To do",
       color: "bg-gray-100 dark:bg-gray-800",
       headerColor: "bg-gray-200 dark:bg-gray-700",
     },
     {
       id: "in-progress" as const,
-      title: "En cours",
+      title: "In progress",
       color: "bg-orange-50 dark:bg-orange-900/10",
       headerColor: "bg-orange-100 dark:bg-orange-900/20",
     },
     {
       id: "done" as const,
-      title: "Terminé",
+      title: "Done",
       color: "bg-green-50 dark:bg-green-900/10",
       headerColor: "bg-green-100 dark:bg-green-900/20",
     },
@@ -37,7 +37,7 @@ export default function KanbanBoard({ tasks, onMoveTask }: KanbanBoardProps) {
   return (
     <Card className="p-6">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-        Tableau de bord du projet
+        Project dashboard
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -87,7 +87,7 @@ export default function KanbanBoard({ tasks, onMoveTask }: KanbanBoardProps) {
                         </div>
                       </div>
 
-                      {/* Boutons de déplacement (simulation) */}
+                      {/* Movement buttons (simulation) */}
                       <div className="mt-3 flex space-x-2">
                         {column.id !== "todo" && (
                           <motion.button
@@ -101,7 +101,7 @@ export default function KanbanBoard({ tasks, onMoveTask }: KanbanBoardProps) {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                           >
-                            ← Précédent
+                            ← Previous
                           </motion.button>
                         )}
                         {column.id !== "done" && (
@@ -116,7 +116,7 @@ export default function KanbanBoard({ tasks, onMoveTask }: KanbanBoardProps) {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                           >
-                            Suivant →
+                            Next →
                           </motion.button>
                         )}
                       </div>

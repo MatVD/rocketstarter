@@ -18,11 +18,11 @@ export default function Build() {
   };
 
   const handleEditTask = (taskId: string) => {
-    alert(`Édition de la tâche ${taskId} - Fonctionnalité à implémenter`);
+    alert(`Edit task ${taskId} - Feature to implement`);
   };
 
   const handleDeleteTask = (taskId: string) => {
-    if (confirm("Êtes-vous sûr de vouloir supprimer cette tâche ?")) {
+    if (confirm("Are you sure you want to delete this task?")) {
       setTasks(tasks.filter((task) => task.id !== taskId));
     }
   };
@@ -51,13 +51,13 @@ export default function Build() {
               Build
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Gérez vos tâches et suivez l'avancement du projet
+              Manage your tasks and track project progress
             </p>
           </div>
         </div>
       </motion.div>
 
-      {/* Section supérieure - Gestion des tâches */}
+      {/* Upper section - Task management */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -71,7 +71,7 @@ export default function Build() {
         />
       </motion.div>
 
-      {/* Section inférieure - Tableau Kanban */}
+      {/* Lower section - Kanban board */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -35,9 +35,9 @@ export default function TaskTable({
     };
 
     const labels = {
-      todo: "À faire",
-      "in-progress": "En cours",
-      done: "Terminé",
+      todo: "To do",
+      "in-progress": "In progress",
+      done: "Done",
     };
 
     return (
@@ -68,7 +68,7 @@ export default function TaskTable({
     <Card className="p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Gestion des tâches
+          Task management
         </h3>
         <motion.button
           onClick={() => setShowAddForm(!showAddForm)}
@@ -77,7 +77,7 @@ export default function TaskTable({
           whileTap={{ scale: 0.95 }}
         >
           <Plus className="w-4 h-4" />
-          <span>Nouvelle tâche</span>
+          <span>New task</span>
         </motion.button>
       </div>
 
@@ -92,7 +92,7 @@ export default function TaskTable({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 type="text"
-                placeholder="Titre de la tâche"
+                placeholder="Task title"
                 value={newTask.title}
                 onChange={(e) =>
                   setNewTask({ ...newTask, title: e.target.value })
@@ -102,7 +102,7 @@ export default function TaskTable({
               />
               <input
                 type="text"
-                placeholder="Assigné à"
+                placeholder="Assignee"
                 value={newTask.assignee}
                 onChange={(e) =>
                   setNewTask({ ...newTask, assignee: e.target.value })
@@ -125,14 +125,14 @@ export default function TaskTable({
                 type="submit"
                 className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
               >
-                Ajouter
+                Add
               </button>
               <button
                 type="button"
                 onClick={() => setShowAddForm(false)}
                 className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
               >
-                Annuler
+                Cancel
               </button>
             </div>
           </form>
@@ -144,16 +144,16 @@ export default function TaskTable({
           <thead>
             <tr className="border-b border-gray-200 dark:border-gray-700">
               <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-white">
-                Titre
+                Title
               </th>
               <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-white">
                 Description
               </th>
               <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-white">
-                Statut
+                Status
               </th>
               <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-white">
-                Assigné
+                Assignee
               </th>
               <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-white">
                 Actions
