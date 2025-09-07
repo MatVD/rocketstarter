@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { User, Calendar, GripVertical } from "lucide-react";
+import { User, Calendar, GripVertical, Trash2 } from "lucide-react";
 import {
   DndContext,
   DragEndEvent,
@@ -129,29 +129,57 @@ export default function KanbanBoard({ tasks, onMoveTask }: KanbanBoardProps) {
     })
   );
 
-  const columns = [
+  const defaultColumns = [
     {
-      id: "todo" as const,
+      id: "todo",
       title: "To Do",
       color: "bg-gray-100 dark:bg-gray-800",
       headerColor: "bg-gray-200 dark:bg-gray-700",
     },
     {
-      id: "in-progress" as const,
+      id: "in-progress",
       title: "In Progress",
       color: "bg-orange-50 dark:bg-orange-900/10",
       headerColor: "bg-orange-100 dark:bg-orange-900/20",
     },
     {
-      id: "done" as const,
+      id: "done",
       title: "Done",
       color: "bg-green-50 dark:bg-green-900/10",
       headerColor: "bg-green-100 dark:bg-green-900/20",
     },
   ];
 
-  const getTasksByStatus = (status: Task["status"]) => {
+  const [columns, setColumns] = useState(defaultColumns);
+  const [editingColumnId, setEditingColumnId] = useState<string | null>(null);
+
+  const handleDeleteColumn = (id: string) => {
+    if (columns.length === 1) return;
+    setColumns(columns.filter((col) => col.id !== id));
+  };
+  // const [newColumnName, setNewColumnName] = useState("");
+
+  const getTasksByStatus = (status: string) => {
     return tasks.filter((task) => task.status === status);
+  };
+
+  const handleAddColumn = () => {
+    const id = `col-${Date.now()}`;
+    setColumns([
+      ...columns,
+      {
+        id,
+        title: "Nouvelle colonne",
+        color: "bg-gray-50 dark:bg-gray-900/10",
+        headerColor: "bg-gray-200 dark:bg-gray-700",
+      },
+    ]);
+    setEditingColumnId(id);
+  };
+
+  const handleEditColumn = (id: string, title: string) => {
+    setColumns(columns.map((col) => (col.id === id ? { ...col, title } : col)));
+    setEditingColumnId(null);
   };
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -184,9 +212,18 @@ export default function KanbanBoard({ tasks, onMoveTask }: KanbanBoardProps) {
 
   return (
     <Card className="p-4 md:p-6">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 md:mb-6">
-        Project Board
-      </h3>
+      <div className="flex items-center justify-between mb-4 md:mb-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 md:mb-6">
+          Project Board
+        </h3>
+
+        <button
+          onClick={handleAddColumn}
+          className="mb-4 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs md:text-sm"
+        >
+          + Add Column
+        </button>
+      </div>
 
       <DndContext
         sensors={sensors}
@@ -194,17 +231,50 @@ export default function KanbanBoard({ tasks, onMoveTask }: KanbanBoardProps) {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="flex gap-4 md:gap-6 overflow-x-auto">
           {columns.map((column) => {
             const columnTasks = getTasksByStatus(column.id);
             return (
-              <div key={column.id} className="space-y-3 md:space-y-4">
+              <div
+                key={column.id}
+                className="space-y-3 md:space-y-4 min-w-[260px] relative"
+              >
                 <div
                   className={`${column.headerColor} rounded-lg p-3 flex items-center justify-between`}
                 >
-                  <h4 className="font-medium text-gray-900 dark:text-white text-sm md:text-base">
-                    {column.title}
-                  </h4>
+                  <div className="flex items-center gap-2">
+                    {editingColumnId === column.id ? (
+                      <input
+                        autoFocus
+                        type="text"
+                        className="font-medium text-gray-900 dark:text-white text-sm md:text-base bg-transparent border-b border-blue-400 outline-none px-1 mr-2"
+                        value={column.title}
+                        onChange={(e) =>
+                          handleEditColumn(column.id, e.target.value)
+                        }
+                        onBlur={() => setEditingColumnId(null)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") setEditingColumnId(null);
+                        }}
+                      />
+                    ) : (
+                      <h4
+                        className="font-medium text-gray-900 dark:text-white text-sm md:text-base cursor-pointer"
+                        onDoubleClick={() => setEditingColumnId(column.id)}
+                      >
+                        {column.title}
+                      </h4>
+                    )}
+                    {columns.length > 1 && (
+                      <button
+                        title="Remove Column"
+                        onClick={() => handleDeleteColumn(column.id)}
+                        className="ml-1 text-gray-400 hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                   <span className="text-xs md:text-sm text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 px-2 py-1 rounded-full">
                     {columnTasks.length}
                   </span>
