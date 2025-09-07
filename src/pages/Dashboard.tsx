@@ -1,22 +1,20 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, CheckCircle, Clock } from "lucide-react";
+import { TrendingUp, Route } from "lucide-react";
 import Card from "../components/UI/Card";
 import ProgressBar from "../components/UI/ProgressBar";
-import StepCard from "../components/Dashboard/StepCard";
-import { mockProject, completedSteps, nextActions } from "../data/mockData";
+import FlowStep from "../components/Flow/FlowStep";
+import {
+  mockProject,
+  flowSteps,
+} from "../data/mockData";
 
-export default function Dashboard() {
-  const [actions, setActions] = useState(nextActions);
+interface DashboardProps {
+  onNavigateToStep: (stepId: string) => void;
+}
 
-  const handleCompleteAction = (stepId: string) => {
-    setActions((prev) =>
-      prev.map((action) =>
-        action.id === stepId
-          ? { ...action, status: "completed" as const, completed: true }
-          : action
-      )
-    );
+export default function Dashboard({ onNavigateToStep }: DashboardProps) {
+  const handleStepDetails = (stepId: string) => {
+    onNavigateToStep(stepId);
   };
 
   return (
@@ -34,7 +32,7 @@ export default function Dashboard() {
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="flex flex-col gap-4">
         {/* Project progress */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -69,79 +67,79 @@ export default function Dashboard() {
           </Card>
         </motion.div>
 
-        {/* Recent completed steps */}
+        {/* Step by step journey */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="lg:col-span-2"
-        >
-          <Card className="p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
-                <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Recent completed steps
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Steps recently finished
-                </p>
-              </div>
-            </div>
-            <div className="space-y-3">
-              {completedSteps.map((step, index) => (
-                <motion.div
-                  key={step.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                >
-                  <StepCard step={step} />
-                </motion.div>
-              ))}
-            </div>
-          </Card>
-        </motion.div>
-
-        {/* Next actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
           className="lg:col-span-3"
         >
           <Card className="p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
-                <Clock className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                <Route className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Next actions
+                  Step by step
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Steps to complete
+                  Visualize your progress - Click "View details" to manage tasks
+                  for each step
                 </p>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {actions.map((action, index) => (
-                <motion.div
-                  key={action.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                >
-                  <StepCard
-                    step={action}
-                    showButton
-                    onComplete={handleCompleteAction}
-                  />
-                </motion.div>
-              ))}
+
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 md:p-8 overflow-x-auto">
+              <div className="flex items-center space-x-0 min-w-max">
+                {flowSteps.map((step, index) => (
+                  <motion.div
+                    key={step.id}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <FlowStep
+                      step={step}
+                      isLast={index === flowSteps.length - 1}
+                      onDetails={handleStepDetails}
+                    />
+                  </motion.div>
+                ))}
+              </div>
             </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+              className="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6"
+            >
+              <h4 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                Current step: Smart contracts
+              </h4>
+              <p className="text-blue-700 dark:text-blue-300 mb-4">
+                You are currently developing smart contracts for your project.
+                This step includes creating, testing and optimizing your
+                contracts.
+              </p>
+              <div className="flex space-x-3">
+                <motion.button
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Continue step
+                </motion.button>
+                <motion.button
+                  className="px-4 py-2 border border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  View documentation
+                </motion.button>
+              </div>
+            </motion.div>
           </Card>
         </motion.div>
       </div>

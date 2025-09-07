@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import {
   LayoutDashboard,
-  Route,
   BookTemplate as FileTemplate,
   Hammer,
   Settings,
@@ -17,7 +16,6 @@ interface SidebarProps {
 
 const menuItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "journey", label: "Journey", icon: Route },
   { id: "build", label: "Build", icon: Hammer },
   { id: "templates", label: "Templates", icon: FileTemplate },
   { id: "settings", label: "Settings", icon: Settings },

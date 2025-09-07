@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Sidebar from "./components/Layout/Sidebar";
 import Header from "./components/Layout/Header";
 import Dashboard from "./pages/Dashboard";
-import Journey from "./pages/Journey";
 import Build from "./pages/Build";
 import Templates from "./pages/Templates";
 import Settings from "./pages/Settings";
@@ -22,9 +21,7 @@ function App() {
   const renderContent = () => {
     switch (activeTab) {
       case "dashboard":
-        return <Dashboard />;
-      case "journey":
-        return <Journey onNavigateToStep={handleNavigateToStep} />;
+        return <Dashboard onNavigateToStep={handleNavigateToStep} />;
       case "build":
         return (
           <Build activeStepId={activeStepId} onStepChange={setActiveStepId} />
@@ -34,7 +31,7 @@ function App() {
       case "settings":
         return <Settings />;
       default:
-        return <Dashboard />;
+        return <Dashboard onNavigateToStep={handleNavigateToStep} />;
     }
   };
 
