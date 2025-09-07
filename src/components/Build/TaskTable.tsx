@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Edit, Trash2, User } from "lucide-react";
+import { Plus, Edit, Trash2, User, GripVertical } from "lucide-react";
 import { Task } from "../../types";
 import Card from "../UI/Card";
 
