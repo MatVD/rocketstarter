@@ -6,9 +6,7 @@ import { templates } from "../data/mockData";
 export default function Templates() {
   const handleLaunchTemplate = (templateId: string) => {
     const template = templates.find((t) => t.id === templateId);
-    alert(
-      `Lancement du template "${template?.title}" - Fonctionnalité à implémenter`
-    );
+    alert(`Launching template "${template?.title}" - Feature to implement`);
   };
 
   return (

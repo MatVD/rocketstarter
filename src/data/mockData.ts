@@ -1,4 +1,4 @@
-import { Step, Template, Project } from "../types";
+import { Step, Template, Project, Task } from "../types";
 
 export const mockProject: Project = {
   name: "My Web3 Project",
@@ -103,5 +103,56 @@ export const templates: Template[] = [
       "Decentralized organization with governance and secure treasury",
     icon: "users",
     difficulty: "Advanced",
+  },
+];
+
+export const tasks: Task[] = [
+  {
+    id: "1",
+    title: "Configurer le smart contract ERC-20",
+    description: "Define the loyalty token parameters",
+    status: "done",
+    assignee: "Alice Martin",
+    createdAt: "2025-01-10",
+  },
+  {
+    id: "2",
+    title: "Contract unit tests",
+    description: "Write and execute tests to validate functionalities",
+    status: "in-progress",
+    assignee: "Bob Dupont",
+    createdAt: "2025-01-12",
+  },
+  {
+    id: "3",
+    title: "Web3 user interface",
+    description: "Develop the wallet connection interface",
+    status: "in-progress",
+    assignee: "Claire Rousseau",
+    createdAt: "2025-01-14",
+  },
+  {
+    id: "4",
+    title: "Security audit",
+    description: "Have smart contracts audited by an expert",
+    status: "todo",
+    assignee: "David Chen",
+    createdAt: "2025-01-15",
+  },
+  {
+    id: "5",
+    title: "Technical documentation",
+    description: "Write complete project documentation",
+    status: "todo",
+    assignee: "Emma Wilson",
+    createdAt: "2025-01-16",
+  },
+  {
+    id: "6",
+    title: "Testnet deployment",
+    description: "Deploy and test on the test network",
+    status: "done",
+    assignee: "Alice Martin",
+    createdAt: "2025-01-08",
   },
 ];
