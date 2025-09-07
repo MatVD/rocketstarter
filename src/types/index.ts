@@ -24,7 +24,7 @@ export interface Task {
   id: string;
   title: string;
   description: string;
-  status: "todo" | "in-progress" | "done";
+  status: string; // Accept any column id
   assignee: string;
   createdAt: string;
 }
