@@ -47,7 +47,7 @@ export default function KanbanBoard({
   };
 
   const handleAddColumn = () => {
-    const newColumn = createNewColumn();
+    const newColumn = createNewColumn(columns);
     setColumns((prev) => [...prev, newColumn]);
   };
 
