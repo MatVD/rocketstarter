@@ -132,19 +132,19 @@ export default function KanbanBoard({ tasks, onMoveTask }: KanbanBoardProps) {
   const columns = [
     {
       id: "todo" as const,
-      title: "À faire",
+      title: "To Do",
       color: "bg-gray-100 dark:bg-gray-800",
       headerColor: "bg-gray-200 dark:bg-gray-700",
     },
     {
       id: "in-progress" as const,
-      title: "En cours",
+      title: "In Progress",
       color: "bg-orange-50 dark:bg-orange-900/10",
       headerColor: "bg-orange-100 dark:bg-orange-900/20",
     },
     {
       id: "done" as const,
-      title: "Terminé",
+      title: "Done",
       color: "bg-green-50 dark:bg-green-900/10",
       headerColor: "bg-green-100 dark:bg-green-900/20",
     },
@@ -175,7 +175,7 @@ export default function KanbanBoard({ tasks, onMoveTask }: KanbanBoardProps) {
       return;
     }
 
-    // Si on dépose sur une autre tâche, on prend le statut de cette tâche
+    // If dropped on another task, take the status of that task
     const overTask = tasks.find((t) => t.id === overId);
     if (overTask && overTask.status !== active.data.current?.task.status) {
       onMoveTask(taskId, overTask.status);
@@ -185,7 +185,7 @@ export default function KanbanBoard({ tasks, onMoveTask }: KanbanBoardProps) {
   return (
     <Card className="p-4 md:p-6">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 md:mb-6">
-        Tableau de bord du projet
+        Project Board
       </h3>
 
       <DndContext

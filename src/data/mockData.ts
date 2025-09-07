@@ -109,7 +109,7 @@ export const templates: Template[] = [
 export const tasks: Task[] = [
   {
     id: "1",
-    title: "Configurer le smart contract ERC-20",
+    title: "Configure ERC-20 smart contract",
     description: "Define the loyalty token parameters",
     status: "done",
     assignee: "Alice Martin",

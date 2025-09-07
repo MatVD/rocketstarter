@@ -121,23 +121,21 @@ export default function Settings() {
           </h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="text-gray-500 dark:text-gray-400">Status :</span>
+              <span className="text-gray-500 dark:text-gray-400">Status:</span>
               <span className="ml-2 font-medium text-gray-900 dark:text-white">
                 In development
               </span>
             </div>
             <div>
               <span className="text-gray-500 dark:text-gray-400">
-                Blockchain :
+                Blockchain:
               </span>
               <span className="ml-2 font-medium text-gray-900 dark:text-white">
                 Ethereum
               </span>
             </div>
             <div>
-              <span className="text-gray-500 dark:text-gray-400">
-                Version :
-              </span>
+              <span className="text-gray-500 dark:text-gray-400">Version:</span>
               <span className="ml-2 font-medium text-gray-900 dark:text-white">
                 1.0.0
               </span>

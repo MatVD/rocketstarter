@@ -15,7 +15,7 @@ export default function Header({ projectName, onMenuClick }: HeaderProps) {
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 md:px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          {/* Bouton menu mobile */}
+          {/* Mobile menu button */}
           <motion.button
             onClick={onMenuClick}
             className="md:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
@@ -30,7 +30,7 @@ export default function Header({ projectName, onMenuClick }: HeaderProps) {
               {projectName}
             </h2>
             <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
-              Transition Web2 → Web3
+              Web2 → Web3 Transition
             </p>
           </div>
         </div>
