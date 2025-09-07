@@ -1,7 +1,7 @@
-import React from "react";
-import { Bell, User, Menu, Sun, Moon } from "lucide-react";
+import { Bell, Menu, Sun, Moon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 interface HeaderProps {
   projectName: string;
@@ -57,29 +57,68 @@ export default function Header({ projectName, onMenuClick }: HeaderProps) {
             <Bell className="w-5 h-5" />
           </motion.button>
 
-          <motion.div
-            className="hidden md:flex items-center space-x-3 bg-gray-50 dark:bg-gray-700 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-            whileHover={{ scale: 1.02 }}
-          >
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-              <User className="w-4 h-4 text-white" />
-            </div>
-            <div className="text-sm">
-              <p className="font-medium text-gray-900 dark:text-white">
-                Utilisateur
-              </p>
-              <p className="text-gray-500 dark:text-gray-400">Admin</p>
-            </div>
-          </motion.div>
+          <div className="flex items-center">
+            <ConnectButton.Custom>
+              {({
+                account,
+                chain,
+                openAccountModal,
+                openChainModal,
+                openConnectModal,
+                mounted,
+              }) => {
+                const ready = mounted;
+                const connected = ready && account && chain;
 
-          {/* Version mobile du profil utilisateur */}
-          <motion.div
-            className="md:hidden w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-700 transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <User className="w-4 h-4 text-white" />
-          </motion.div>
+                return (
+                  <div
+                    {...(!ready && {
+                      "aria-hidden": true,
+                      style: {
+                        opacity: 0,
+                        pointerEvents: "none",
+                        userSelect: "none",
+                      },
+                    })}
+                  >
+                    {(() => {
+                      if (!connected) {
+                        return (
+                          <button
+                            onClick={openConnectModal}
+                            type="button"
+                            className="bg-[#2463eb] text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors"
+                          >
+                            Connect Wallet
+                          </button>
+                        );
+                      }
+                      if (chain.unsupported) {
+                        return (
+                          <button
+                            onClick={openChainModal}
+                            type="button"
+                            className="bg-red-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-red-600 transition-colors"
+                          >
+                            Wrong network
+                          </button>
+                        );
+                      }
+                      return (
+                        <button
+                          onClick={openAccountModal}
+                          type="button"
+                          className="bg-[#2463eb] text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors"
+                        >
+                          {account.displayName}
+                        </button>
+                      );
+                    })()}
+                  </div>
+                );
+              }}
+            </ConnectButton.Custom>
+          </div>
         </div>
       </div>
     </header>
