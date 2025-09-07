@@ -27,7 +27,7 @@ export default function NavigationButton({
         <Icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
       )}
       <div className={isPrevious ? "text-left" : "text-right"}>
-        <div className="text-xs text-gray-500 dark:text-gray-500 uppercase tracking-wide">
+        <div className="text-sm text-gray-500 dark:text-gray-500 uppercase tracking-wide mb-1">
           {isPrevious ? "Previous step" : "Next step"}
         </div>
         <div className="font-medium text-gray-900 dark:text-white">
