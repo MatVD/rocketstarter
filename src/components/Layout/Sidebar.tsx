@@ -17,7 +17,7 @@ interface SidebarProps {
 const menuItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "build", label: "Build", icon: Hammer },
-  { id: "templates", label: "Templates", icon: FileTemplate },
+  { id: "templates", label: "Pre-Build", icon: FileTemplate },
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
