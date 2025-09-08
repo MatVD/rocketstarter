@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Hammer } from "lucide-react";
+import { Hammer, SettingsIcon } from "lucide-react";
 import TaskTable from "../components/Build/TaskTable";
 import KanbanBoard from "../components/Build/KanbanBoard";
 import StepNavigation from "../components/Build/StepNavigation";
@@ -15,9 +15,14 @@ import {
 interface BuildProps {
   activeStepId?: string | null;
   onStepChange?: (stepId: string) => void;
+  onSettingsClick?: () => void;
 }
 
-export default function Build({ activeStepId, onStepChange }: BuildProps) {
+export default function Build({
+  activeStepId,
+  onStepChange,
+  onSettingsClick,
+}: BuildProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
 
@@ -65,17 +70,31 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
-            <Hammer className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+        <div className="w-full flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
+              <Hammer className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                Build - {currentStep.title}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                Manage tasks for the current step: {currentStep.description}
+              </p>
+            </div>
           </div>
+
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-              Build - {currentStep.title}
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Manage tasks for the current step: {currentStep.description}
-            </p>
+            <motion.button
+              onClick={onSettingsClick}
+              aria-label="Open settings"
+              className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <SettingsIcon className="w-8 h-8" />
+            </motion.button>
           </div>
         </div>
       </motion.div>
