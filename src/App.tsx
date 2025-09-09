@@ -12,10 +12,10 @@ function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeStepId, setActiveStepId] = useState<string | null>(null);
-  
+
   const onSettingsClick = () => {
     setActiveTab("settings");
-  }
+  };
 
   const handleNavigateToStep = (stepId: string) => {
     setActiveStepId(stepId);
@@ -28,7 +28,11 @@ function App() {
         return <Dashboard onNavigateToStep={handleNavigateToStep} />;
       case "build":
         return (
-          <Build activeStepId={activeStepId} onStepChange={setActiveStepId} onSettingsClick={onSettingsClick} />
+          <Build
+            activeStepId={activeStepId}
+            onStepChange={setActiveStepId}
+            onSettingsClick={onSettingsClick}
+          />
         );
       case "templates":
         return <Templates />;
