@@ -117,7 +117,7 @@ export default function KanbanBoard({
             return (
               <div
                 key={column.id}
-                className="flex-1 space-y-3 md:space-y-4 relative"
+                className="flex-1 min-w-[250px] space-y-3 md:space-y-4 relative"
               >
                 <KanbanColumnHeader
                   column={column}

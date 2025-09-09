@@ -85,7 +85,7 @@ export default function TaskCard({ task, isDragging = false }: TaskCardProps) {
           <div className="mt-1 p-1 text-gray-400 transition-colors touch-none">
             <GripVertical className="w-3 h-3 md:w-4 md:h-4" />
           </div>
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 touch-none">
             <TaskCardContent task={task} />
           </div>
         </div>
