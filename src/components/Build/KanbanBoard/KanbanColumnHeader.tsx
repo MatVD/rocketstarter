@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 
 export interface Column {
   id: string;
@@ -19,9 +19,7 @@ interface KanbanColumnHeaderProps {
 export default function KanbanColumnHeader({
   column,
   taskCount,
-  canDelete,
   onEdit,
-  onDelete,
 }: KanbanColumnHeaderProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editingTitle, setEditingTitle] = useState("");
@@ -49,9 +47,7 @@ export default function KanbanColumnHeader({
   };
 
   return (
-    <div
-      className={`${column.headerColor} rounded-lg p-3 flex items-center justify-between`}
-    >
+    <div className={`${column.headerColor} rounded-lg p-3 flex items-center justify-between`}>
       <div className="flex items-center gap-2">
         {isEditing ? (
           <input
@@ -77,7 +73,7 @@ export default function KanbanColumnHeader({
             </button>
           </>
         )}
-        {canDelete && (
+        {/* {canDelete && (
           <button
             title="Remove Column"
             onClick={() => onDelete(column.id)}
@@ -85,7 +81,7 @@ export default function KanbanColumnHeader({
           >
             <Trash2 className="w-4 h-4" />
           </button>
-        )}
+        )} */}
       </div>
       <span className="text-xs md:text-sm text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 px-2 py-1 rounded-full">
         {taskCount}

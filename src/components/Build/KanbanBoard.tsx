@@ -18,7 +18,6 @@ import DroppableColumn from "./KanbanBoard/DroppableColumn";
 import KanbanColumnHeader from "./KanbanBoard/KanbanColumnHeader";
 import { useKanbanSensors } from "./KanbanBoard/useKanbanSensors";
 import {
-  createNewColumn,
   updateColumn,
   deleteColumn,
 } from "./KanbanBoard/kanbanUtils";
@@ -46,10 +45,10 @@ export default function KanbanBoard({
     return tasks.filter((task) => task.status === status);
   };
 
-  const handleAddColumn = () => {
-    const newColumn = createNewColumn(columns);
-    setColumns((prev) => [...prev, newColumn]);
-  };
+  // const handleAddColumn = () => {
+  //   const newColumn = createNewColumn(columns);
+  //   setColumns((prev) => [...prev, newColumn]);
+  // };
 
   const handleEditColumn = (id: string, title: string) => {
     setColumns((prev) => updateColumn(prev, id, title));
@@ -98,12 +97,12 @@ export default function KanbanBoard({
           Project Board
         </h3>
 
-        <button
+        {/* <button
           onClick={handleAddColumn}
           className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs md:text-sm"
         >
           + Add Column
-        </button>
+        </button> */}
       </div>
 
       <DndContext
@@ -118,7 +117,7 @@ export default function KanbanBoard({
             return (
               <div
                 key={column.id}
-                className="space-y-3 md:space-y-4 min-w-[260px] relative"
+                className="flex-1 space-y-3 md:space-y-4 relative"
               >
                 <KanbanColumnHeader
                   column={column}
