@@ -12,6 +12,7 @@ export interface Template {
   description: string;
   icon: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
+  steps?: Step[]; // Optional pre-built steps for strategy templates
 }
 
 export interface Project {

@@ -49,9 +49,16 @@ export default function TemplateCard({
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
         {template.title}
       </h3>
-      <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 leading-relaxed">
+      <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 leading-relaxed">
         {template.description}
       </p>
+      {template.steps && (
+        <div className="mb-4">
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            {template.steps.length} pre-built steps
+          </span>
+        </div>
+      )}
 
       <motion.button
         onClick={() => onLaunch(template.id)}
@@ -59,7 +66,7 @@ export default function TemplateCard({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
       >
-        <span>Launch template</span>
+        <span>Launch strategy</span>
         <ArrowRight className="w-4 h-4" />
       </motion.button>
     </Card>
