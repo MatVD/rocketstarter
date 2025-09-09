@@ -1,25 +1,21 @@
-# Rocket Launch — README
+# RocketStarter — README
 
 ## Overview
 
-This repository is a Vite + React + TypeScript starter tailored for the Rocket Launch project. It includes a modern frontend stack with Tailwind CSS and common libraries used across the app.
+This repository is a Vite + React + TypeScript starter tailored for the RocketStarter project. It includes a modern frontend stack with Tailwind CSS and common libraries used across the app.
 
 ## Quickstart (local development)
 
 Prerequisites: Node.js (16+ recommended), npm
 
-1.  Clone the repository
+1.  Fork the repository from GitHub and clone it locally
 
 ```bash
-git clone https://github.com/your-username/rocket-launch.git
-cd rocket-launch
+git clone https://github.com/YOUR_USERNAME/rocketstarter.git
+cd rocketstarter
 ```
 
 2.  Install dependencies
-
-```bash
-npm install
-```
 
 ```bash
 npm install
@@ -62,39 +58,12 @@ npm run preview
 - `npm run preview` — locally preview the production build
 - `npm run lint` — run ESLint across the project
 
-## Deploying to Vercel
-
-This project is configured to deploy as a static site (Vite output in `dist/`). A `vercel.json` file is included to use `@vercel/static-build` and to rewrite routes for an SPA.
-
-Two ways to deploy:
-
-1.  Vercel web UI
-
-    - Connect your Git provider (GitHub/GitLab/Bitbucket) and import the repository.
-    - Set the Branch to deploy (e.g. `main`).
-    - Vercel should detect:
-      - Build command: `npm run build`
-      - Output directory: `dist`
-
-2.  Vercel CLI
-
-```bash
-# (optional) npm i -g vercel
-vercel login
-vercel --prod
-```
-
-## Environment variables
-
-If your app needs environment variables, set them in the Vercel dashboard (Project Settings → Environment Variables) or use `vercel env` via the CLI.
-
 ## Project structure (top-level)
 
 - `src/` — source code (React components, pages, styles)
 - `index.html` — app entry HTML
 - `package.json` — scripts & dependencies
 - `vite.config.ts` — Vite configuration
-- `vercel.json` — Vercel build & routing config
 
 ## Maintenance tips
 
