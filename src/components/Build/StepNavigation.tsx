@@ -1,5 +1,4 @@
 import { Step } from "../../types";
-import NavigationButton from "./StepNavigation/NavigationButton";
 import ProgressIndicator from "./StepNavigation/ProgressIndicator";
 
 interface StepNavigationProps {
@@ -21,37 +20,17 @@ export default function StepNavigation({
     currentIndex < allSteps.length - 1 ? allSteps[currentIndex + 1] : null;
 
   return (
-    <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
-      {/* Previous Step */}
-      <div className="flex-1">
-        {previousStep && (
-          <NavigationButton
-            step={previousStep}
-            direction="previous"
-            onClick={() => onStepChange(previousStep.id)}
-          />
-        )}
-      </div>
-
-      {/* Current Step Indicator */}
-      <div className="flex-1 flex justify-center">
-        <ProgressIndicator
-          currentIndex={currentIndex}
-          totalSteps={allSteps.length}
-          currentTitle={currentStep.title}
-        />
-      </div>
-
-      {/* Next Step */}
-      <div className="flex-1 flex justify-end">
-        {nextStep && (
-          <NavigationButton
-            step={nextStep}
-            direction="next"
-            onClick={() => onStepChange(nextStep.id)}
-          />
-        )}
-      </div>
+    <div className="flex justify-center mb-6">
+      {/* Current Step Indicator with Navigation */}
+      <ProgressIndicator
+        currentIndex={currentIndex}
+        totalSteps={allSteps.length}
+        currentTitle={currentStep.title}
+        onPrevious={
+          previousStep ? () => onStepChange(previousStep.id) : undefined
+        }
+        onNext={nextStep ? () => onStepChange(nextStep.id) : undefined}
+      />
     </div>
   );
 }

@@ -77,10 +77,10 @@ export default function Build({
             </div>
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                Build - {currentStep.title}
+                Build
               </h1>
               <p className="text-gray-600 dark:text-gray-400">
-                Manage tasks for the current step: {currentStep.description}
+                Manage tasks for the current step.
               </p>
             </div>
           </div>
