@@ -1,6 +1,8 @@
-import { Bell, Menu, Sun, Moon } from "lucide-react";
+import { User, Menu, Sun, Moon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useState } from "react";
 
 interface HeaderProps {
   projectName: string;
@@ -9,6 +11,7 @@ interface HeaderProps {
 
 export default function Header({ projectName, onMenuClick }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 md:px-6 py-4">
@@ -103,12 +106,97 @@ export default function Header({ projectName, onMenuClick }: HeaderProps) {
           </motion.button>
 
           <motion.button
-            className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors relative"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => setShowProfileDropdown(!showProfileDropdown)}
           >
-            <Bell className="w-5 h-5" />
+            <User className="w-5 h-5" />
           </motion.button>
+
+          {/* Profile Dropdown Overlay */}
+          {showProfileDropdown && (
+            <div
+              className="fixed inset-0 z-40"
+              onClick={() => setShowProfileDropdown(false)}
+            />
+          )}
+
+          {/* Profile Dropdown */}
+          {showProfileDropdown && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="absolute top-16 right-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 z-50 min-w-[250px]"
+            >
+              <ConnectButton.Custom>
+                {({
+                  account,
+                  chain,
+                  openAccountModal,
+                  openChainModal,
+                  openConnectModal,
+                  mounted,
+                }) => {
+                  const ready = mounted;
+                  const connected = ready && account && chain;
+
+                  return (
+                    <div
+                      {...(!ready && {
+                        "aria-hidden": true,
+                        style: {
+                          opacity: 0,
+                          pointerEvents: "none",
+                          userSelect: "none",
+                        },
+                      })}
+                    >
+                      {(() => {
+                        if (!connected) {
+                          return (
+                            <button
+                              onClick={openConnectModal}
+                              type="button"
+                              className="w-full bg-[#2463eb] text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors"
+                            >
+                              Connect Wallet
+                            </button>
+                          );
+                        }
+                        if (chain.unsupported) {
+                          return (
+                            <button
+                              onClick={openChainModal}
+                              type="button"
+                              className="w-full bg-red-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-red-600 transition-colors"
+                            >
+                              Wrong network
+                            </button>
+                          );
+                        }
+                        return (
+                          <div className="space-y-2">
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              Connected: {account.displayName}
+                            </div>
+                            <button
+                              onClick={openAccountModal}
+                              type="button"
+                              className="w-full bg-[#2463eb] text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors"
+                            >
+                              Manage Account
+                            </button>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  );
+                }}
+              </ConnectButton.Custom>
+            </motion.div>
+          )}
 
           {/* Mobile menu button - moved to right side */}
           <motion.button

@@ -7,7 +7,6 @@ import {
   ChevronRight,
   X,
 } from "lucide-react";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 interface SidebarProps {
   activeTab: string;
@@ -86,69 +85,6 @@ export default function Sidebar({
         </ul>
       </nav>
 
-      {/* Connect Wallet Button */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-        <ConnectButton.Custom>
-          {({
-            account,
-            chain,
-            openAccountModal,
-            openChainModal,
-            openConnectModal,
-            mounted,
-          }) => {
-            const ready = mounted;
-            const connected = ready && account && chain;
-
-            return (
-              <div
-                {...(!ready && {
-                  "aria-hidden": true,
-                  style: {
-                    opacity: 0,
-                    pointerEvents: "none",
-                    userSelect: "none",
-                  },
-                })}
-              >
-                {(() => {
-                  if (!connected) {
-                    return (
-                      <button
-                        onClick={openConnectModal}
-                        type="button"
-                        className="w-full bg-[#2463eb] text-white font-semibold px-4 py-3 rounded-lg shadow hover:bg-blue-700 transition-colors"
-                      >
-                        Connect Wallet
-                      </button>
-                    );
-                  }
-                  if (chain.unsupported) {
-                    return (
-                      <button
-                        onClick={openChainModal}
-                        type="button"
-                        className="w-full bg-red-500 text-white font-semibold px-4 py-3 rounded-lg shadow hover:bg-red-600 transition-colors"
-                      >
-                        Wrong network
-                      </button>
-                    );
-                  }
-                  return (
-                    <button
-                      onClick={openAccountModal}
-                      type="button"
-                      className="w-full bg-[#2463eb] text-white font-semibold px-4 py-3 rounded-lg shadow hover:bg-blue-700 transition-colors"
-                    >
-                      {account.displayName}
-                    </button>
-                  );
-                })()}
-              </div>
-            );
-          }}
-        </ConnectButton.Custom>
       </div>
-    </div>
   );
 }
