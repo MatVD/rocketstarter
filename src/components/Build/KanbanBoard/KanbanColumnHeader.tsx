@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { Pencil } from "lucide-react";
-
-export interface Column {
-  id: string;
-  title: string;
-  color: string;
-  headerColor: string;
-}
+import { Column } from "../../../types";
 
 interface KanbanColumnHeaderProps {
   column: Column;
@@ -47,7 +41,9 @@ export default function KanbanColumnHeader({
   };
 
   return (
-    <div className={`${column.headerColor} rounded-lg p-3 flex items-center justify-between`}>
+    <div
+      className={`${column.headerColor} rounded-lg p-3 flex items-center justify-between`}
+    >
       <div className="flex items-center gap-2">
         {isEditing ? (
           <input

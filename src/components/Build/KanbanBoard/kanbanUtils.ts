@@ -1,4 +1,4 @@
-import { Column } from "./KanbanColumnHeader";
+import { Column } from "../../../types";
 export type { Column };
 
 // Palette de couleurs pour les nouvelles colonnes

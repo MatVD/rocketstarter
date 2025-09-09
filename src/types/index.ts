@@ -30,3 +30,10 @@ export interface Task {
   createdAt: string;
   stepId: string; // Associate task with a specific step
 }
+
+export interface Column {
+  id: string;
+  title: string;
+  color: string;
+  headerColor: string;
+}
