@@ -30,9 +30,9 @@ export default function StepDetails({ step, tasks = [] }: StepDetailsProps) {
       <div className="flex items-start space-x-4 mb-6">
         {/* <div className="flex-shrink-0">{getStatusIcon(step.status)}</div> */}
         <div className="flex-1">
-          <h3 className="flex justify-center text-xl font-semibold text-gray-900 dark:text-white mb-2">
-            {step.title} - <div
-              className={`inline-flex items-start px-2 py-1 rounded-full text-sm font-medium ${getStatusStyles(
+          <h3 className="flex justify-center text-xl gap-2 font-semibold text-gray-900 dark:text-white mb-2">
+            {step.title}  <div
+              className={`inline-flex items-center p-1 rounded-lg text-xs font-medium ${getStatusStyles(
                 step.status
               )}`}
             >

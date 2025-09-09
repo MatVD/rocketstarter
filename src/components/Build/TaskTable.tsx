@@ -42,7 +42,7 @@ export default function TaskTable({
           whileTap={{ scale: 0.95 }}
         >
           <Plus className="w-4 h-4" />
-          <span>New task</span>
+          <span className="hidden md:inline">New task</span>
         </motion.button>
       </div>
 

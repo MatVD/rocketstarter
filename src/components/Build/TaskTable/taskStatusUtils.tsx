@@ -49,10 +49,10 @@ export const getStatusBadge = (status: Task["status"], columns: Column[]) => {
 
   // Default styles for known statuses - using soft colors consistent with design
   const defaultStyles = {
-    todo: "bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300",
+    todo: "bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800",
     "in-progress":
-      "bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300",
-    done: "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300",
+      "bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800",
+    done: "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800",
   } as const;
 
   const defaultLabels = {

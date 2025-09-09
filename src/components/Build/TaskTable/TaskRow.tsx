@@ -36,7 +36,9 @@ export default function TaskRow({
           {task.description}
         </div>
       </td>
-      <td className="py-3 px-4">{getStatusBadge(task.status, columns)}</td>
+      <td className="py-3 px-4 whitespace-nowrap">
+        {getStatusBadge(task.status, columns)}
+      </td>
       <td className="py-3 px-4">
         <div className="flex items-center space-x-2">
           <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
