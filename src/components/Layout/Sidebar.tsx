@@ -31,10 +31,10 @@ export default function Sidebar({
       <div className="px-4 md:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Rocket Starter
+            RocketStarter.io
           </h1>
           <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
-            Web3 Builder Toolkit
+            By Kudora
           </p>
         </div>
         {onClose && (
