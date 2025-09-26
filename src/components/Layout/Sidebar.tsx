@@ -6,26 +6,45 @@ import {
   Settings,
   ChevronRight,
   X,
+  FolderOpen,
+  User as UserIcon,
 } from "lucide-react";
+import { User } from "../../types";
 
 interface SidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   onClose?: () => void;
+  user?: User;
 }
 
-const menuItems = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "build", label: "Build", icon: Hammer },
-  { id: "templates", label: "Strategy", icon: FileTemplate },
-  { id: "settings", label: "Settings", icon: Settings },
-];
+const getMenuItems = (userRole?: string) => {
+  const baseItems = [{ id: "settings", label: "Settings", icon: Settings }];
+
+  if (userRole === "builder") {
+    return [
+      { id: "projects", label: "Projects", icon: FolderOpen },
+      { id: "my-tasks", label: "My Tasks", icon: UserIcon },
+      ...baseItems,
+    ];
+  }
+
+  // Owner role (default)
+  return [
+    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { id: "build", label: "Build", icon: Hammer },
+    { id: "templates", label: "Strategy", icon: FileTemplate },
+    ...baseItems,
+  ];
+};
 
 export default function Sidebar({
   activeTab,
   setActiveTab,
   onClose,
+  user,
 }: SidebarProps) {
+  const menuItems = getMenuItems(user?.role);
   return (
     <div className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 h-screen flex flex-col">
       <div className="px-4 md:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
@@ -33,9 +52,22 @@ export default function Sidebar({
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             RocketStarter.io
           </h1>
-          <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
-            By Kudora
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
+              By Kudora
+            </p>
+            {user && (
+              <span
+                className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                  user.role === "owner"
+                    ? "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200"
+                    : "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200"
+                }`}
+              >
+                {user.role}
+              </span>
+            )}
+          </div>
         </div>
         {onClose && (
           <motion.button
@@ -84,7 +116,6 @@ export default function Sidebar({
           })}
         </ul>
       </nav>
-
-      </div>
+    </div>
   );
 }

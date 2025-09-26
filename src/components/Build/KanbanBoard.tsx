@@ -11,16 +11,13 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Task } from "../../types";
+import { Task, User } from "../../types";
 import Card from "../UI/Card";
-import TaskCard from "./KanbanBoard/TaskCard";
+import TaskCard from "../UI/TaskCard";
 import DroppableColumn from "./KanbanBoard/DroppableColumn";
 import KanbanColumnHeader from "./KanbanBoard/KanbanColumnHeader";
 import { useKanbanSensors } from "./KanbanBoard/useKanbanSensors";
-import {
-  updateColumn,
-  deleteColumn,
-} from "./KanbanBoard/kanbanUtils";
+import { updateColumn, deleteColumn } from "./KanbanBoard/kanbanUtils";
 
 import type { Column } from "./KanbanBoard/kanbanUtils";
 
@@ -29,6 +26,8 @@ interface KanbanBoardProps {
   columns: Column[];
   setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
   onMoveTask: (taskId: string, newStatus: Task["status"]) => void;
+  user?: User;
+  onTaskAssignment?: (taskId: string) => void;
 }
 
 export default function KanbanBoard({
@@ -36,6 +35,8 @@ export default function KanbanBoard({
   columns,
   setColumns,
   onMoveTask,
+  user,
+  onTaskAssignment,
 }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
@@ -143,7 +144,13 @@ export default function KanbanBoard({
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.3, delay: index * 0.1 }}
                         >
-                          <TaskCard task={task} />
+                          <TaskCard
+                            task={task}
+                            variant="kanban"
+                            isDraggable
+                            user={user}
+                            onTaskAssignment={onTaskAssignment}
+                          />
                         </motion.div>
                       ))}
                     </div>
@@ -155,7 +162,15 @@ export default function KanbanBoard({
         </div>
 
         <DragOverlay>
-          {activeTask ? <TaskCard task={activeTask} isDragging /> : null}
+          {activeTask ? (
+            <TaskCard
+              task={activeTask}
+              variant="kanban"
+              isDragging
+              user={user}
+              onTaskAssignment={onTaskAssignment}
+            />
+          ) : null}
         </DragOverlay>
       </DndContext>
     </Card>

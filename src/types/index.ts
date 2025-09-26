@@ -16,9 +16,22 @@ export interface Template {
 }
 
 export interface Project {
+  id: string;
   name: string;
+  description?: string;
   progress: number;
   environment: "testnet" | "mainnet";
+  owner?: string;
+  createdAt?: string;
+  tags?: string[];
+}
+
+export interface User {
+  id: string;
+  address?: string;
+  role: "owner" | "builder";
+  name?: string;
+  isConnected: boolean;
 }
 
 export interface Task {

@@ -5,8 +5,9 @@ import TaskTable from "../components/Build/TaskTable";
 import KanbanBoard from "../components/Build/KanbanBoard";
 import StepNavigation from "../components/Build/StepNavigation";
 import StepDetails from "../components/Build/StepDetails";
-import { tasks as initialTasks, flowSteps } from "../data/mockData";
-import { Task } from "../types";
+import Toast from "../components/UI/Toast";
+import { tasks as initialTasks, flowSteps, mockUser } from "../data/mockData";
+import { Task, Project, User } from "../types";
 import {
   DEFAULT_COLUMNS,
   Column,
@@ -16,15 +17,25 @@ interface BuildProps {
   activeStepId?: string | null;
   onStepChange?: (stepId: string) => void;
   onSettingsClick?: () => void;
+  project?: Project;
+  onBackToProjects?: () => void;
+  user?: User;
 }
 
 export default function Build({
   activeStepId,
   onStepChange,
   onSettingsClick,
+  project,
+  onBackToProjects,
+  user = mockUser,
 }: BuildProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error" | "info";
+  } | null>(null);
 
   // Find the current step based on activeStepId, default to first step if none provided
   const currentStep = activeStepId
@@ -63,6 +74,28 @@ export default function Build({
     );
   };
 
+  const handleTaskUpdate = (taskId: string, newStatus: string) => {
+    handleMoveTask(taskId, newStatus as Task["status"]);
+  };
+
+  // Builder-specific task assignment logic
+  const handleTaskAssignment = (taskId: string) => {
+    if (user.role === "builder") {
+      const task = tasks.find((t) => t.id === taskId);
+      if (task) {
+        setTasks(
+          tasks.map((t) => (t.id === taskId ? { ...t, assignee: user.id } : t))
+        );
+        setToast({
+          message: `Successfully took task: ${task.title}`,
+          type: "success",
+        });
+        // Auto-hide toast after 3 seconds
+        setTimeout(() => setToast(null), 3000);
+      }
+    }
+  };
+
   return (
     <div className="p-4 md:p-6 space-y-6">
       <motion.div
@@ -80,7 +113,9 @@ export default function Build({
                 Build
               </h1>
               <p className="text-gray-600 dark:text-gray-400">
-                Manage tasks for the current step.
+                {user.role === "builder"
+                  ? "Choose and manage your tasks"
+                  : "Manage tasks for the current step"}
               </p>
             </div>
           </div>
@@ -137,6 +172,7 @@ export default function Build({
           onAddTask={handleAddTask}
           onEditTask={handleEditTask}
           onDeleteTask={handleDeleteTask}
+          user={user}
         />
       </motion.div>
 
@@ -151,8 +187,20 @@ export default function Build({
           columns={columns}
           setColumns={setColumns}
           onMoveTask={handleMoveTask}
+          user={user}
+          onTaskAssignment={handleTaskAssignment}
         />
       </motion.div>
+
+      {/* Toast notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          isVisible={true}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

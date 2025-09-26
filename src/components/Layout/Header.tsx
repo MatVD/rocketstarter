@@ -1,15 +1,27 @@
-import { User, Menu, Sun, Moon } from "lucide-react";
+import { User, Menu, Sun, Moon, ArrowLeft, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useState } from "react";
+import { User as UserType } from "../../types";
 
 interface HeaderProps {
   projectName: string;
   onMenuClick?: () => void;
+  showBackButton?: boolean;
+  onBackClick?: () => void;
+  user?: UserType;
+  onRoleSwitch?: () => void;
 }
 
-export default function Header({ projectName, onMenuClick }: HeaderProps) {
+export default function Header({
+  projectName,
+  onMenuClick,
+  showBackButton = false,
+  onBackClick,
+  user,
+  onRoleSwitch,
+}: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
@@ -17,6 +29,16 @@ export default function Header({ projectName, onMenuClick }: HeaderProps) {
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 md:px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
+          {showBackButton && (
+            <button
+              onClick={onBackClick}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              title="Back to Projects"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            </button>
+          )}
+
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
               {projectName}
@@ -130,6 +152,45 @@ export default function Header({ projectName, onMenuClick }: HeaderProps) {
               exit={{ opacity: 0, y: -10 }}
               className="absolute top-16 right-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 z-50 min-w-[250px]"
             >
+              {/* User Role Section */}
+              {user && (
+                <div className="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    Current Role
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          user.role === "owner"
+                            ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                            : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                        }`}
+                      >
+                        {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                      </span>
+                    </div>
+                    {onRoleSwitch && (
+                      <button
+                        onClick={onRoleSwitch}
+                        className="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                        title={`Switch to ${
+                          user.role === "owner" ? "Builder" : "Owner"
+                        } role`}
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        Switch Role
+                      </button>
+                    )}
+                  </div>
+                  {user.name && (
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {user.name}
+                    </div>
+                  )}
+                </div>
+              )}
+
               <ConnectButton.Custom>
                 {({
                   account,

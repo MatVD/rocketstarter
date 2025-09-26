@@ -1,9 +1,65 @@
-import { Step, Template, Project, Task } from "../types";
+import { Step, Template, Project, Task, User } from "../types";
 
 export const mockProject: Project = {
+  id: "1",
   name: "My Web3 Project",
+  description: "A comprehensive Web3 project with DeFi capabilities",
   progress: 65,
   environment: "testnet",
+  owner: "0x1234567890123456789012345678901234567890",
+  createdAt: "2024-01-15",
+  tags: ["DeFi", "ERC-20", "Staking"],
+};
+
+export const mockProjects: Project[] = [
+  {
+    id: "1",
+    name: "My Web3 Project",
+    description: "A comprehensive Web3 project with DeFi capabilities",
+    progress: 65,
+    environment: "testnet",
+    owner: "0x1234567890123456789012345678901234567890",
+    createdAt: "2024-01-15",
+    tags: ["DeFi", "ERC-20", "Staking"],
+  },
+  {
+    id: "2",
+    name: "NFT Marketplace",
+    description: "Decentralized marketplace for trading NFTs",
+    progress: 40,
+    environment: "testnet",
+    owner: "0x2345678901234567890123456789012345678901",
+    createdAt: "2024-02-01",
+    tags: ["NFT", "Marketplace", "ERC-721"],
+  },
+  {
+    id: "3",
+    name: "DAO Governance Platform",
+    description: "Decentralized autonomous organization management tool",
+    progress: 80,
+    environment: "mainnet",
+    owner: "0x3456789012345678901234567890123456789012",
+    createdAt: "2024-01-10",
+    tags: ["DAO", "Governance", "Voting"],
+  },
+  {
+    id: "4",
+    name: "Cross-chain Bridge",
+    description: "Secure asset transfer between different blockchains",
+    progress: 25,
+    environment: "testnet",
+    owner: "0x4567890123456789012345678901234567890123",
+    createdAt: "2024-02-20",
+    tags: ["Bridge", "Cross-chain", "Security"],
+  },
+];
+
+export const mockUser: User = {
+  id: "builder-1",
+  address: "0x9876543210987654321098765432109876543210",
+  role: "builder",
+  name: "Builder User",
+  isConnected: false,
 };
 
 export const completedSteps: Step[] = [
@@ -269,7 +325,7 @@ export const tasks: Task[] = [
     title: "Contract unit tests",
     description: "Write and execute tests to validate functionalities",
     status: "in-progress",
-    assignee: "Bob Dupont",
+    assignee: "builder-1",
     createdAt: "2025-01-17",
     stepId: "3", // Smart contracts
   },
@@ -277,8 +333,8 @@ export const tasks: Task[] = [
     id: "7",
     title: "Web3 user interface",
     description: "Develop the wallet connection interface",
-    status: "in-progress",
-    assignee: "Claire Rousseau",
+    status: "todo",
+    assignee: "builder-1",
     createdAt: "2025-01-18",
     stepId: "3", // Smart contracts
   },
@@ -287,7 +343,7 @@ export const tasks: Task[] = [
     title: "Security audit",
     description: "Have smart contracts audited by an expert",
     status: "todo",
-    assignee: "David Chen",
+    assignee: "builder-1",
     createdAt: "2025-01-19",
     stepId: "4", // Tests & audit
   },
@@ -305,7 +361,7 @@ export const tasks: Task[] = [
     title: "Testnet deployment",
     description: "Deploy and test on the test network",
     status: "todo",
-    assignee: "Alice Martin",
+    assignee: "builder-1",
     createdAt: "2025-01-21",
     stepId: "5", // Deployment
   },
