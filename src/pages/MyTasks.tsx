@@ -2,7 +2,12 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { User, Clock, CheckCircle2, Circle, AlertCircle } from "lucide-react";
 import { Task, User as UserType } from "../types";
-import { tasks as initialTasks, mockProjects } from "../data/mockData";
+import {
+  tasks as initialTasks,
+  mockProjects,
+  mockUsers,
+  flowSteps,
+} from "../data/mockData";
 import Toast from "../components/UI/Toast";
 import TaskCard from "../components/UI/TaskCard";
 
@@ -80,6 +85,12 @@ export default function MyTasks({ user }: MyTasksProps) {
     return project?.name || "Unknown Project";
   };
 
+  // Helper function to get step name from stepId
+  const getStepName = (stepId: string) => {
+    const step = flowSteps.find((s) => s.id === stepId);
+    return step?.title || "Unknown Step";
+  };
+
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
@@ -115,9 +126,12 @@ export default function MyTasks({ user }: MyTasksProps) {
                   <TaskCard
                     key={task.id}
                     task={task}
-                    variant="list"
+                    variant="simple"
                     showProject
                     projectName={getProjectName()}
+                    stepName={getStepName(task.stepId)}
+                    user={user}
+                    users={mockUsers}
                     onStatusChange={handleUpdateTaskStatus}
                     getStatusColor={getStatusColor}
                     getStatusIcon={getStatusIcon}
@@ -165,9 +179,12 @@ export default function MyTasks({ user }: MyTasksProps) {
                   <TaskCard
                     key={task.id}
                     task={task}
-                    variant="list"
+                    variant="simple"
                     showProject
                     projectName={getProjectName()}
+                    stepName={getStepName(task.stepId)}
+                    user={user}
+                    users={mockUsers}
                     onStatusChange={handleUpdateTaskStatus}
                     getStatusColor={getStatusColor}
                     getStatusIcon={getStatusIcon}
@@ -215,9 +232,12 @@ export default function MyTasks({ user }: MyTasksProps) {
                   <TaskCard
                     key={task.id}
                     task={task}
-                    variant="list"
+                    variant="simple"
                     showProject
                     projectName={getProjectName()}
+                    stepName={getStepName(task.stepId)}
+                    user={user}
+                    users={mockUsers}
                     onStatusChange={handleUpdateTaskStatus}
                     getStatusColor={getStatusColor}
                     getStatusIcon={getStatusIcon}

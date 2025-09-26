@@ -375,3 +375,43 @@ export const tasks: Task[] = [
     stepId: "5", // Deployment
   },
 ];
+
+export const mockUsers: User[] = [
+  {
+    id: "builder-1",
+    name: "Alex Thompson",
+    role: "builder",
+    isConnected: true,
+    address: "0x1234567890123456789012345678901234567890",
+  },
+  {
+    id: "Alice Martin",
+    name: "Alice Martin",
+    role: "owner",
+    isConnected: false,
+  },
+  {
+    id: "Bob Dupont",
+    name: "Bob Dupont",
+    role: "owner",
+    isConnected: false,
+  },
+  {
+    id: "Claire Rousseau",
+    name: "Claire Rousseau",
+    role: "owner",
+    isConnected: false,
+  },
+  {
+    id: "David Chen",
+    name: "David Chen",
+    role: "owner",
+    isConnected: false,
+  },
+  {
+    id: "Emma Wilson",
+    name: "Emma Wilson",
+    role: "owner",
+    isConnected: false,
+  },
+];

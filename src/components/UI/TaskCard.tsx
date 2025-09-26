@@ -11,6 +11,7 @@ interface TaskCardProps {
   variant?: "kanban" | "list" | "simple";
   showProject?: boolean;
   projectName?: string;
+  stepName?: string;
 
   // Drag and drop
   isDragging?: boolean;
@@ -18,6 +19,7 @@ interface TaskCardProps {
 
   // User and assignment
   user?: UserType;
+  users?: UserType[]; // List of users to get names for assignees
   onTaskAssignment?: (taskId: string) => void;
 
   // Status actions
@@ -38,7 +40,9 @@ interface TaskCardContentProps {
   variant: "kanban" | "list" | "simple";
   showProject?: boolean;
   projectName?: string;
+  stepName?: string;
   user?: UserType;
+  users?: UserType[];
   onTaskAssignment?: (taskId: string) => void;
   onStatusChange?: (taskId: string, status: string) => void;
   statusButtons?: Array<{
@@ -55,7 +59,9 @@ function TaskCardContent({
   variant,
   showProject,
   projectName,
+  stepName,
   user,
+  users,
   onTaskAssignment,
   onStatusChange,
   statusButtons,
@@ -105,6 +111,21 @@ function TaskCardContent({
             </span>
           )}
         </div>
+        {/* Project and Step info for Builder mode */}
+        {variant === "simple" && (projectName || stepName) && (
+          <div className="flex items-center space-x-2 mb-2">
+            {projectName && (
+              <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 rounded-md font-medium">
+                📝 {projectName}
+              </span>
+            )}
+            {stepName && (
+              <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 rounded-md font-medium">
+                🎯 {stepName}
+              </span>
+            )}
+          </div>
+        )}
         <p
           className={`text-xs ${
             variant === "kanban" ? "md:text-sm" : "text-sm"
@@ -214,15 +235,22 @@ function TaskCardContent({
             {variant === "simple" && user && (
               <div className="flex items-center space-x-2">
                 {task.assignee === user.id ? (
-                  <span className="flex items-center text-sm text-blue-600 dark:text-blue-400">
-                    <User className="w-4 h-4 mr-1" />
-                    My Task
-                  </span>
+                  <div className="flex items-center space-x-2 text-sm text-blue-600 dark:text-blue-400">
+                    <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                      <User className="w-3 h-3 text-white" />
+                    </div>
+                    <span className="font-medium">You</span>
+                  </div>
                 ) : task.assignee ? (
-                  <span className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                    <User className="w-4 h-4 mr-1" />
-                    Assigned
-                  </span>
+                  <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
+                    <div className="w-6 h-6 rounded-full bg-gray-500 flex items-center justify-center flex-shrink-0">
+                      <User className="w-3 h-3 text-white" />
+                    </div>
+                    <span className="font-medium">
+                      {users?.find((u) => u.id === task.assignee)?.name ||
+                        task.assignee}
+                    </span>
+                  </div>
                 ) : onTaskAssignment ? (
                   <button
                     onClick={() => onTaskAssignment(task.id)}
@@ -249,9 +277,11 @@ export default function TaskCard({
   variant = "simple",
   showProject = false,
   projectName,
+  stepName,
   isDragging = false,
   isDraggable = false,
   user,
+  users,
   onTaskAssignment,
   onStatusChange,
   statusButtons,
@@ -291,7 +321,9 @@ export default function TaskCard({
       variant={variant}
       showProject={showProject}
       projectName={projectName}
+      stepName={stepName}
       user={user}
+      users={users}
       onTaskAssignment={onTaskAssignment}
       onStatusChange={onStatusChange}
       statusButtons={statusButtons}
