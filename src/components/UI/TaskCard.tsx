@@ -57,7 +57,6 @@ interface TaskCardContentProps {
 function TaskCardContent({
   task,
   variant,
-  showProject,
   projectName,
   stepName,
   user,
@@ -93,39 +92,67 @@ function TaskCardContent({
 
   return (
     <>
-      {/* Title and Description */}
-      <div className={variant === "kanban" ? "mb-1" : "mb-2"}>
-        <div className="flex items-center space-x-2 mb-1">
-          <h3
-            className={`font-${
-              variant === "kanban" ? "medium" : "semibold"
-            } text-gray-900 dark:text-white ${
-              variant === "kanban" ? "text-sm md:text-base line-clamp-2" : ""
-            }`}
-          >
-            {task.title}
-          </h3>
-          {showProject && projectName && (
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              • {projectName}
-            </span>
-          )}
-        </div>
+      <div className="flex items-start justify-between">
         {/* Project and Step info for Builder mode */}
         {variant === "simple" && (projectName || stepName) && (
-          <div className="flex items-center space-x-2 mb-2">
-            {projectName && (
-              <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 rounded-md font-medium">
-                📝 {projectName}
-              </span>
-            )}
-            {stepName && (
-              <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 rounded-md font-medium">
-                🎯 {stepName}
+          <span className="text-xs py-1 text-blue-700 dark:text-blue-300 rounded-md font-medium">
+            {projectName}
+          </span>
+        )}
+        {/* Assignee section - Top Right */}
+        {variant === "simple" && user && (
+          <div className="flex items-center space-x-2 ml-3 flex-shrink-0">
+            {task.assignee === user.id ? (
+              <div className="flex items-center space-x-2 text-sm text-blue-600 dark:text-blue-400">
+                <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                  <User className="w-3 h-3 text-white" />
+                </div>
+                <span className="font-medium">You</span>
+              </div>
+            ) : task.assignee ? (
+              <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
+                <div className="w-6 h-6 rounded-full bg-gray-500 flex items-center justify-center flex-shrink-0">
+                  <User className="w-3 h-3 text-white" />
+                </div>
+                <span className="font-medium">
+                  {users?.find((u) => u.id === task.assignee)?.name ||
+                    task.assignee}
+                </span>
+              </div>
+            ) : onTaskAssignment ? (
+              <button
+                onClick={() => onTaskAssignment(task.id)}
+                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors duration-200"
+              >
+                Take Task
+              </button>
+            ) : (
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                Unassigned
               </span>
             )}
           </div>
         )}
+      </div>
+      <hr className="my-2 border-gray-200 dark:border-gray-700" />
+      {/* Header with Title and Assignee */}
+      <div className={variant === "kanban" ? "mb-1" : "mb-2"}>
+        <div className="flex items-start justify-between mb-1">
+          {/* Title section */}
+          <div className="flex items-center space-x-2 flex-1 min-w-0">
+            <h3
+              className={`font-${
+                variant === "kanban" ? "medium" : "semibold"
+              } text-gray-900 dark:text-white ${
+                variant === "kanban" ? "text-sm md:text-base line-clamp-2" : ""
+              } truncate`}
+            >
+              {task.title}
+            </h3>
+          </div>
+        </div>
+
+        {/* Description */}
         <p
           className={`text-xs ${
             variant === "kanban" ? "md:text-sm" : "text-sm"
@@ -228,41 +255,6 @@ function TaskCardContent({
                       label={button.label}
                     />
                   ))}
-              </div>
-            )}
-
-            {/* Builder Assignment (Simple variant) */}
-            {variant === "simple" && user && (
-              <div className="flex items-center space-x-2">
-                {task.assignee === user.id ? (
-                  <div className="flex items-center space-x-2 text-sm text-blue-600 dark:text-blue-400">
-                    <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                      <User className="w-3 h-3 text-white" />
-                    </div>
-                    <span className="font-medium">You</span>
-                  </div>
-                ) : task.assignee ? (
-                  <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
-                    <div className="w-6 h-6 rounded-full bg-gray-500 flex items-center justify-center flex-shrink-0">
-                      <User className="w-3 h-3 text-white" />
-                    </div>
-                    <span className="font-medium">
-                      {users?.find((u) => u.id === task.assignee)?.name ||
-                        task.assignee}
-                    </span>
-                  </div>
-                ) : onTaskAssignment ? (
-                  <button
-                    onClick={() => onTaskAssignment(task.id)}
-                    className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors duration-200"
-                  >
-                    Take Task
-                  </button>
-                ) : (
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    Unassigned
-                  </span>
-                )}
               </div>
             )}
           </>

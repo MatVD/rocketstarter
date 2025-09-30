@@ -12,9 +12,7 @@ interface ProjectListProps {
 
 export default function ProjectList({
   projects,
-  user,
   onProjectSelect,
-  onConnectWallet,
 }: ProjectListProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -47,31 +45,6 @@ export default function ProjectList({
             <p className="text-gray-600 dark:text-gray-300 mt-2">
               Choose a project to start building
             </p>
-          </div>
-
-          {/* User info and wallet connection */}
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                {user.name || "Builder"}
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-              </p>
-            </div>
-            {!user.isConnected && (
-              <button
-                onClick={onConnectWallet}
-                className={`px-4 py-2 rounded-lg transition-colors ${COLORS.button.primary} hover:shadow-lg`}
-              >
-                Connect Wallet
-              </button>
-            )}
-            {user.isConnected && user.address && (
-              <div className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-lg text-sm font-mono">
-                {user.address.slice(0, 6)}...{user.address.slice(-4)}
-              </div>
-            )}
           </div>
         </div>
       </div>

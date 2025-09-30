@@ -104,7 +104,7 @@ export default function MyTasks({ user }: MyTasksProps) {
             My Tasks
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-1">
-            All tasks assigned to you across all projects
+            All tasks you bring across all projects
           </p>
         </div>
       </motion.div>
