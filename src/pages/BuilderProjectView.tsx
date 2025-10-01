@@ -151,14 +151,6 @@ export default function BuilderProjectView({
           filters={filters}
           onFiltersChange={setFilters}
         />
-        {(filters.searchTerm ||
-          filters.myTasks ||
-          filters.priority.length > 0 ||
-          filters.categories.length > 0) && (
-          <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
-            Showing {filteredTasks.length} of {projectTasks.length} tasks
-          </div>
-        )}
       </motion.div>
 
       {/* Kanban Board */}
