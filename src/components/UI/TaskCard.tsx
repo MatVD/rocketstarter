@@ -70,8 +70,13 @@ function TaskCardContent({
   const isBuilderMode = user?.role === "builder";
   const isAssignedToCurrentUser = user && task.assignee === user.id;
   const isUnassigned = !task.assignee || task.assignee === "";
+  const isInTodoStatus = task.status === "todo";
   const canTakeTask =
-    isBuilderMode && !isAssignedToCurrentUser && onTaskAssignment;
+    isBuilderMode &&
+    !isAssignedToCurrentUser &&
+    isUnassigned &&
+    isInTodoStatus &&
+    onTaskAssignment;
 
   const StatusButton = ({
     targetStatus,

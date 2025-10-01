@@ -7,7 +7,6 @@ import {
   ChevronRight,
   X,
   FolderOpen,
-  User as UserIcon,
 } from "lucide-react";
 import { User } from "../../types";
 
@@ -24,7 +23,6 @@ const getMenuItems = (userRole?: string) => {
   if (userRole === "builder") {
     return [
       { id: "projects", label: "Projects", icon: FolderOpen },
-      { id: "my-tasks", label: "My Tasks", icon: UserIcon },
       ...baseItems,
     ];
   }

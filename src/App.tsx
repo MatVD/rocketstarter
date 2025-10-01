@@ -9,7 +9,6 @@ import Templates from "./pages/Templates";
 import Settings from "./pages/Settings";
 import ProjectList from "./pages/ProjectList";
 import BuilderProjectView from "./pages/BuilderProjectView";
-import MyTasks from "./pages/MyTasks";
 import Toast from "./components/UI/Toast";
 import { mockProjects, mockUser } from "./data/mockData";
 import { User, Project } from "./types";
@@ -138,8 +137,6 @@ function App() {
             onConnectWallet={handleConnectWallet}
           />
         );
-      case "my-tasks":
-        return <MyTasks user={currentUser} />;
       case "builder-project":
         return selectedProject ? (
           <BuilderProjectView

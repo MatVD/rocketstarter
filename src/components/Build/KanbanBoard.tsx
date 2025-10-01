@@ -28,6 +28,7 @@ interface KanbanBoardProps {
   onMoveTask: (taskId: string, newStatus: Task["status"]) => void;
   user?: User;
   onTaskAssignment?: (taskId: string) => void;
+  isBuilderMode?: boolean; // New prop to indicate builder mode
 }
 
 export default function KanbanBoard({
@@ -37,6 +38,7 @@ export default function KanbanBoard({
   onMoveTask,
   user,
   onTaskAssignment,
+  isBuilderMode = false,
 }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
@@ -72,7 +74,8 @@ export default function KanbanBoard({
     const { active, over } = event;
     setActiveTask(null);
 
-    if (!over) return;
+    // Disable drag and drop for builders
+    if (isBuilderMode || !over) return;
 
     const taskId = active.id as string;
     const overId = over.id as string;
@@ -94,9 +97,17 @@ export default function KanbanBoard({
   return (
     <Card className="p-4 md:p-6">
       <div className="flex items-center justify-between mb-4 md:mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Project Board
-        </h3>
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            Project Board
+          </h3>
+          {isBuilderMode && (
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              You can only take tasks from the "To Do" column. Tasks will
+              automatically move to "In Progress" when taken.
+            </p>
+          )}
+        </div>
 
         {/* <button
           onClick={handleAddColumn}
@@ -147,7 +158,7 @@ export default function KanbanBoard({
                           <TaskCard
                             task={task}
                             variant="kanban"
-                            isDraggable
+                            isDraggable={!isBuilderMode} // Disable dragging for builders
                             user={user}
                             onTaskAssignment={onTaskAssignment}
                           />
