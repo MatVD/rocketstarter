@@ -43,6 +43,7 @@ export interface Task {
   createdAt: string;
   stepId: string; // Associate task with a specific step
   projectId: string; // Associate task with a specific project
+  priority?: "high" | "medium" | "low" | ""; // Task priority level
 }
 
 export interface Column {

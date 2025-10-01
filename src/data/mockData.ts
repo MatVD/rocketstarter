@@ -82,6 +82,66 @@ export const mockProjects: Project[] = [
     createdAt: "2024-04-01",
     tags: ["Social", "Creator", "Tokens", "Community"],
   },
+  {
+    id: "8",
+    name: "AI Trading Bot",
+    description: "Automated DeFi trading bot with ML algorithms",
+    progress: 15,
+    environment: "testnet",
+    owner: "0x8901234567890123456789012345678901234567",
+    createdAt: "2024-04-10",
+    tags: ["AI", "Trading", "DeFi", "Automation"],
+  },
+  {
+    id: "9",
+    name: "Metaverse Real Estate",
+    description: "Virtual land trading and development platform",
+    progress: 70,
+    environment: "mainnet",
+    owner: "0x9012345678901234567890123456789012345678",
+    createdAt: "2024-03-20",
+    tags: ["Metaverse", "Real Estate", "NFT", "Virtual"],
+  },
+  {
+    id: "10",
+    name: "Carbon Credit Exchange",
+    description: "Blockchain-based carbon credit trading platform",
+    progress: 85,
+    environment: "mainnet",
+    owner: "0xa012345678901234567890123456789012345678",
+    createdAt: "2024-02-15",
+    tags: ["Carbon", "Environment", "Trading", "Sustainability"],
+  },
+  {
+    id: "8",
+    name: "AI Trading Bot",
+    description: "Automated DeFi trading bot with ML algorithms",
+    progress: 15,
+    environment: "testnet",
+    owner: "0x8901234567890123456789012345678901234567",
+    createdAt: "2024-04-10",
+    tags: ["AI", "Trading", "DeFi", "Automation"],
+  },
+  {
+    id: "9",
+    name: "Metaverse Real Estate",
+    description: "Virtual land trading and development platform",
+    progress: 70,
+    environment: "mainnet",
+    owner: "0x9012345678901234567890123456789012345678",
+    createdAt: "2024-03-20",
+    tags: ["Metaverse", "Real Estate", "NFT", "Virtual"],
+  },
+  {
+    id: "10",
+    name: "Carbon Credit Exchange",
+    description: "Blockchain-based carbon credit trading platform",
+    progress: 85,
+    environment: "mainnet",
+    owner: "0xa012345678901234567890123456789012345678",
+    createdAt: "2024-02-15",
+    tags: ["Carbon", "Environment", "Trading", "Sustainability"],
+  },
 ];
 
 export const mockUser: User = {
@@ -314,6 +374,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-10",
     stepId: "1", // Requirements analysis
     projectId: "1", // My Web3 Project
+    priority: "high",
   },
   {
     id: "2",
@@ -324,16 +385,18 @@ export const tasks: Task[] = [
     createdAt: "2025-01-12",
     stepId: "1", // Requirements analysis
     projectId: "1", // My Web3 Project
+    priority: "medium",
   },
   {
     id: "3",
     title: "Select blockchain platform",
     description: "Choose between Ethereum, Polygon, or other platforms",
-    status: "in-progress",
+    status: "todo",
     assignee: "", // Unassigned task
     createdAt: "2025-01-14",
     stepId: "2", // Architecture choice
     projectId: "2", // NFT Marketplace
+    priority: "high",
   },
   {
     id: "4",
@@ -344,6 +407,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-15",
     stepId: "2", // Architecture choice
     projectId: "1", // My Web3 Project
+    priority: "medium",
   },
   {
     id: "5",
@@ -354,6 +418,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-16",
     stepId: "3", // Smart contracts
     projectId: "1", // My Web3 Project
+    priority: "high",
   },
   {
     id: "6",
@@ -364,6 +429,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-17",
     stepId: "3", // Smart contracts
     projectId: "1", // My Web3 Project
+    priority: "high",
   },
   {
     id: "7",
@@ -374,46 +440,51 @@ export const tasks: Task[] = [
     createdAt: "2025-01-18",
     stepId: "3", // Smart contracts
     projectId: "1", // My Web3 Project
+    priority: "high",
   },
   {
     id: "8",
     title: "Security audit",
     description: "Have smart contracts audited by an expert",
-    status: "todo",
+    status: "in-progress",
     assignee: "builder-1",
     createdAt: "2025-01-19",
     stepId: "4", // Tests & audit
     projectId: "3", // DAO Governance Platform
+    priority: "high",
   },
   {
     id: "9",
     title: "Penetration testing",
     description: "Conduct security testing on the application",
-    status: "todo",
+    status: "in-progress",
     assignee: "Emma Wilson",
     createdAt: "2025-01-20",
     stepId: "4", // Tests & audit
     projectId: "2", // NFT Marketplace
+    priority: "high",
   },
   {
     id: "10",
     title: "Testnet deployment",
     description: "Deploy and test on the test network",
-    status: "todo",
+    status: "in-progress",
     assignee: "builder-1",
     createdAt: "2025-01-21",
     stepId: "5", // Deployment
     projectId: "4", // Cross-chain Bridge
+    priority: "",
   },
   {
     id: "11",
     title: "Mainnet deployment",
     description: "Deploy the final version to production",
-    status: "todo",
+    status: "in-progress",
     assignee: "Bob Dupont",
     createdAt: "2025-01-22",
     stepId: "5", // Deployment
     projectId: "3", // DAO Governance Platform
+    priority: "high",
   },
   // Additional tasks for better testing
   {
@@ -425,16 +496,18 @@ export const tasks: Task[] = [
     createdAt: "2025-01-23",
     stepId: "1", // Requirements analysis
     projectId: "5", // GameFi Platform
+    priority: "",
   },
   {
     id: "13",
     title: "NFT marketplace smart contracts",
     description: "Develop ERC-721 and marketplace contracts",
-    status: "todo",
+    status: "in-progress",
     assignee: "builder-3",
     createdAt: "2025-01-24",
     stepId: "3", // Smart contracts
     projectId: "2", // NFT Marketplace
+    priority: "",
   },
   {
     id: "14",
@@ -445,6 +518,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-25",
     stepId: "1", // Requirements analysis
     projectId: "4", // Cross-chain Bridge
+    priority: "low",
   },
   {
     id: "15",
@@ -455,26 +529,29 @@ export const tasks: Task[] = [
     createdAt: "2025-01-26",
     stepId: "3", // Smart contracts
     projectId: "6", // DeFi Yield Aggregator
+    priority: "",
   },
   {
     id: "16",
     title: "Social token vesting contracts",
     description: "Create time-locked vesting smart contracts",
-    status: "review",
+    status: "in-review",
     assignee: "James Wright",
     createdAt: "2025-01-27",
     stepId: "3", // Smart contracts
     projectId: "7", // Social Token Platform
+    priority: "low",
   },
   {
     id: "17",
     title: "DAO governance frontend",
     description: "Build voting interface for DAO members",
-    status: "todo",
+    status: "in-progress",
     assignee: "builder-1",
     createdAt: "2025-01-28",
     stepId: "3", // Smart contracts
     projectId: "3", // DAO Governance Platform
+    priority: "",
   },
   {
     id: "18",
@@ -485,16 +562,18 @@ export const tasks: Task[] = [
     createdAt: "2025-01-29",
     stepId: "2", // Architecture choice
     projectId: "5", // GameFi Platform
+    priority: "high",
   },
   {
     id: "19",
     title: "Bridge security audit preparation",
     description: "Prepare documentation and test cases for audit",
-    status: "todo",
+    status: "in-progress",
     assignee: "builder-4",
     createdAt: "2025-01-30",
     stepId: "4", // Tests & audit
     projectId: "4", // Cross-chain Bridge
+    priority: "medium",
   },
   {
     id: "20",
@@ -505,26 +584,29 @@ export const tasks: Task[] = [
     createdAt: "2025-01-31",
     stepId: "4", // Tests & audit
     projectId: "6", // DeFi Yield Aggregator
+    priority: "medium",
   },
   {
     id: "21",
     title: "Social platform UI/UX design",
     description: "Design creator dashboard and token management UI",
-    status: "review",
+    status: "in-review",
     assignee: "Claire Rousseau",
     createdAt: "2025-02-01",
     stepId: "3", // Smart contracts
     projectId: "7", // Social Token Platform
+    priority: "low",
   },
   {
     id: "22",
     title: "NFT royalty mechanism",
     description: "Implement creator royalty distribution system",
-    status: "todo",
+    status: "in-progress",
     assignee: "builder-3",
     createdAt: "2025-02-02",
     stepId: "3", // Smart contracts
     projectId: "2", // NFT Marketplace
+    priority: "low",
   },
   {
     id: "23",
@@ -535,16 +617,18 @@ export const tasks: Task[] = [
     createdAt: "2025-02-03",
     stepId: "4", // Tests & audit
     projectId: "5", // GameFi Platform
+    priority: "high",
   },
   {
     id: "24",
     title: "Multi-chain deployment strategy",
     description: "Plan deployment across multiple blockchain networks",
-    status: "todo",
+    status: "in-progress",
     assignee: "Elena Volkov",
     createdAt: "2025-02-04",
     stepId: "5", // Deployment
     projectId: "4", // Cross-chain Bridge
+    priority: "medium",
   },
   {
     id: "25",
@@ -555,6 +639,7 @@ export const tasks: Task[] = [
     createdAt: "2025-02-05",
     stepId: "2", // Architecture choice
     projectId: "6", // DeFi Yield Aggregator
+    priority: "",
   },
   {
     id: "26",
@@ -565,26 +650,29 @@ export const tasks: Task[] = [
     createdAt: "2025-02-06",
     stepId: "1", // Requirements analysis
     projectId: "7", // Social Token Platform
+    priority: "",
   },
   {
     id: "27",
     title: "DAO treasury management",
     description: "Implement multi-signature treasury contracts",
-    status: "review",
+    status: "in-review",
     assignee: "builder-4",
     createdAt: "2025-02-07",
     stepId: "3", // Smart contracts
     projectId: "3", // DAO Governance Platform
+    priority: "high",
   },
   {
     id: "28",
     title: "Game leaderboard system",
     description: "Build competitive ranking and achievement system",
-    status: "todo",
+    status: "in-progress",
     assignee: "Marcus Rodriguez",
     createdAt: "2025-02-08",
     stepId: "3", // Smart contracts
     projectId: "5", // GameFi Platform
+    priority: "low",
   },
   {
     id: "29",
@@ -595,16 +683,18 @@ export const tasks: Task[] = [
     createdAt: "2025-02-09",
     stepId: "4", // Tests & audit
     projectId: "2", // NFT Marketplace
+    priority: "low",
   },
   {
     id: "30",
     title: "Bridge liquidity management",
     description: "Implement automated liquidity rebalancing system",
-    status: "todo",
+    status: "in-progress",
     assignee: "builder-2",
     createdAt: "2025-02-10",
     stepId: "3", // Smart contracts
     projectId: "4", // Cross-chain Bridge
+    priority: "",
   },
   {
     id: "31",
@@ -615,6 +705,7 @@ export const tasks: Task[] = [
     createdAt: "2025-02-11",
     stepId: "1", // Requirements analysis
     projectId: "6", // DeFi Yield Aggregator
+    priority: "high",
   },
   {
     id: "32",
@@ -625,36 +716,261 @@ export const tasks: Task[] = [
     createdAt: "2025-02-12",
     stepId: "3", // Smart contracts
     projectId: "7", // Social Token Platform
+    priority: "high",
   },
   {
     id: "33",
     title: "My Web3 Project mobile app",
     description: "Develop mobile application for token management",
-    status: "todo",
+    status: "in-progress",
     assignee: "builder-1",
     createdAt: "2025-02-13",
     stepId: "3", // Smart contracts
     projectId: "1", // My Web3 Project
+    priority: "",
   },
   {
     id: "34",
     title: "DAO proposal template system",
     description: "Create standardized proposal templates and workflows",
-    status: "review",
+    status: "in-review",
     assignee: "David Chen",
     createdAt: "2025-02-14",
     stepId: "2", // Architecture choice
     projectId: "3", // DAO Governance Platform
+    priority: "",
   },
   {
     id: "35",
     title: "Game asset trading marketplace",
     description: "Build in-game asset trading and exchange features",
-    status: "todo",
+    status: "in-progress",
     assignee: "builder-4",
     createdAt: "2025-02-15",
     stepId: "3", // Smart contracts
     projectId: "5", // GameFi Platform
+    priority: "",
+  },
+  // Additional tasks for better testing coverage
+  {
+    id: "36",
+    title: "Smart contract optimization",
+    description: "Optimize gas usage and contract efficiency",
+    status: "todo",
+    assignee: "", // Available for builders to take
+    createdAt: "2025-02-16",
+    stepId: "3",
+    projectId: "1", // My Web3 Project
+    priority: "",
+  },
+  {
+    id: "37",
+    title: "Frontend wallet integration",
+    description: "Integrate multiple wallet providers",
+    status: "todo",
+    assignee: "",
+    createdAt: "2025-02-17",
+    stepId: "3",
+    projectId: "1",
+    priority: "",
+  },
+  {
+    id: "38",
+    title: "API documentation",
+    description: "Create comprehensive API documentation",
+    status: "in-progress",
+    assignee: "builder-2",
+    createdAt: "2025-02-18",
+    stepId: "4",
+    projectId: "2", // NFT Marketplace
+    priority: "high",
+  },
+  {
+    id: "39",
+    title: "Performance testing",
+    description: "Load testing and performance optimization",
+    status: "todo",
+    assignee: "",
+    createdAt: "2025-02-19",
+    stepId: "4",
+    projectId: "2",
+    priority: "high",
+  },
+  {
+    id: "40",
+    title: "Mobile responsive design",
+    description: "Ensure mobile compatibility for all features",
+    status: "done",
+    assignee: "builder-3",
+    createdAt: "2025-02-20",
+    stepId: "3",
+    projectId: "3", // DAO Governance Platform
+    priority: "low",
+  },
+  {
+    id: "41",
+    title: "Multi-language support",
+    description: "Add internationalization for global users",
+    status: "todo",
+    assignee: "",
+    createdAt: "2025-02-21",
+    stepId: "3",
+    projectId: "3",
+    priority: "medium",
+  },
+  {
+    id: "42",
+    title: "AI model training",
+    description: "Train ML models for trading predictions",
+    status: "in-progress",
+    assignee: "builder-1",
+    createdAt: "2025-02-22",
+    stepId: "2",
+    projectId: "8", // AI Trading Bot
+    priority: "",
+  },
+  {
+    id: "43",
+    title: "Bot strategy implementation",
+    description: "Implement various trading strategies",
+    status: "todo",
+    assignee: "",
+    createdAt: "2025-02-23",
+    stepId: "3",
+    projectId: "8",
+    priority: "",
+  },
+  {
+    id: "44",
+    title: "Virtual land contract",
+    description: "Develop ERC-721 contract for virtual land",
+    status: "in-review",
+    assignee: "builder-4",
+    createdAt: "2025-02-24",
+    stepId: "3",
+    projectId: "9", // Metaverse Real Estate
+    priority: "medium",
+  },
+  {
+    id: "45",
+    title: "3D visualization tool",
+    description: "Build 3D viewer for virtual properties",
+    status: "todo",
+    assignee: "",
+    createdAt: "2025-02-25",
+    stepId: "3",
+    projectId: "9",
+    priority: "high",
+  },
+  {
+    id: "46",
+    title: "Carbon credit verification",
+    description: "Implement verification system for carbon credits",
+    status: "done",
+    assignee: "builder-2",
+    createdAt: "2025-02-26",
+    stepId: "4",
+    projectId: "10", // Carbon Credit Exchange
+    priority: "",
+  },
+  {
+    id: "47",
+    title: "Marketplace frontend",
+    description: "Build user interface for carbon credit trading",
+    status: "in-progress",
+    assignee: "builder-3",
+    createdAt: "2025-02-27",
+    stepId: "3",
+    projectId: "10",
+    priority: "",
+  },
+  {
+    id: "48",
+    title: "Database schema design",
+    description: "Design efficient database structure",
+    status: "todo",
+    assignee: "",
+    createdAt: "2025-02-28",
+    stepId: "2",
+    projectId: "1",
+    priority: "low",
+  },
+  {
+    id: "49",
+    title: "Security penetration test",
+    description: "Comprehensive security testing",
+    status: "todo",
+    assignee: "",
+    createdAt: "2025-03-01",
+    stepId: "4",
+    projectId: "2",
+    priority: "medium",
+  },
+  {
+    id: "50",
+    title: "Governance token design",
+    description: "Design tokenomics for governance token",
+    status: "in-progress",
+    assignee: "builder-1",
+    createdAt: "2025-03-02",
+    stepId: "1",
+    projectId: "3",
+    priority: "low",
+  },
+  {
+    id: "51",
+    title: "Cross-chain bridge testing",
+    description: "Test bridge functionality across networks",
+    status: "todo",
+    assignee: "",
+    createdAt: "2025-03-03",
+    stepId: "4",
+    projectId: "4", // Cross-chain Bridge
+    priority: "",
+  },
+  {
+    id: "52",
+    title: "GameFi rewards optimization",
+    description: "Optimize reward distribution algorithms",
+    status: "todo",
+    assignee: "",
+    createdAt: "2025-03-04",
+    stepId: "3",
+    projectId: "5", // GameFi Platform
+    priority: "low",
+  },
+  {
+    id: "53",
+    title: "Yield farming interface",
+    description: "Build user-friendly yield farming dashboard",
+    status: "in-progress",
+    assignee: "builder-4",
+    createdAt: "2025-03-05",
+    stepId: "3",
+    projectId: "6", // DeFi Yield Aggregator
+    priority: "high",
+  },
+  {
+    id: "54",
+    title: "Creator token marketplace",
+    description: "Build marketplace for creator social tokens",
+    status: "todo",
+    assignee: "",
+    createdAt: "2025-03-06",
+    stepId: "3",
+    projectId: "7", // Social Token Platform
+    priority: "low",
+  },
+  {
+    id: "55",
+    title: "Trading bot backtesting",
+    description: "Implement historical data backtesting system",
+    status: "todo",
+    assignee: "",
+    createdAt: "2025-03-07",
+    stepId: "4",
+    projectId: "8", // AI Trading Bot
+    priority: "",
   },
 ];
 
@@ -736,5 +1052,33 @@ export const mockUsers: User[] = [
     role: "builder",
     isConnected: true,
     address: "0x6789012345678901234567890123456789012345",
+  },
+  {
+    id: "builder-5",
+    name: "Maya Patel",
+    role: "builder",
+    isConnected: true,
+    address: "0xb012345678901234567890123456789012345678",
+  },
+  {
+    id: "builder-6",
+    name: "Lucas Anderson",
+    role: "builder",
+    isConnected: false,
+    address: "0xc012345678901234567890123456789012345678",
+  },
+  {
+    id: "builder-7",
+    name: "Zoe Martinez",
+    role: "builder",
+    isConnected: true,
+    address: "0xd012345678901234567890123456789012345678",
+  },
+  {
+    id: "builder-8",
+    name: "Kai Nakamura",
+    role: "builder",
+    isConnected: true,
+    address: "0xe012345678901234567890123456789012345678",
   },
 ];
