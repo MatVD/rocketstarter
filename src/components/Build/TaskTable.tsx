@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
-import { Task } from "../../types";
+import { Task, User } from "../../types";
 import Card from "../UI/Card";
 import TaskForm from "./TaskTable/TaskForm";
 import TaskRow from "./TaskTable/TaskRow";
@@ -13,6 +13,7 @@ interface TaskTableProps {
   onAddTask: (task: Omit<Task, "id" | "stepId">) => void;
   onEditTask: (taskId: string) => void;
   onDeleteTask: (taskId: string) => void;
+  user?: User;
 }
 
 export default function TaskTable({
@@ -21,6 +22,7 @@ export default function TaskTable({
   onAddTask,
   onEditTask,
   onDeleteTask,
+  user,
 }: TaskTableProps) {
   const [showAddForm, setShowAddForm] = useState(false);
 

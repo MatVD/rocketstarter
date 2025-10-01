@@ -16,9 +16,22 @@ export interface Template {
 }
 
 export interface Project {
+  id: string;
   name: string;
+  description?: string;
   progress: number;
   environment: "testnet" | "mainnet";
+  owner?: string;
+  createdAt?: string;
+  categories?: string[];
+}
+
+export interface User {
+  id: string;
+  address?: string;
+  role: "owner" | "builder";
+  name?: string;
+  isConnected: boolean;
 }
 
 export interface Task {
@@ -29,6 +42,9 @@ export interface Task {
   assignee: string;
   createdAt: string;
   stepId: string; // Associate task with a specific step
+  projectId: string; // Associate task with a specific project
+  priority?: "high" | "medium" | "low" | ""; // Task priority level
+  categories?: string[]; // Task categories
 }
 
 export interface Column {

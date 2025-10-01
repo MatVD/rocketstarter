@@ -11,16 +11,13 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Task } from "../../types";
+import { Task, User } from "../../types";
 import Card from "../UI/Card";
-import TaskCard from "./KanbanBoard/TaskCard";
+import TaskCard from "../UI/TaskCard";
 import DroppableColumn from "./KanbanBoard/DroppableColumn";
 import KanbanColumnHeader from "./KanbanBoard/KanbanColumnHeader";
 import { useKanbanSensors } from "./KanbanBoard/useKanbanSensors";
-import {
-  updateColumn,
-  deleteColumn,
-} from "./KanbanBoard/kanbanUtils";
+import { updateColumn, deleteColumn } from "./KanbanBoard/kanbanUtils";
 
 import type { Column } from "./KanbanBoard/kanbanUtils";
 
@@ -29,6 +26,9 @@ interface KanbanBoardProps {
   columns: Column[];
   setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
   onMoveTask: (taskId: string, newStatus: Task["status"]) => void;
+  user?: User;
+  onTaskAssignment?: (taskId: string) => void;
+  isBuilderMode?: boolean; // New prop to indicate builder mode
 }
 
 export default function KanbanBoard({
@@ -36,6 +36,9 @@ export default function KanbanBoard({
   columns,
   setColumns,
   onMoveTask,
+  user,
+  onTaskAssignment,
+  isBuilderMode = false,
 }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
@@ -71,7 +74,8 @@ export default function KanbanBoard({
     const { active, over } = event;
     setActiveTask(null);
 
-    if (!over) return;
+    // Disable drag and drop for builders
+    if (isBuilderMode || !over) return;
 
     const taskId = active.id as string;
     const overId = over.id as string;
@@ -93,9 +97,17 @@ export default function KanbanBoard({
   return (
     <Card className="p-4 md:p-6">
       <div className="flex items-center justify-between mb-4 md:mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Project Board
-        </h3>
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            Project Board
+          </h3>
+          {isBuilderMode && (
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              You can only take tasks from the "To Do" column. Tasks will
+              automatically move to "In Progress" when taken.
+            </p>
+          )}
+        </div>
 
         {/* <button
           onClick={handleAddColumn}
@@ -143,7 +155,13 @@ export default function KanbanBoard({
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.3, delay: index * 0.1 }}
                         >
-                          <TaskCard task={task} />
+                          <TaskCard
+                            task={task}
+                            variant="kanban"
+                            isDraggable={!isBuilderMode} // Disable dragging for builders
+                            user={user}
+                            onTaskAssignment={onTaskAssignment}
+                          />
                         </motion.div>
                       ))}
                     </div>
@@ -155,7 +173,15 @@ export default function KanbanBoard({
         </div>
 
         <DragOverlay>
-          {activeTask ? <TaskCard task={activeTask} isDragging /> : null}
+          {activeTask ? (
+            <TaskCard
+              task={activeTask}
+              variant="kanban"
+              isDragging
+              user={user}
+              onTaskAssignment={onTaskAssignment}
+            />
+          ) : null}
         </DragOverlay>
       </DndContext>
     </Card>

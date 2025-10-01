@@ -7,9 +7,11 @@ const COLOR_PALETTE = getKanbanColorPalette();
 
 // Fonction pour obtenir la prochaine couleur disponible
 const getNextAvailableColor = (existingColumns: Column[]) => {
-  // Récupérer les couleurs déjà utilisées par les colonnes personnalisées (exclut les 3 par défaut)
+  // Récupérer les couleurs déjà utilisées par les colonnes personnalisées (exclut les 4 par défaut)
   const usedColors = existingColumns
-    .filter((col) => !["todo", "in-progress", "done"].includes(col.id))
+    .filter(
+      (col) => !["todo", "in-progress", "in-review", "done"].includes(col.id)
+    )
     .map((col) => col.color);
 
   // Trouver la première couleur non utilisée
@@ -35,6 +37,12 @@ export const DEFAULT_COLUMNS: Column[] = [
     title: "In Progress",
     color: "bg-orange-50 dark:bg-orange-900/20",
     headerColor: "bg-orange-100 dark:bg-orange-900/30",
+  },
+  {
+    id: "in-review",
+    title: "In Review",
+    color: "bg-blue-50 dark:bg-blue-900/20",
+    headerColor: "bg-blue-100 dark:bg-blue-900/30",
   },
   {
     id: "done",
