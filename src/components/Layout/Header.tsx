@@ -4,6 +4,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useState } from "react";
 import { User as UserType } from "../../types";
+import BackendStatus from "../UI/BackendStatus";
 
 interface HeaderProps {
   projectName: string;
@@ -47,8 +48,12 @@ export default function Header({
               Web2 → Web3 Transition
             </p>
           </div>
-        </div>
 
+          {/* Backend Status */}
+          <div className="hidden md:block">
+            <BackendStatus />
+          </div>
+        </div>{" "}
         <div className="flex items-center space-x-2 md:space-x-4">
           {/* Desktop Connect Wallet Button
           <div className="hidden md:flex items-center">

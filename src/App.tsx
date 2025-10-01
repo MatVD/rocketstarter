@@ -9,6 +9,7 @@ import Templates from "./pages/Templates";
 import Settings from "./pages/Settings";
 import ProjectList from "./pages/ProjectList";
 import BuilderProjectView from "./pages/BuilderProjectView";
+import ApiTesting from "./pages/ApiTesting";
 import Toast from "./components/UI/Toast";
 import { mockProjects, mockUser } from "./data/mockData";
 import { User, Project } from "./types";
@@ -154,6 +155,8 @@ function App() {
         );
       case "templates":
         return <Templates />;
+      case "api-testing":
+        return <ApiTesting />;
       case "settings":
         return <Settings />;
       default:

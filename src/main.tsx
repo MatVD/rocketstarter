@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { BackendProvider } from "./contexts/BackendContext";
 
 // wagmi / viem / rainbowkit
 import {
@@ -31,7 +32,9 @@ createRoot(document.getElementById("root")!).render(
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider theme={rainbowDarkTheme()}>
           <ThemeProvider>
-            <App />
+            <BackendProvider>
+              <App />
+            </BackendProvider>
           </ThemeProvider>
         </RainbowKitProvider>
       </QueryClientProvider>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RocketStarter Backend Integration Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      button {
+        background: #2463eb;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 10px 0;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #1e56db;
+      }
+      .result {
+        margin: 20px 0;
+        padding: 15px;
+        background: #f8f9fa;
+        border-left: 4px solid #2463eb;
+        border-radius: 4px;
+      }
+      .error {
+        border-left-color: #dc3545;
+        background: #f8d7da;
+      }
+      .success {
+        border-left-color: #28a745;
+        background: #d4edda;
+      }
+      pre {
+        white-space: pre-wrap;
+        background: #f1f1f1;
+        padding: 10px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 RocketStarter Backend Integration Test</h1>
+      <p>Test your backend connection and API endpoints here.</p>
+
+      <h2>Quick Tests</h2>
+      <button onclick="testHealth()">1. Test Backend Health</button>
+      <button onclick="testProjects()">2. Test Get Projects</button>
+      <button onclick="testTasks()">3. Test Get Tasks</button>
+      <button onclick="testUsers()">4. Test Get Users</button>
+      <button onclick="testWithUser()">5. Test with User Address</button>
+      <button onclick="createTestProject()">6. Create Test Project</button>
+
+      <div id="results"></div>
+    </div>
+
+    <script>
+      const API_BASE = "http://localhost:3000/api/v1";
+      const TEST_USER_ADDRESS = "0x742d35Cc6634C0532925a3b8D429499295E09e8D";
+
+      function log(message, type = "info") {
+        const results = document.getElementById("results");
+        const div = document.createElement("div");
+        div.className = `result ${type}`;
+        div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+        results.appendChild(div);
+        results.scrollTop = results.scrollHeight;
+      }
+
+      async function apiRequest(endpoint, options = {}) {
+        try {
+          log(`Making request to: ${endpoint}`, "info");
+          const url = endpoint.startsWith("http")
+            ? endpoint
+            : `${API_BASE}${endpoint}`;
+
+          const config = {
+            headers: {
+              "Content-Type": "application/json",
+              ...options.headers,
+            },
+            credentials: "include",
+            ...options,
+          };
+
+          const response = await fetch(url, config);
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+          log(`✅ Success: ${JSON.stringify(data, null, 2)}`, "success");
+          return data;
+        } catch (error) {
+          log(`❌ Error: ${error.message}`, "error");
+          throw error;
+        }
+      }
+
+      async function testHealth() {
+        try {
+          await apiRequest("http://localhost:3000/health");
+        } catch (error) {
+          console.error("Health check failed:", error);
+        }
+      }
+
+      async function testProjects() {
+        try {
+          await apiRequest("/projects");
+        } catch (error) {
+          console.error("Projects test failed:", error);
+        }
+      }
+
+      async function testTasks() {
+        try {
+          await apiRequest("/tasks");
+        } catch (error) {
+          console.error("Tasks test failed:", error);
+        }
+      }
+
+      async function testUsers() {
+        try {
+          await apiRequest("/users");
+        } catch (error) {
+          console.error("Users test failed:", error);
+        }
+      }
+
+      async function testWithUser() {
+        try {
+          await apiRequest("/tasks", {
+            headers: {
+              "x-user-address": TEST_USER_ADDRESS,
+            },
+          });
+        } catch (error) {
+          console.error("User auth test failed:", error);
+        }
+      }
+
+      async function createTestProject() {
+        try {
+          const projectData = {
+            name: "Test Project from CORS Test",
+            description: "Created via the test page",
+            ownerAddress: TEST_USER_ADDRESS,
+          };
+
+          await apiRequest("/projects", {
+            method: "POST",
+            headers: {
+              "x-user-address": TEST_USER_ADDRESS,
+            },
+            body: JSON.stringify(projectData),
+          });
+        } catch (error) {
+          console.error("Create project test failed:", error);
+        }
+      }
+
+      // Auto-run health check on page load
+      window.onload = function () {
+        log("🚀 Page loaded. Testing backend connection...", "info");
+        testHealth();
+      };
+    </script>
+  </body>
+</html>

@@ -10,7 +10,7 @@
 [![Web3](https://img.shields.io/badge/Powered%20by-Web3-orange.svg)](https://web3js.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-[Demo](#-demo) • [Features](#-features) • [Quick Start](#-quick-start) • [Documentation](#-documentation)
+[Demo](#-demo) • [Features](#-features) • [Quick Start](#-quick-start) • [Backend Integration](#-backend-integration) • [Documentation](#-documentation)
 
 </div>
 
@@ -48,6 +48,9 @@
 ### 🔗 **Native Web3 Integration**
 
 - **Wallet Connection** via RainbowKit
+- **Backend API Integration** with real-time data sync
+- **Blockchain Network** support (Mainnet, Sepolia)
+- **Task Workflow** management with on-chain capabilities
 - **Multi-Chain Support** (Ethereum Mainnet & Sepolia Testnet)
 - **Smart Contract Interaction** with Wagmi & viem
 - **Environment Management** (testnet/mainnet switching)
@@ -98,6 +101,46 @@ npm run dev
 ```
 
 🎉 **That's it!** Open [http://localhost:5173](http://localhost:5173) to see RocketStarter in action.
+
+---
+
+## 🔗 Backend Integration
+
+RocketStarter includes full backend API integration for real-time data management.
+
+### Quick Backend Setup
+
+```bash
+# Clone the backend repository
+git clone <backend-repo>
+cd rocketstarter-back
+
+# Start with Docker
+docker-compose up -d
+npm run seed:auto
+
+# Verify connection
+curl http://localhost:3000/health
+```
+
+### Features
+
+- **Real-time Data Sync** - Live project and task updates
+- **Wallet Authentication** - Automatic user verification
+- **Task Workflows** - Backend-enforced business rules
+- **Connection Monitoring** - Visual status indicators
+
+### Integration Status
+
+- ✅ **API Client** - Axios-based with auto-authentication
+- ✅ **React Hooks** - Custom hooks for all endpoints
+- ✅ **Type Safety** - Full TypeScript integration
+- ✅ **Error Handling** - Comprehensive user feedback
+- ✅ **CORS Support** - Pre-configured for development
+
+📖 **Full setup guide**: [BACKEND_INTEGRATION.md](./BACKEND_INTEGRATION.md)
+
+Test the integration in the "API Testing" tab within the app.
 
 ---
 
