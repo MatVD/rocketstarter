@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TaskFilters } from "../components/Build/TaskFilterBar";
+import { TaskFilters } from "../components/UI/TaskFilterBar";
 
 /**
  * Custom hook to persist task filters in localStorage

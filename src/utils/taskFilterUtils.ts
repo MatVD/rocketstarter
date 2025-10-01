@@ -1,5 +1,5 @@
 import { Task, User as UserType } from "../types";
-import { TaskFilters } from "../components/Build/TaskFilterBar";
+import { TaskFilters } from "../components/UI/TaskFilterBar";
 
 /**
  * Utility function to filter tasks based on the provided filters

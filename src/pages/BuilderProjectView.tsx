@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { Task, Project, User as UserType } from "../types";
 import { tasks as initialTasks } from "../data/mockData";
 import KanbanBoard from "../components/Build/KanbanBoard";
-import TaskFilterBar from "../components/Build/TaskFilterBar";
+import TaskFilterBar from "../components/UI/TaskFilterBar";
 import { filterTasks } from "../utils/taskFilterUtils";
 import { useTaskFilters } from "../hooks/useTaskFilters";
 import Toast from "../components/UI/Toast";
