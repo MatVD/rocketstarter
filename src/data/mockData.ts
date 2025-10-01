@@ -319,8 +319,8 @@ export const tasks: Task[] = [
     id: "2",
     title: "Research target audience",
     description: "Identify key user personas for the Web3 application",
-    status: "done",
-    assignee: "Bob Dupont",
+    status: "todo",
+    assignee: "", // Unassigned task
     createdAt: "2025-01-12",
     stepId: "1", // Requirements analysis
     projectId: "1", // My Web3 Project
@@ -329,8 +329,8 @@ export const tasks: Task[] = [
     id: "3",
     title: "Select blockchain platform",
     description: "Choose between Ethereum, Polygon, or other platforms",
-    status: "done",
-    assignee: "Claire Rousseau",
+    status: "in-progress",
+    assignee: "", // Unassigned task
     createdAt: "2025-01-14",
     stepId: "2", // Architecture choice
     projectId: "2", // NFT Marketplace
@@ -370,7 +370,7 @@ export const tasks: Task[] = [
     title: "Web3 user interface",
     description: "Develop the wallet connection interface",
     status: "todo",
-    assignee: "builder-1",
+    assignee: "", // Unassigned task - most recent
     createdAt: "2025-01-18",
     stepId: "3", // Smart contracts
     projectId: "1", // My Web3 Project
