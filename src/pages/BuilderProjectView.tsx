@@ -4,6 +4,9 @@ import { ArrowLeft } from "lucide-react";
 import { Task, Project, User as UserType } from "../types";
 import { tasks as initialTasks } from "../data/mockData";
 import KanbanBoard from "../components/Build/KanbanBoard";
+import TaskFilter from "../components/Build/TaskFilter";
+import { filterTasks } from "../utils/taskFilterUtils";
+import { useTaskFilters } from "../hooks/useTaskFilters";
 import Toast from "../components/UI/Toast";
 import {
   DEFAULT_COLUMNS,
@@ -23,6 +26,7 @@ export default function BuilderProjectView({
 }: BuilderProjectViewProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
+  const [filters, setFilters] = useTaskFilters(project.id);
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error" | "info";
@@ -30,6 +34,9 @@ export default function BuilderProjectView({
 
   // Filter tasks for this specific project
   const projectTasks = tasks.filter((task) => task.projectId === project.id);
+
+  // Apply filters to project tasks
+  const filteredTasks = filterTasks(projectTasks, filters, user);
 
   const handleTaskAssignment = (taskId: string) => {
     const task = tasks.find((t) => t.id === taskId);
@@ -84,7 +91,8 @@ export default function BuilderProjectView({
               {project.name}
             </h1>
             <p className="text-gray-600 dark:text-gray-300 mt-1">
-              Project tasks organized by status ({projectTasks.length} tasks)
+              Project tasks organized by status ({filteredTasks.length} of{" "}
+              {projectTasks.length} tasks)
             </p>
           </div>
         </div>
@@ -130,21 +138,88 @@ export default function BuilderProjectView({
         </div>
       </motion.div>
 
+      {/* Task Filter */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.15 }}
+        className="mb-6 flex justify-between items-center"
+      >
+        <div className="flex items-center space-x-4">
+          <TaskFilter
+            tasks={projectTasks}
+            project={project}
+            filters={filters}
+            onFiltersChange={setFilters}
+          />
+          {(filters.myTasks ||
+            filters.priority.length > 0 ||
+            filters.assignee.length > 0) && (
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Showing {filteredTasks.length} of {projectTasks.length} tasks
+            </div>
+          )}
+        </div>
+      </motion.div>
+
       {/* Kanban Board */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        <KanbanBoard
-          tasks={projectTasks}
-          columns={columns}
-          setColumns={setColumns}
-          onMoveTask={() => {}} // Disabled for builders
-          user={user}
-          onTaskAssignment={handleTaskAssignment}
-          isBuilderMode={true} // Add this prop to indicate builder mode
-        />
+        {filteredTasks.length > 0 ? (
+          <KanbanBoard
+            tasks={filteredTasks}
+            columns={columns}
+            setColumns={setColumns}
+            onMoveTask={() => {}} // Disabled for builders
+            user={user}
+            onTaskAssignment={handleTaskAssignment}
+            isBuilderMode={true} // Add this prop to indicate builder mode
+          />
+        ) : (
+          <div className="text-center py-12">
+            <div className="text-gray-400 dark:text-gray-500 mb-4">
+              <svg
+                className="mx-auto h-12 w-12"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1}
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              No tasks found
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 mb-4">
+              {projectTasks.length === 0
+                ? "This project doesn't have any tasks yet."
+                : "No tasks match the current filters. Try adjusting your filter criteria."}
+            </p>
+            {projectTasks.length > 0 && (
+              <button
+                onClick={() =>
+                  setFilters({
+                    myTasks: false,
+                    priority: [],
+                    categories: [],
+                    assignee: [],
+                  })
+                }
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Clear all filters
+              </button>
+            )}
+          </div>
+        )}
       </motion.div>
 
       {/* Toast notification */}
