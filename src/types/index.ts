@@ -42,6 +42,7 @@ export interface Task {
   assignee: string;
   createdAt: string;
   stepId: string; // Associate task with a specific step
+  projectId: string; // Associate task with a specific project
 }
 
 export interface Column {

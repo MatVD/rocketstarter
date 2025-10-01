@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { User, Clock, CheckCircle2, Circle, AlertCircle } from "lucide-react";
+import {
+  User,
+  Clock,
+  CheckCircle2,
+  Circle,
+  AlertCircle,
+  Filter,
+  X,
+} from "lucide-react";
 import { Task, User as UserType } from "../types";
 import {
   tasks as initialTasks,
@@ -21,18 +29,41 @@ export default function MyTasks({ user }: MyTasksProps) {
     message: string;
     type: "success" | "error" | "info";
   } | null>(null);
+  const [selectedProject, setSelectedProject] = useState<string>("all");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // Get all tasks assigned to the current user
   const myTasks = tasks.filter((task) => task.assignee === user.id);
 
-  // Group tasks by status for better organization
+  // Apply filters
+  const filteredTasks = myTasks.filter((task) => {
+    // Filtrage par projet avec le nouveau champ projectId
+    const projectMatch =
+      selectedProject === "all" ||
+      selectedProject === "current" || // Pour "current", on prend le premier projet par défaut
+      task.projectId === selectedProject;
+
+    const categoryMatch =
+      selectedCategory === "all" || task.stepId === selectedCategory;
+
+    // Debug logs
+    console.log(
+      `Task ${task.id}: projectMatch=${projectMatch}, categoryMatch=${categoryMatch}, stepId=${task.stepId}, selectedCategory=${selectedCategory}, projectId=${task.projectId}`
+    );
+
+    return projectMatch && categoryMatch;
+  });
+
+  // Group filtered tasks by status for better organization
   const tasksByStatus = {
-    todo: myTasks.filter((task) => task.status.toLowerCase() === "todo"),
-    inProgress: myTasks.filter(
+    todo: filteredTasks.filter((task) => task.status.toLowerCase() === "todo"),
+    inProgress: filteredTasks.filter(
       (task) => task.status.toLowerCase() === "in-progress"
     ),
-    review: myTasks.filter((task) => task.status.toLowerCase() === "review"),
-    done: myTasks.filter((task) => task.status.toLowerCase() === "done"),
+    review: filteredTasks.filter(
+      (task) => task.status.toLowerCase() === "review"
+    ),
+    done: filteredTasks.filter((task) => task.status.toLowerCase() === "done"),
   };
 
   const handleUpdateTaskStatus = (taskId: string, newStatus: string) => {
@@ -79,9 +110,8 @@ export default function MyTasks({ user }: MyTasksProps) {
     }
   };
 
-  const getProjectName = () => {
-    // This is a simplified approach - in a real app, you'd have proper project-task relationships
-    const project = mockProjects[0]; // Fallback to first project
+  const getProjectName = (projectId: string) => {
+    const project = mockProjects.find((p) => p.id === projectId);
     return project?.name || "Unknown Project";
   };
 
@@ -109,8 +139,103 @@ export default function MyTasks({ user }: MyTasksProps) {
         </div>
       </motion.div>
 
+      {/* Filters */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="mb-6"
+      >
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center space-x-2 mb-4">
+            <Filter className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+              Filters
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Project Filter */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Project
+              </label>
+              <select
+                value={selectedProject}
+                onChange={(e) => setSelectedProject(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="all">All Projects</option>
+                <option value="current">Current Project</option>
+                {mockProjects.map((project) => (
+                  <option key={project.id} value={project.id}>
+                    {project.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Category Filter */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Category
+              </label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="all">All Categories</option>
+                {flowSteps.map((step) => (
+                  <option key={step.id} value={step.id}>
+                    {step.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Active Filters Display */}
+          {(selectedProject !== "all" || selectedCategory !== "all") && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                Active filters:
+              </span>
+              {selectedProject !== "all" && (
+                <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 text-xs rounded-full">
+                  Project:{" "}
+                  {selectedProject === "current"
+                    ? "Current Project"
+                    : mockProjects.find((p) => p.id === selectedProject)
+                        ?.name || selectedProject}
+                  <button
+                    onClick={() => setSelectedProject("all")}
+                    className="ml-1 hover:text-blue-600 dark:hover:text-blue-300"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+              {selectedCategory !== "all" && (
+                <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs rounded-full">
+                  Category:{" "}
+                  {flowSteps.find((s) => s.id === selectedCategory)?.title ||
+                    selectedCategory}
+                  <button
+                    onClick={() => setSelectedCategory("all")}
+                    className="ml-1 hover:text-green-600 dark:hover:text-green-300"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      </motion.div>
+
       {/* Task Sections */}
-      {myTasks.length > 0 ? (
+      {filteredTasks.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Todo Column */}
           <div className="space-y-4">
@@ -128,7 +253,7 @@ export default function MyTasks({ user }: MyTasksProps) {
                     task={task}
                     variant="simple"
                     showProject
-                    projectName={getProjectName()}
+                    projectName={getProjectName(task.projectId)}
                     stepName={getStepName(task.stepId)}
                     user={user}
                     users={mockUsers}
@@ -181,7 +306,7 @@ export default function MyTasks({ user }: MyTasksProps) {
                     task={task}
                     variant="simple"
                     showProject
-                    projectName={getProjectName()}
+                    projectName={getProjectName(task.projectId)}
                     stepName={getStepName(task.stepId)}
                     user={user}
                     users={mockUsers}
@@ -234,7 +359,7 @@ export default function MyTasks({ user }: MyTasksProps) {
                     task={task}
                     variant="simple"
                     showProject
-                    projectName={getProjectName()}
+                    projectName={getProjectName(task.projectId)}
                     stepName={getStepName(task.stepId)}
                     user={user}
                     users={mockUsers}
@@ -271,6 +396,32 @@ export default function MyTasks({ user }: MyTasksProps) {
             )}
           </div>
         </div>
+      ) : myTasks.length > 0 ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="text-center py-12"
+        >
+          <div className="text-gray-400 dark:text-gray-500 mb-4">
+            <Filter className="w-12 h-12 mx-auto" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            No tasks match your filters
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            Try adjusting your filters to see more tasks.
+          </p>
+          <button
+            onClick={() => {
+              setSelectedProject("all");
+              setSelectedCategory("all");
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Clear all filters
+          </button>
+        </motion.div>
       ) : (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
