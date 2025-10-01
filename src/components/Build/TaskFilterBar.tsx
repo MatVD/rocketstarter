@@ -70,7 +70,7 @@ export default function TaskFilter({
         )
     )
   );
-  const projectCategories = project.tags || [];
+  const projectCategories = project.categories || [];
 
   // Count active filters
   const activeFiltersCount =

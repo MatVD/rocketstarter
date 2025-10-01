@@ -23,7 +23,7 @@ export interface Project {
   environment: "testnet" | "mainnet";
   owner?: string;
   createdAt?: string;
-  tags?: string[];
+  categories?: string[];
 }
 
 export interface User {
@@ -44,6 +44,7 @@ export interface Task {
   stepId: string; // Associate task with a specific step
   projectId: string; // Associate task with a specific project
   priority?: "high" | "medium" | "low" | ""; // Task priority level
+  categories?: string[]; // Task categories
 }
 
 export interface Column {

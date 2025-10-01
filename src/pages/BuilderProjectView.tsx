@@ -123,14 +123,14 @@ export default function BuilderProjectView({
               <span className="font-medium">Progress:</span> {project.progress}%
             </div>
           </div>
-          {project.tags && (
+          {project.categories && (
             <div className="flex flex-wrap gap-2">
-              {project.tags.map((tag, index) => (
+              {project.categories.map((category, index) => (
                 <span
                   key={index}
                   className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full"
                 >
-                  {tag}
+                  {category}
                 </span>
               ))}
             </div>

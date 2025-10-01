@@ -117,21 +117,21 @@ export default function ProjectList({
                   </div>
                 )}
 
-                {project.tags && project.tags.length > 0 && (
+                {project.categories && project.categories.length > 0 && (
                   <div className="flex items-center gap-2">
                     <Tag className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                     <div className="flex flex-wrap gap-1">
-                      {project.tags.slice(0, 3).map((tag) => (
+                      {project.categories.slice(0, 3).map((category) => (
                         <span
-                          key={tag}
+                          key={category}
                           className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs rounded-full"
                         >
-                          {tag}
+                          {category}
                         </span>
                       ))}
-                      {project.tags.length > 3 && (
+                      {project.categories.length > 3 && (
                         <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs rounded-full">
-                          +{project.tags.length - 3}
+                          +{project.categories.length - 3}
                         </span>
                       )}
                     </div>
