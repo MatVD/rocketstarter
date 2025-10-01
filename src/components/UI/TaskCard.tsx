@@ -1,4 +1,5 @@
 import { User, Calendar, GripVertical, Plus, Clock } from "lucide-react";
+import { COLORS } from "../../constants/colors";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Task, User as UserType } from "../../types";
@@ -54,6 +55,36 @@ interface TaskCardContentProps {
   getStatusIcon?: (status: string) => React.ReactNode;
 }
 
+// Priority color mapping helper
+function getPriorityStyle(priority?: "high" | "medium" | "low" | "") {
+  switch (priority) {
+    case "high":
+      return {
+        bg: COLORS.status.error.bg,
+        text: COLORS.status.error.text,
+        border: COLORS.status.error.border,
+      };
+    case "medium":
+      return {
+        bg: COLORS.status.warning.bg,
+        text: COLORS.status.warning.text,
+        border: COLORS.status.warning.border,
+      };
+    case "low":
+      return {
+        bg: COLORS.status.success.bg,
+        text: COLORS.status.success.text,
+        border: COLORS.status.success.border,
+      };
+    default:
+      return {
+        bg: COLORS.status.neutral.bg,
+        text: COLORS.status.neutral.text,
+        border: COLORS.status.neutral.border,
+      };
+  }
+}
+
 function TaskCardContent({
   task,
   variant,
@@ -98,9 +129,28 @@ function TaskCardContent({
   return (
     <>
       <div className="flex items-start justify-between">
+        {/* Priority badge (always visible) */}
+        {typeof task.priority !== "undefined" && task.priority !== "" && (
+          <div className="flex items-center">
+            <span className="text-sm text-white mr-2">Priority:</span>
+            <span
+              className={`flex items-center gap-1 px-2 py-0.5 rounded-md border text-xs font-medium select-none ${
+                getPriorityStyle(task.priority).bg
+              } ${getPriorityStyle(task.priority).text} ${
+                getPriorityStyle(task.priority).border
+              }`}
+              title={`Priority: ${
+                task.priority.charAt(0).toUpperCase() + task.priority.slice(1)
+              }`}
+              style={{ minWidth: 60, justifyContent: "center" }}
+            >
+              {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+            </span>
+          </div>
+        )}
         {/* Project and Step info for Builder mode */}
         {variant === "simple" && (projectName || stepName) && (
-          <span className="text-xs py-1 text-blue-700 dark:text-blue-300 rounded-md font-medium">
+          <span className="text-xs py-1 text-blue-700 dark:text-blue-300 rounded-md font-medium ml-2">
             {projectName}
           </span>
         )}
