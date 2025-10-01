@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { Task, Project, User as UserType } from "../types";
 import { tasks as initialTasks } from "../data/mockData";
 import KanbanBoard from "../components/Build/KanbanBoard";
-import TaskFilter from "../components/Build/TaskFilter";
+import TaskFilterBar from "../components/Build/TaskFilterBar";
 import { filterTasks } from "../utils/taskFilterUtils";
 import { useTaskFilters } from "../hooks/useTaskFilters";
 import Toast from "../components/UI/Toast";
@@ -138,28 +138,27 @@ export default function BuilderProjectView({
         </div>
       </motion.div>
 
-      {/* Task Filter */}
+      {/* Task Filter Bar */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.15 }}
-        className="mb-6 flex justify-between items-center"
+        className="mb-6"
       >
-        <div className="flex items-center space-x-4">
-          <TaskFilter
-            tasks={projectTasks}
-            project={project}
-            filters={filters}
-            onFiltersChange={setFilters}
-          />
-          {(filters.myTasks ||
-            filters.priority.length > 0 ||
-            filters.assignee.length > 0) && (
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Showing {filteredTasks.length} of {projectTasks.length} tasks
-            </div>
-          )}
-        </div>
+        <TaskFilterBar
+          tasks={projectTasks}
+          project={project}
+          filters={filters}
+          onFiltersChange={setFilters}
+        />
+        {(filters.searchTerm ||
+          filters.myTasks ||
+          filters.priority.length > 0 ||
+          filters.categories.length > 0) && (
+          <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
+            Showing {filteredTasks.length} of {projectTasks.length} tasks
+          </div>
+        )}
       </motion.div>
 
       {/* Kanban Board */}
@@ -207,10 +206,10 @@ export default function BuilderProjectView({
               <button
                 onClick={() =>
                   setFilters({
+                    searchTerm: "",
                     myTasks: false,
                     priority: [],
                     categories: [],
-                    assignee: [],
                   })
                 }
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"

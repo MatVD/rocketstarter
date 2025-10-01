@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TaskFilters } from "../components/Build/TaskFilter";
+import { TaskFilters } from "../components/Build/TaskFilterBar";
 
 /**
  * Custom hook to persist task filters in localStorage
@@ -19,10 +19,10 @@ export function useTaskFilters(projectId: string) {
     }
 
     return {
+      searchTerm: "",
       myTasks: false,
       priority: [],
       categories: [],
-      assignee: [],
     };
   };
 
