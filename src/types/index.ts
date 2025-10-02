@@ -44,14 +44,14 @@ export interface Task {
   id: string;
   title: string;
   description?: string;
-  status: string | number; // Accept any column id or backend status numbers
+  status: string; // Accept any column id or backend status numbers
   assignee?: string;
   builderAddress?: string;
   createdAt?: string;
   updatedAt?: string;
-  stepId?: string; // Associate task with a specific step
-  projectId: string | number; // Associate task with a specific project
-  priority?: "high" | "medium" | "low" | "" | 0 | 1 | 2 | 3; // Task priority level (string or number)
+  stepId: string; // Associate task with a specific step
+  projectId: string; // Associate task with a specific project
+  priority?: 0 | 1 | 2 | 3; // Task priority level (string or number)
   categories?: string[]; // Task categories
 }
 

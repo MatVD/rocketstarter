@@ -1,9 +1,9 @@
 import { User, Calendar, GripVertical, Plus, Clock } from "lucide-react";
-import { COLORS } from "../../constants/colors";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Task, User as UserType } from "../../types";
 import Card from "./Card";
+import { getPriorityLabel, getPriorityStyle } from "../../utils/priorityUtils";
 
 interface TaskCardProps {
   task: Task;
@@ -55,36 +55,6 @@ interface TaskCardContentProps {
   getStatusIcon?: (status: string) => React.ReactNode;
 }
 
-// Priority color mapping helper
-function getPriorityStyle(priority?: "high" | "medium" | "low" | "") {
-  switch (priority) {
-    case "high":
-      return {
-        bg: COLORS.status.error.bg,
-        text: COLORS.status.error.text,
-        border: COLORS.status.error.border,
-      };
-    case "medium":
-      return {
-        bg: COLORS.status.warning.bg,
-        text: COLORS.status.warning.text,
-        border: COLORS.status.warning.border,
-      };
-    case "low":
-      return {
-        bg: COLORS.status.success.bg,
-        text: COLORS.status.success.text,
-        border: COLORS.status.success.border,
-      };
-    default:
-      return {
-        bg: COLORS.status.neutral.bg,
-        text: COLORS.status.neutral.text,
-        border: COLORS.status.neutral.border,
-      };
-  }
-}
-
 function TaskCardContent({
   task,
   variant,
@@ -130,7 +100,7 @@ function TaskCardContent({
     <>
       <div className="flex items-start justify-between">
         {/* Priority badge (always visible) */}
-        {typeof task.priority !== "undefined" && task.priority !== "" && (
+        {typeof task.priority !== "undefined" && getPriorityLabel(task.priority) !== "" && (
           <div className="flex items-center">
             <span className="text-sm text-white mr-2">Priority:</span>
             <span
@@ -140,11 +110,11 @@ function TaskCardContent({
                 getPriorityStyle(task.priority).border
               }`}
               title={`Priority: ${
-                task.priority.charAt(0).toUpperCase() + task.priority.slice(1)
+                getPriorityLabel(task.priority).charAt(0).toUpperCase() + getPriorityLabel(task.priority).slice(1)
               }`}
               style={{ minWidth: 60, justifyContent: "center" }}
             >
-              {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+              {getPriorityLabel(task.priority)}
             </span>
           </div>
         )}
@@ -270,7 +240,7 @@ function TaskCardContent({
             <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 flex-shrink-0">
               <Calendar className="w-2 h-2 md:w-3 md:h-3" />
               <span className="hidden md:inline">{task.createdAt}</span>
-              <span className="md:hidden">{task.createdAt.split("-")[2]}</span>
+              <span className="md:hidden">{task.createdAt?.split("-")[2]}</span>
             </div>
           </>
         ) : (
@@ -292,8 +262,8 @@ function TaskCardContent({
               <span className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                 <Clock className="w-3 h-3 mr-1" />
                 {variant === "list"
-                  ? new Date(task.createdAt).toLocaleDateString()
-                  : task.createdAt}
+                  ? task.createdAt ? new Date(task.createdAt).toLocaleDateString() : "No date"
+                  : task.createdAt || "No date"}
               </span>
             </div>
 

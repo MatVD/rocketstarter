@@ -285,7 +285,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-10",
     stepId: "1", // Requirements analysis
     projectId: "1",
-    priority: "high",
+    priority: 1,
   },
   {
     id: "2",
@@ -296,7 +296,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-12",
     stepId: "1", // Requirements analysis
     projectId: "1",
-    priority: "medium",
+    priority: 2,
   },
   {
     id: "4",
@@ -307,7 +307,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-15",
     stepId: "2", // Architecture choice
     projectId: "1",
-    priority: "medium",
+    priority: 2,
   },
   {
     id: "5",
@@ -318,7 +318,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-16",
     stepId: "3", // Smart contracts
     projectId: "1",
-    priority: "high",
+    priority: 1,
   },
   {
     id: "6",
@@ -329,7 +329,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-17",
     stepId: "3", // Smart contracts
     projectId: "1",
-    priority: "high",
+    priority: 1,
   },
   {
     id: "7",
@@ -340,7 +340,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-18",
     stepId: "3", // Smart contracts
     projectId: "1",
-    priority: "high",
+    priority: 1,
   },
 
   // Project 2 tasks (NFT Marketplace)
@@ -353,7 +353,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-14",
     stepId: "2", // Architecture choice
     projectId: "2",
-    priority: "high",
+    priority: 1,
   },
   {
     id: "13",
@@ -364,7 +364,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-24",
     stepId: "3", // Smart contracts
     projectId: "2",
-    priority: "medium",
+    priority: 2,
   },
   {
     id: "9",
@@ -375,7 +375,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-20",
     stepId: "4", // Tests & audit
     projectId: "2",
-    priority: "high",
+    priority: 1,
   },
 
   // Project 3 tasks (DAO Governance Platform)
@@ -388,7 +388,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-19",
     stepId: "4", // Tests & audit
     projectId: "3",
-    priority: "high",
+    priority: 1,
   },
   {
     id: "11",
@@ -399,7 +399,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-22",
     stepId: "5", // Deployment
     projectId: "3",
-    priority: "high",
+    priority: 1,
   },
   {
     id: "17",
@@ -410,7 +410,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-28",
     stepId: "3", // Smart contracts
     projectId: "3",
-    priority: "medium",
+    priority: 2,
   },
   {
     id: "27",
@@ -421,7 +421,7 @@ export const tasks: Task[] = [
     createdAt: "2025-02-07",
     stepId: "3", // Smart contracts
     projectId: "3",
-    priority: "high",
+    priority: 1,
   },
 
   // Project 4 tasks (GameFi Platform)
@@ -434,7 +434,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-23",
     stepId: "1", // Requirements analysis
     projectId: "4",
-    priority: "high",
+    priority: 1,
   },
   {
     id: "18",
@@ -445,7 +445,7 @@ export const tasks: Task[] = [
     createdAt: "2025-01-29",
     stepId: "2", // Architecture choice
     projectId: "4",
-    priority: "high",
+    priority: 3,
   },
   {
     id: "23",
@@ -456,7 +456,7 @@ export const tasks: Task[] = [
     createdAt: "2025-02-03",
     stepId: "4", // Tests & audit
     projectId: "4",
-    priority: "high",
+    priority: 1,
   },
 
   // Additional tasks for variety
@@ -469,7 +469,7 @@ export const tasks: Task[] = [
     createdAt: "2025-02-16",
     stepId: "3",
     projectId: "1",
-    priority: "medium",
+    priority: 2,
   },
   {
     id: "37",
@@ -480,7 +480,7 @@ export const tasks: Task[] = [
     createdAt: "2025-02-17",
     stepId: "3",
     projectId: "1",
-    priority: "low",
+    priority: 3,
   },
   {
     id: "40",
@@ -491,7 +491,7 @@ export const tasks: Task[] = [
     createdAt: "2025-02-20",
     stepId: "3",
     projectId: "3",
-    priority: "low",
+    priority: 3,
   },
 ];
 

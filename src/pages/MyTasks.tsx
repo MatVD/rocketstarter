@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   User,
-  Clock,
   CheckCircle2,
   Circle,
   AlertCircle,
@@ -18,6 +17,8 @@ import {
 } from "../data/mockData";
 import Toast from "../components/UI/Toast";
 import TaskCard from "../components/UI/TaskCard";
+import { getStatusIcon } from "../utils/iconUtils";
+import { getStatusColor } from "../utils/statusUtils";
 
 interface MyTasksProps {
   user: UserType;
@@ -80,35 +81,7 @@ export default function MyTasks({ user }: MyTasksProps) {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "todo":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
-      case "in-progress":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
-      case "review":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
-      case "done":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "todo":
-        return <Circle className="w-4 h-4" />;
-      case "in-progress":
-        return <AlertCircle className="w-4 h-4" />;
-      case "review":
-        return <Clock className="w-4 h-4" />;
-      case "done":
-        return <CheckCircle2 className="w-4 h-4" />;
-      default:
-        return <Circle className="w-4 h-4" />;
-    }
-  };
+  
 
   const getProjectName = (projectId: string) => {
     const project = mockProjects.find((p) => p.id === projectId);

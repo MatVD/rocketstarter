@@ -68,30 +68,22 @@ export const getStatusStyles = (status: Step["status"]): string => {
   }
 };
 
-export const getStatusColor = (
-  status: Step["status"],
-  type: "background" | "border" = "background"
-): string => {
-  if (type === "background") {
-    switch (status) {
-      case "completed":
-        return "bg-green-500";
+export const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "todo":
+        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
       case "in-progress":
-        return "bg-orange-500";
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+      case "review":
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+      case "done":
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
       default:
-        return "bg-gray-400";
+        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
     }
-  } else {
-    switch (status) {
-      case "completed":
-        return "border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20";
-      case "in-progress":
-        return "border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/20";
-      default:
-        return "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800";
-    }
-  }
-};
+  };
+
+
 
 export const getBorderColor = (status: Step["status"]): string => {
   switch (status) {
