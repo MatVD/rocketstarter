@@ -7,7 +7,6 @@ import {
   ChevronRight,
   X,
   FolderOpen,
-  Database,
 } from "lucide-react";
 import { User } from "../../types";
 
@@ -20,7 +19,6 @@ interface SidebarProps {
 
 const getMenuItems = (userRole?: string) => {
   const baseItems = [
-    { id: "api-testing", label: "API Testing", icon: Database },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
