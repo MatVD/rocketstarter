@@ -4,7 +4,6 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useState } from "react";
 import { User as UserType } from "../../types";
-import BackendStatus from "../UI/BackendStatus";
 
 interface HeaderProps {
   projectName: string;
@@ -49,76 +48,8 @@ export default function Header({
             </p>
           </div>
 
-          {/* Backend Status */}
-          <div className="hidden md:block">
-            <BackendStatus />
-          </div>
-        </div>{" "}
+        </div>
         <div className="flex items-center space-x-2 md:space-x-4">
-          {/* Desktop Connect Wallet Button
-          <div className="hidden md:flex items-center">
-            <ConnectButton.Custom>
-              {({
-                account,
-                chain,
-                openAccountModal,
-                openChainModal,
-                openConnectModal,
-                mounted,
-              }) => {
-                const ready = mounted;
-                const connected = ready && account && chain;
-
-                return (
-                  <div
-                    {...(!ready && {
-                      "aria-hidden": true,
-                      style: {
-                        opacity: 0,
-                        pointerEvents: "none",
-                        userSelect: "none",
-                      },
-                    })}
-                  >
-                    {(() => {
-                      if (!connected) {
-                        return (
-                          <button
-                            onClick={openConnectModal}
-                            type="button"
-                            className="bg-[#2463eb] text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors"
-                          >
-                            Connect Wallet
-                          </button>
-                        );
-                      }
-                      if (chain.unsupported) {
-                        return (
-                          <button
-                            onClick={openChainModal}
-                            type="button"
-                            className="bg-red-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-red-600 transition-colors"
-                          >
-                            Wrong network
-                          </button>
-                        );
-                      }
-                      return (
-                        <button
-                          onClick={openAccountModal}
-                          type="button"
-                          className="bg-[#2463eb] text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors"
-                        >
-                          {account.displayName}
-                        </button>
-                      );
-                    })()}
-                  </div>
-                );
-              }}
-            </ConnectButton.Custom>
-          </div> */}
-
           <motion.button
             onClick={toggleTheme}
             className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
