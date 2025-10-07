@@ -1,9 +1,10 @@
 import { Task } from "../../../types";
 import type { Column } from "../KanbanBoard/kanbanUtils";
+import { numberToStatus } from "../../../utils/taskUtils";
 
-// Fonction pour convertir une couleur de colonne en couleur de badge
+// Function to convert a column color to a badge color
 const getColumnBadgeStyle = (columnColor: string) => {
-  // Mapping des couleurs de colonnes vers des styles de badge avec texte approprié
+  // Mapping of column colors to badge styles with appropriate text
   const colorMap = {
     "bg-blue-50 dark:bg-blue-900/20":
       "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300",
@@ -44,26 +45,33 @@ const getColumnBadgeStyle = (columnColor: string) => {
 };
 
 export const getStatusBadge = (status: Task["status"], columns: Column[]) => {
+  // Convert numeric status to string status if needed
+  const statusString =
+    typeof status === "number" ? numberToStatus(status) : status;
+
   // Try to find the column for this status
-  const column = columns.find((col) => col.id === status);
+  const column = columns.find((col) => col.id === statusString);
 
   // Default styles for known statuses - using soft colors consistent with design
   const defaultStyles = {
     todo: "bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800",
-    "in-progress":
+    inprogress:
       "bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800",
+    inreview:
+      "bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800",
     done: "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800",
   } as const;
 
   const defaultLabels = {
     todo: "To do",
-    "in-progress": "In progress",
+    inprogress: "In progress",
+    inreview: "In review",
     done: "Done",
   } as const;
 
   // If it's a default status, use predefined styles
-  if (status in defaultStyles) {
-    const statusKey = status as keyof typeof defaultStyles;
+  if (statusString in defaultStyles) {
+    const statusKey = statusString as keyof typeof defaultStyles;
     return (
       <span
         className={`px-2 py-1 rounded-full text-xs font-medium ${defaultStyles[statusKey]}`}
@@ -76,7 +84,7 @@ export const getStatusBadge = (status: Task["status"], columns: Column[]) => {
   // For custom columns, use the column's color with appropriate text color
   if (column?.color) {
     const badgeStyle = getColumnBadgeStyle(column.color);
-    const label = column?.title || status;
+    const label = column?.title || statusString;
 
     return (
       <span
@@ -90,7 +98,7 @@ export const getStatusBadge = (status: Task["status"], columns: Column[]) => {
   // Fallback for unknown custom columns
   const fallbackStyle =
     "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300";
-  const label = status;
+  const label = statusString;
 
   return (
     <span
