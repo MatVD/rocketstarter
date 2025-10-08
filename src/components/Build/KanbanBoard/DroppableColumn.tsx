@@ -1,7 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
 
 interface DroppableColumnProps {
-  id: string;
+  id: number;
   className: string;
   children: React.ReactNode;
 }

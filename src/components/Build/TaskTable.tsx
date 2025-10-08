@@ -22,7 +22,6 @@ export default function TaskTable({
   onAddTask,
   onEditTask,
   onDeleteTask,
-  user,
 }: TaskTableProps) {
   const [showAddForm, setShowAddForm] = useState(false);
 

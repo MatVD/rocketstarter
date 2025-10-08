@@ -4,6 +4,8 @@ import { CSS } from "@dnd-kit/utilities";
 import { Task, User as UserType } from "../../types";
 import Card from "./Card";
 import { getPriorityLabel, getPriorityStyle } from "../../utils/priorityUtils";
+import { formatDate } from "../../utils/dateUtils";
+import { getStatusColor, getStatusIcon } from "../../utils/statusUtils";
 
 interface TaskCardProps {
   task: Task;
@@ -21,10 +23,10 @@ interface TaskCardProps {
   // User and assignment
   user?: UserType;
   users?: UserType[]; // List of users to get names for assignees
-  onTaskAssignment?: (taskId: string) => void;
+  onTaskAssignment?: (taskId: number) => void;
 
   // Status actions
-  onStatusChange?: (taskId: string, status: string) => void;
+  onStatusChange?: (taskId: number, status: string) => void;
   statusButtons?: Array<{
     label: string;
     targetStatus: string;
@@ -44,15 +46,13 @@ interface TaskCardContentProps {
   stepName?: string;
   user?: UserType;
   users?: UserType[];
-  onTaskAssignment?: (taskId: string) => void;
-  onStatusChange?: (taskId: string, status: string) => void;
+  onTaskAssignment?: (taskId: number) => void;
+  onStatusChange?: (taskId: number, status: string) => void;
   statusButtons?: Array<{
     label: string;
     targetStatus: string;
     show: boolean;
   }>;
-  getStatusColor?: (status: string) => string;
-  getStatusIcon?: (status: string) => React.ReactNode;
 }
 
 function TaskCardContent({
@@ -65,13 +65,11 @@ function TaskCardContent({
   onTaskAssignment,
   onStatusChange,
   statusButtons,
-  getStatusColor,
-  getStatusIcon,
 }: TaskCardContentProps) {
   const isBuilderMode = user?.role === "builder";
-  const isAssignedToCurrentUser = user && task.assignee === user.id;
-  const isUnassigned = !task.assignee || task.assignee === "";
-  const isInTodoStatus = task.status === "todo";
+  const isAssignedToCurrentUser = user && task.builder === user.address;
+  const isUnassigned = !task.builder || task.builder === "";
+  const isInTodoStatus = task.status === 0;
   const canTakeTask =
     isBuilderMode &&
     !isAssignedToCurrentUser &&
@@ -85,7 +83,7 @@ function TaskCardContent({
     label,
   }: {
     targetStatus: string;
-    taskId: string;
+    taskId: number;
     label: string;
   }) => (
     <button
@@ -127,21 +125,21 @@ function TaskCardContent({
         {/* Assignee section - Top Right */}
         {variant === "simple" && user && (
           <div className="flex items-center space-x-2 ml-3 flex-shrink-0">
-            {task.assignee === user.id ? (
+            {task.builder === user.address ? (
               <div className="flex items-center space-x-2 text-sm text-blue-600 dark:text-blue-400">
                 <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
                   <User className="w-3 h-3 text-white" />
                 </div>
                 <span className="font-medium">You</span>
               </div>
-            ) : task.assignee ? (
+            ) : task.builder ? (
               <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
                 <div className="w-6 h-6 rounded-full bg-gray-500 flex items-center justify-center flex-shrink-0">
                   <User className="w-3 h-3 text-white" />
                 </div>
                 <span className="font-medium">
-                  {users?.find((u) => u.id === task.assignee)?.name ||
-                    task.assignee}
+                  {users?.find((u) => u.address === task.builder)?.username ||
+                    task.builder}
                 </span>
               </div>
             ) : onTaskAssignment ? (
@@ -193,7 +191,7 @@ function TaskCardContent({
       {variant === "kanban" &&
         canTakeTask &&
         (isUnassigned ||
-          (!isAssignedToCurrentUser && task.assignee !== user.id)) && (
+          (!isAssignedToCurrentUser && task.builder !== user.address)) && (
           <div className="mb-1">
             <button
               onClick={(e) => {
@@ -234,13 +232,12 @@ function TaskCardContent({
                   ? "You"
                   : isUnassigned
                   ? "Unassigned"
-                  : task.assignee}
+                  : task.builder}
               </span>
             </div>
             <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 flex-shrink-0">
               <Calendar className="w-2 h-2 md:w-3 md:h-3" />
-              <span className="hidden md:inline">{task.createdAt}</span>
-              <span className="md:hidden">{task.createdAt?.split("-")[2]}</span>
+              <span className="hidden md:inline">{formatDate(task.createdAt)}</span>
             </div>
           </>
         ) : (
@@ -255,7 +252,7 @@ function TaskCardContent({
                 }`}
               >
                 {getStatusIcon && getStatusIcon(task.status)}
-                <span className={getStatusIcon ? "ml-1" : ""}>
+                <span className="ml-1">
                   {task.status}
                 </span>
               </span>
@@ -263,7 +260,7 @@ function TaskCardContent({
                 <Clock className="w-3 h-3 mr-1" />
                 {variant === "list"
                   ? task.createdAt ? new Date(task.createdAt).toLocaleDateString() : "No date"
-                  : task.createdAt || "No date"}
+                  : task.createdAt ? (task.createdAt instanceof Date ? task.createdAt.toLocaleDateString() : task.createdAt) : "No date"}
               </span>
             </div>
 
@@ -302,8 +299,6 @@ export default function TaskCard({
   onTaskAssignment,
   onStatusChange,
   statusButtons,
-  getStatusColor,
-  getStatusIcon,
 }: TaskCardProps) {
   // Drag and drop setup (only if draggable)
   const sortable = useSortable({
@@ -344,8 +339,6 @@ export default function TaskCard({
       onTaskAssignment={onTaskAssignment}
       onStatusChange={onStatusChange}
       statusButtons={statusButtons}
-      getStatusColor={getStatusColor}
-      getStatusIcon={getStatusIcon}
     />
   );
 

@@ -9,7 +9,7 @@
  * @returns Formatted date string or fallback text if date is invalid
  */
 export function formatDate(
-  dateString: string | undefined | null,
+  dateString: string | undefined | null | Date,
   format: "short" | "medium" | "full" = "medium"
 ): string {
   if (!dateString) return "No date";

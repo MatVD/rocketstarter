@@ -116,7 +116,7 @@ export interface Step {
 }
 
 export interface Column {
-  id: string;
+  id: number;
   title: string;
   color: string;
   headerColor: string;

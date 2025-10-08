@@ -17,7 +17,6 @@ import TaskCard from "../UI/TaskCard";
 import DroppableColumn from "./KanbanBoard/DroppableColumn";
 import KanbanColumnHeader from "./KanbanBoard/KanbanColumnHeader";
 import { useKanbanSensors } from "./KanbanBoard/useKanbanSensors";
-import { updateColumn, deleteColumn } from "./KanbanBoard/kanbanUtils";
 
 import type { Column } from "./KanbanBoard/kanbanUtils";
 
@@ -25,16 +24,15 @@ interface KanbanBoardProps {
   tasks: Task[];
   columns: Column[];
   setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
-  onMoveTask: (taskId: string, newStatus: Task["status"]) => void;
+  onMoveTask: (taskId: number, newStatus: number) => void;
   user?: User;
-  onTaskAssignment?: (taskId: string) => void;
+  onTaskAssignment?: (taskId: number) => void;
   isBuilderMode?: boolean; // New prop to indicate builder mode
 }
 
 export default function KanbanBoard({
   tasks,
   columns,
-  setColumns,
   onMoveTask,
   user,
   onTaskAssignment,
@@ -44,20 +42,10 @@ export default function KanbanBoard({
 
   const sensors = useKanbanSensors();
 
-  const getTasksByStatus = (status: string) => {
+  const getTasksByStatus = (status: number) => {
     return tasks.filter((task) => task.status === status);
   };
 
-  const handleEditColumn = (id: string, title: string) => {
-    setColumns((prev) => updateColumn(prev, id, title));
-  };
-
-  const handleDeleteColumn = (id: string) => {
-    setColumns((prev) => {
-      if (prev.length === 1) return prev;
-      return deleteColumn(prev, id);
-    });
-  };
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
@@ -72,8 +60,8 @@ export default function KanbanBoard({
     // Disable drag and drop for builders
     if (isBuilderMode || !over) return;
 
-    const taskId = active.id as string;
-    const overId = over.id as string;
+    const taskId = active.id as number;
+    const overId = over.id as number;
 
     // If we drop on a column, move the task to that column's status
     const isColumn = columns.some((col) => col.id === overId);
@@ -123,8 +111,6 @@ export default function KanbanBoard({
                   column={column}
                   taskCount={columnTasks.length}
                   canDelete={columns.length > 1}
-                  onEdit={handleEditColumn}
-                  onDelete={handleDeleteColumn}
                 />
 
                 <DroppableColumn
