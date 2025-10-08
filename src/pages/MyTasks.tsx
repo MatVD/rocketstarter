@@ -37,14 +37,14 @@ export default function MyTasks({ user }: MyTasksProps) {
 
   // Apply filters
   const filteredTasks = myTasks.filter((task) => {
-    // Filtrage par projet avec le nouveau champ projectId
+    // Filtrage par projet avec le champ projectId
     const projectMatch =
       selectedProject === "all" ||
       selectedProject === "current" || // Pour "current", on prend le premier projet par défaut
-      task.project.name === selectedProject;
+      task.projectId.toString() === selectedProject;
 
     const categoryMatch =
-      selectedCategory === "all" || task.step.id === selectedCategory;
+      selectedCategory === "all" || task.stepId === selectedCategory;
 
     return projectMatch && categoryMatch;
   });
@@ -52,12 +52,8 @@ export default function MyTasks({ user }: MyTasksProps) {
   // Group filtered tasks by status for better organization
   const tasksByStatus = {
     todo: filteredTasks.filter((task) => task.status === 0),
-    inProgress: filteredTasks.filter(
-      (task) => task.status === 1
-    ),
-    review: filteredTasks.filter(
-      (task) => task.status === 2
-    ),
+    inProgress: filteredTasks.filter((task) => task.status === 1),
+    review: filteredTasks.filter((task) => task.status === 2),
     done: filteredTasks.filter((task) => task.status === 3),
   };
 
@@ -65,7 +61,9 @@ export default function MyTasks({ user }: MyTasksProps) {
     const task = tasks.find((t) => t.id === taskId);
     if (task) {
       setTasks(
-        tasks.map((t) => (t.id === taskId ? { ...t, status: newStatus as TaskStatus } : t))
+        tasks.map((t) =>
+          t.id === taskId ? { ...t, status: newStatus as TaskStatus } : t
+        )
       );
       setToast({
         message: `Task "${task.title}" status updated to ${newStatus}`,
@@ -74,8 +72,6 @@ export default function MyTasks({ user }: MyTasksProps) {
       setTimeout(() => setToast(null), 3000);
     }
   };
-
-  
 
   const getProjectName = (projectId: string) => {
     const project = mockProjects.find((p) => p.id === projectId);
@@ -220,8 +216,8 @@ export default function MyTasks({ user }: MyTasksProps) {
                     task={task}
                     variant="simple"
                     showProject
-                    projectName={getProjectName(task.project.name)}
-                    stepName={getStepName(task.step.title)}
+                    projectName={getProjectName(task.projectId.toString())}
+                    stepName={getStepName(task.stepId)}
                     user={user}
                     users={mockUsers}
                     onStatusChange={handleUpdateTaskStatus}
@@ -273,8 +269,8 @@ export default function MyTasks({ user }: MyTasksProps) {
                     task={task}
                     variant="simple"
                     showProject
-                    projectName={getProjectName(task.project.name)}
-                    stepName={getStepName(task.step.id)}
+                    projectName={getProjectName(task.projectId.toString())}
+                    stepName={getStepName(task.stepId)}
                     user={user}
                     users={mockUsers}
                     onStatusChange={handleUpdateTaskStatus}
@@ -326,8 +322,8 @@ export default function MyTasks({ user }: MyTasksProps) {
                     task={task}
                     variant="simple"
                     showProject
-                    projectName={getProjectName(task.project.name)}
-                    stepName={getStepName(task.step.id)}
+                    projectName={getProjectName(task.projectId.toString())}
+                    stepName={getStepName(task.stepId)}
                     user={user}
                     users={mockUsers}
                     onStatusChange={handleUpdateTaskStatus}

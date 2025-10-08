@@ -33,26 +33,28 @@ export default function BuilderProjectView({
   } | null>(null);
 
   // Filter tasks for this specific project
-  const projectTasks = tasks.filter((task) => task.projectId === project.id);
+  const projectTasks = tasks.filter(
+    (task) => task.projectId === parseInt(project.id)
+  );
 
   // Apply filters to project tasks
   const filteredTasks = filterTasks(projectTasks, filters, user);
 
-  const handleTaskAssignment = (taskId: string) => {
+  const handleTaskAssignment = (taskId: number) => {
     const task = tasks.find((t) => t.id === taskId);
     // Only allow taking tasks that are in "todo" status and unassigned
     if (
       task &&
-      (!task.assignee || task.assignee === "") &&
-      task.status === "todo"
+      (!task.builder || task.builder === "") &&
+      task.status === 0 // todo status
     ) {
       setTasks((prevTasks) =>
         prevTasks.map((t) =>
           t.id === taskId
             ? {
                 ...t,
-                assignee: user.id,
-                status: "in-progress", // Automatically move to In Progress when assigned
+                builder: user.address,
+                status: 1, // in-progress status
               }
             : t
         )
@@ -62,7 +64,7 @@ export default function BuilderProjectView({
         message: "Task assigned and moved to In Progress",
         type: "success",
       });
-    } else if (task && task.status !== "todo") {
+    } else if (task && task.status !== 0) {
       setToast({
         message: "Only tasks in 'To Do' column can be taken",
         type: "error",
