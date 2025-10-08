@@ -15,9 +15,12 @@ export interface UpdateUserRequest {
 
 // Transform API response to frontend format
 const transformUser = (apiUser: ApiUser): User => ({
-  ...apiUser,
   id: apiUser.id.toString(),
   address: apiUser.walletAddress,
+  role: apiUser.role || "builder",
+  username: apiUser.name,
+  email: apiUser.email,
+  createdAt: new Date(apiUser.createdAt),
 });
 
 // Get all users
@@ -34,7 +37,7 @@ export const getUser = async (id: string): Promise<User> => {
 
 // Get user by wallet address
 export const getUserByAddress = async (address: string): Promise<User> => {
-  const response = await api.get(`/users/address/${address}`);
+  const response = await api.get(`/users/${address}`);
   return transformUser(response.data);
 };
 
@@ -44,16 +47,16 @@ export const createUser = async (data: CreateUserRequest): Promise<User> => {
   return transformUser(response.data);
 };
 
-// Update user
+// Update user by wallet address
 export const updateUser = async (
-  id: string,
+  address: string,
   data: UpdateUserRequest
 ): Promise<User> => {
-  const response = await api.put(`/users/${id}`, data);
+  const response = await api.put(`/users/${address}`, data);
   return transformUser(response.data);
 };
 
-// Delete user
-export const deleteUser = async (id: string): Promise<void> => {
-  await api.delete(`/users/${id}`);
+// Delete user by wallet address
+export const deleteUser = async (address: string): Promise<void> => {
+  await api.delete(`/users/${address}`);
 };

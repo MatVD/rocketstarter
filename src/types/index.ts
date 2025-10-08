@@ -1,10 +1,21 @@
 // ----------- User types ----------- //
 export interface User {
+  id: string;
   address: string;
   role: "owner" | "builder";
   username?: string;
   email?: string;
   createdAt: Date;
+}
+
+export interface ApiUser {
+  id: number;
+  walletAddress: string;
+  name: string;
+  email?: string;
+  role?: "owner" | "builder";
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateUserRequest {
@@ -34,6 +45,15 @@ export interface Project {
   categories?: string[];
 }
 
+export interface ApiProject {
+  id: number;
+  name: string;
+  description?: string;
+  ownerAddress: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface CreateProjectRequest {
   name: string;
   description?: string;
@@ -47,11 +67,12 @@ export interface UpdateProjectRequest {
 }
 
 // ---------- Task types ---------- //
-export type TaskPriority = 0 | 1 | 2;
+export type TaskPriority = 0 | 1 | 2 | 3;
 export const TaskPriorityLabel: Record<TaskPriority, string> = {
   0: "low",
   1: "medium",
   2: "high",
+  3: "urgent",
 };
 
 export type TaskStatus = 0 | 1 | 2 | 3;
@@ -63,8 +84,8 @@ export const TaskStatusLabel: Record<TaskStatus, string> = {
 };
 
 export interface Task {
-  id: number;
-  projectId: number;
+  id: string;
+  projectId: string;
   stepId: string;
   title: string;
   description?: string;
@@ -73,8 +94,21 @@ export interface Task {
   createdAt: Date;
   updatedAt: Date;
   effort?: string;
-  priority?: TaskPriority;
-  status: TaskStatus;
+  priority: TaskPriority;
+  status: string;
+}
+
+export interface ApiTask {
+  id: number;
+  projectId: number;
+  title: string;
+  description?: string;
+  priority: 0 | 1 | 2 | 3;
+  status: 0 | 1 | 2 | 3;
+  builderAddress?: string;
+  stepId?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateTaskRequest {
@@ -106,14 +140,51 @@ export interface Category {
   name: string;
 }
 
+export interface ApiCategory {
+  id: number;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ----------- Step types ----------- //
 export interface Step {
   id: string;
   title: string;
   description: string;
   status: "todo" | "in-progress" | "completed";
   completed?: boolean;
+  projectId?: string;
+  order?: number;
 }
 
+export interface ApiStep {
+  id: number;
+  title: string;
+  description?: string;
+  projectId: number;
+  order: number;
+  status: 0 | 1 | 2; // 0=todo, 1=in-progress, 2=completed
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateStepRequest {
+  title: string;
+  description?: string;
+  projectId: number;
+  order: number;
+  status?: 0 | 1 | 2;
+}
+
+export interface UpdateStepRequest {
+  title?: string;
+  description?: string;
+  order?: number;
+  status?: 0 | 1 | 2;
+}
+
+// ----------- Column types ----------- //
 export interface Column {
   id: number;
   title: string;

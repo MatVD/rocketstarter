@@ -61,10 +61,34 @@ export const setUserAddress = (address: string | null) => {
 // Health check function
 export const checkBackendHealth = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/health`);
+    const response = await axios.get(
+      `${API_BASE_URL.replace("/api/v1", "")}/health`
+    );
     return response.data;
   } catch {
     throw new Error("Backend server is not running");
+  }
+};
+
+// Database test function
+export const checkDatabaseConnection = async () => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL.replace("/api/v1", "")}/db-test`
+    );
+    return response.data;
+  } catch {
+    throw new Error("Database connection failed");
+  }
+};
+
+// API info function
+export const getApiInfo = async () => {
+  try {
+    const response = await api.get("/");
+    return response.data;
+  } catch {
+    throw new Error("Could not retrieve API info");
   }
 };
 
