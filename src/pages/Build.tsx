@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Hammer, SettingsIcon } from "lucide-react";
+import { Hammer } from "lucide-react";
 import TaskTable from "../components/Build/TaskTable";
 import KanbanBoard from "../components/Build/KanbanBoard";
 import StepNavigation from "../components/Build/StepNavigation";
@@ -16,7 +16,6 @@ import {
 interface BuildProps {
   activeStepId?: number | null;
   onStepChange?: (stepId: number) => void;
-  onSettingsClick?: () => void;
   project?: Project;
   onBackToProjects?: () => void;
   user?: User;
@@ -25,7 +24,6 @@ interface BuildProps {
 export default function Build({
   activeStepId,
   onStepChange,
-  onSettingsClick,
   user = mockUsers[1], // Default to Bob Builder
 }: BuildProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
@@ -123,18 +121,6 @@ export default function Build({
                   : "Manage tasks for the current step"}
               </p>
             </div>
-          </div>
-
-          <div>
-            <motion.button
-              onClick={onSettingsClick}
-              aria-label="Open settings"
-              className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <SettingsIcon className="w-8 h-8" />
-            </motion.button>
           </div>
         </div>
       </motion.div>

@@ -36,10 +36,6 @@ function App() {
     }));
   }, [isConnected, address]);
 
-  const onSettingsClick = () => {
-    setActiveTab("settings");
-  };
-
   const handleConnectWallet = () => {
     if (connectors.length > 0) {
       connect({ connector: connectors[0] });
@@ -112,7 +108,6 @@ function App() {
             <Build
               activeStepId={activeStepId}
               onStepChange={setActiveStepId}
-              onSettingsClick={onSettingsClick}
               project={firstProject}
               onBackToProjects={handleBackToProjects}
               user={currentUser}
@@ -124,7 +119,6 @@ function App() {
           <Build
             activeStepId={activeStepId}
             onStepChange={setActiveStepId}
-            onSettingsClick={onSettingsClick}
             project={selectedProject}
             onBackToProjects={handleBackToProjects}
             user={currentUser}
