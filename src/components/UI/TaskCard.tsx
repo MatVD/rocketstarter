@@ -26,16 +26,16 @@ interface TaskCardProps {
   onTaskAssignment?: (taskId: number) => void;
 
   // Status actions
-  onStatusChange?: (taskId: number, status: string) => void;
+  onStatusChange?: (taskId: number, status: number) => void;
   statusButtons?: Array<{
     label: string;
-    targetStatus: string;
+    targetStatus: number;
     show: boolean;
   }>;
 
   // Utility functions
-  getStatusColor?: (status: string) => string;
-  getStatusIcon?: (status: string) => React.ReactNode;
+  getStatusColor?: (status: number) => string;
+  getStatusIcon?: (status: number) => React.ReactNode;
 }
 
 interface TaskCardContentProps {
@@ -47,10 +47,10 @@ interface TaskCardContentProps {
   user?: UserType;
   users?: UserType[];
   onTaskAssignment?: (taskId: number) => void;
-  onStatusChange?: (taskId: number, status: string) => void;
+  onStatusChange?: (taskId: number, status: number) => void;
   statusButtons?: Array<{
     label: string;
-    targetStatus: string;
+    targetStatus: number;
     show: boolean;
   }>;
 }
@@ -82,7 +82,7 @@ function TaskCardContent({
     taskId,
     label,
   }: {
-    targetStatus: string;
+    targetStatus: number;
     taskId: number;
     label: string;
   }) => (

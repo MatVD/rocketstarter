@@ -8,7 +8,7 @@ import {
   Filter,
   X,
 } from "lucide-react";
-import { Task, User as UserType } from "../types";
+import { Task, TaskStatus, User as UserType } from "../types";
 import {
   tasks as initialTasks,
   mockProjects,
@@ -17,8 +17,7 @@ import {
 } from "../data/mockData";
 import Toast from "../components/UI/Toast";
 import TaskCard from "../components/UI/TaskCard";
-import { getStatusIcon } from "../utils/iconUtils";
-import { getStatusColor } from "../utils/statusUtils";
+import { getStatusColor, getStatusIcon } from "../utils/statusUtils";
 
 interface MyTasksProps {
   user: UserType;
@@ -34,7 +33,7 @@ export default function MyTasks({ user }: MyTasksProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // Get all tasks assigned to the current user
-  const myTasks = tasks.filter((task) => task.assignee === user.id);
+  const myTasks = tasks.filter((task) => task.builder === user.address);
 
   // Apply filters
   const filteredTasks = myTasks.filter((task) => {
@@ -42,36 +41,31 @@ export default function MyTasks({ user }: MyTasksProps) {
     const projectMatch =
       selectedProject === "all" ||
       selectedProject === "current" || // Pour "current", on prend le premier projet par défaut
-      task.projectId === selectedProject;
+      task.project.name === selectedProject;
 
     const categoryMatch =
-      selectedCategory === "all" || task.stepId === selectedCategory;
-
-    // Debug logs
-    console.log(
-      `Task ${task.id}: projectMatch=${projectMatch}, categoryMatch=${categoryMatch}, stepId=${task.stepId}, selectedCategory=${selectedCategory}, projectId=${task.projectId}`
-    );
+      selectedCategory === "all" || task.step.id === selectedCategory;
 
     return projectMatch && categoryMatch;
   });
 
   // Group filtered tasks by status for better organization
   const tasksByStatus = {
-    todo: filteredTasks.filter((task) => task.status.toLowerCase() === "todo"),
+    todo: filteredTasks.filter((task) => task.status === 0),
     inProgress: filteredTasks.filter(
-      (task) => task.status.toLowerCase() === "in-progress"
+      (task) => task.status === 1
     ),
     review: filteredTasks.filter(
-      (task) => task.status.toLowerCase() === "review"
+      (task) => task.status === 2
     ),
-    done: filteredTasks.filter((task) => task.status.toLowerCase() === "done"),
+    done: filteredTasks.filter((task) => task.status === 3),
   };
 
-  const handleUpdateTaskStatus = (taskId: string, newStatus: string) => {
+  const handleUpdateTaskStatus = (taskId: number, newStatus: number) => {
     const task = tasks.find((t) => t.id === taskId);
     if (task) {
       setTasks(
-        tasks.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t))
+        tasks.map((t) => (t.id === taskId ? { ...t, status: newStatus as TaskStatus } : t))
       );
       setToast({
         message: `Task "${task.title}" status updated to ${newStatus}`,
@@ -226,8 +220,8 @@ export default function MyTasks({ user }: MyTasksProps) {
                     task={task}
                     variant="simple"
                     showProject
-                    projectName={getProjectName(task.projectId)}
-                    stepName={getStepName(task.stepId)}
+                    projectName={getProjectName(task.project.name)}
+                    stepName={getStepName(task.step.title)}
                     user={user}
                     users={mockUsers}
                     onStatusChange={handleUpdateTaskStatus}
@@ -236,18 +230,18 @@ export default function MyTasks({ user }: MyTasksProps) {
                     statusButtons={[
                       {
                         label: "Start",
-                        targetStatus: "in-progress",
-                        show: task.status.toLowerCase() !== "in-progress",
+                        targetStatus: 1,
+                        show: task.status !== 1,
                       },
                       {
                         label: "Review",
-                        targetStatus: "review",
-                        show: task.status.toLowerCase() !== "review",
+                        targetStatus: 2,
+                        show: task.status !== 2,
                       },
                       {
                         label: "Complete",
-                        targetStatus: "done",
-                        show: task.status.toLowerCase() !== "done",
+                        targetStatus: 3,
+                        show: task.status !== 3,
                       },
                     ]}
                   />
@@ -279,8 +273,8 @@ export default function MyTasks({ user }: MyTasksProps) {
                     task={task}
                     variant="simple"
                     showProject
-                    projectName={getProjectName(task.projectId)}
-                    stepName={getStepName(task.stepId)}
+                    projectName={getProjectName(task.project.name)}
+                    stepName={getStepName(task.step.id)}
                     user={user}
                     users={mockUsers}
                     onStatusChange={handleUpdateTaskStatus}
@@ -289,18 +283,18 @@ export default function MyTasks({ user }: MyTasksProps) {
                     statusButtons={[
                       {
                         label: "Start",
-                        targetStatus: "in-progress",
-                        show: task.status.toLowerCase() !== "in-progress",
+                        targetStatus: 1,
+                        show: task.status !== 1,
                       },
                       {
                         label: "Review",
-                        targetStatus: "review",
-                        show: task.status.toLowerCase() !== "review",
+                        targetStatus: 2,
+                        show: task.status !== 2,
                       },
                       {
                         label: "Complete",
-                        targetStatus: "done",
-                        show: task.status.toLowerCase() !== "done",
+                        targetStatus: 3,
+                        show: task.status !== 3,
                       },
                     ]}
                   />
@@ -332,8 +326,8 @@ export default function MyTasks({ user }: MyTasksProps) {
                     task={task}
                     variant="simple"
                     showProject
-                    projectName={getProjectName(task.projectId)}
-                    stepName={getStepName(task.stepId)}
+                    projectName={getProjectName(task.project.name)}
+                    stepName={getStepName(task.step.id)}
                     user={user}
                     users={mockUsers}
                     onStatusChange={handleUpdateTaskStatus}
@@ -342,18 +336,18 @@ export default function MyTasks({ user }: MyTasksProps) {
                     statusButtons={[
                       {
                         label: "Start",
-                        targetStatus: "in-progress",
-                        show: task.status.toLowerCase() !== "in-progress",
+                        targetStatus: 1,
+                        show: task.status !== 1,
                       },
                       {
                         label: "Review",
-                        targetStatus: "review",
-                        show: task.status.toLowerCase() !== "review",
+                        targetStatus: 2,
+                        show: task.status !== 2,
                       },
                       {
                         label: "Complete",
-                        targetStatus: "done",
-                        show: task.status.toLowerCase() !== "done",
+                        targetStatus: 3,
+                        show: task.status !== 3,
                       },
                     ]}
                   />
