@@ -5,8 +5,6 @@ import Sidebar from "./components/Layout/Sidebar";
 import Header from "./components/Layout/Header";
 import Dashboard from "./pages/Dashboard";
 import Build from "./pages/Build";
-import Templates from "./pages/Templates";
-import Settings from "./pages/Settings";
 import ProjectList from "./pages/ProjectList";
 import BuilderProjectView from "./pages/BuilderProjectView";
 import Toast from "./components/UI/Toast";
@@ -152,10 +150,6 @@ function App() {
             onConnectWallet={handleConnectWallet}
           />
         );
-      case "templates":
-        return <Templates />;
-      case "settings":
-        return <Settings />;
       default:
         return (
           <ProjectList

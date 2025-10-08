@@ -3,7 +3,6 @@ import {
   LayoutDashboard,
   BookTemplate as FileTemplate,
   Hammer,
-  Settings,
   ChevronRight,
   X,
   FolderOpen,
@@ -18,14 +17,9 @@ interface SidebarProps {
 }
 
 const getMenuItems = (userRole?: string) => {
-  const baseItems = [
-    { id: "settings", label: "Settings", icon: Settings },
-  ];
-
   if (userRole === "builder") {
     return [
       { id: "projects", label: "Projects", icon: FolderOpen },
-      ...baseItems,
     ];
   }
 
@@ -34,7 +28,6 @@ const getMenuItems = (userRole?: string) => {
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "build", label: "Build", icon: Hammer },
     { id: "templates", label: "Strategy", icon: FileTemplate },
-    ...baseItems,
   ];
 };
 
