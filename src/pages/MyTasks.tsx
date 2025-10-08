@@ -11,13 +11,13 @@ import {
 import { Task, TaskStatus, User as UserType } from "../types";
 import {
   tasks as initialTasks,
-  mockProjects,
   mockUsers,
   flowSteps,
 } from "../data/mockData";
 import Toast from "../components/UI/Toast";
 import TaskCard from "../components/UI/TaskCard";
 import { getStatusColor, getStatusIcon } from "../utils/statusUtils";
+import { useProjects } from "../hooks/useProjects";
 
 interface MyTasksProps {
   user: UserType;
@@ -29,6 +29,7 @@ export default function MyTasks({ user }: MyTasksProps) {
     message: string;
     type: "success" | "error" | "info";
   } | null>(null);
+  const { projects } = useProjects();
   const [selectedProject, setSelectedProject] = useState<string>("all");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
@@ -44,7 +45,7 @@ export default function MyTasks({ user }: MyTasksProps) {
       task.projectId.toString() === selectedProject;
 
     const categoryMatch =
-      selectedCategory === "all" || task.stepId === selectedCategory;
+      selectedCategory === "all" || task.stepId?.toString() === selectedCategory;
 
     return projectMatch && categoryMatch;
   });
@@ -73,13 +74,14 @@ export default function MyTasks({ user }: MyTasksProps) {
     }
   };
 
-  const getProjectName = (projectId: string) => {
-    const project = mockProjects.find((p) => p.id === projectId);
+  const getProjectName = (projectId: number) => {
+    const project = projects.find((p) => p.id === projectId);
     return project?.name || "Unknown Project";
   };
 
   // Helper function to get step name from stepId
-  const getStepName = (stepId: string) => {
+  const getStepName = (stepId: number | undefined) => {
+    if (!stepId) return "No Step";
     const step = flowSteps.find((s) => s.id === stepId);
     return step?.title || "Unknown Step";
   };
@@ -130,7 +132,7 @@ export default function MyTasks({ user }: MyTasksProps) {
               >
                 <option value="all">All Projects</option>
                 <option value="current">Current Project</option>
-                {mockProjects.map((project) => (
+                {projects.map((project) => (
                   <option key={project.id} value={project.id}>
                     {project.name}
                   </option>
@@ -169,7 +171,7 @@ export default function MyTasks({ user }: MyTasksProps) {
                   Project:{" "}
                   {selectedProject === "current"
                     ? "Current Project"
-                    : mockProjects.find((p) => p.id === selectedProject)
+                    : projects.find((p) => p.id.toString() === selectedProject)
                         ?.name || selectedProject}
                   <button
                     onClick={() => setSelectedProject("all")}
@@ -182,7 +184,7 @@ export default function MyTasks({ user }: MyTasksProps) {
               {selectedCategory !== "all" && (
                 <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs rounded-full">
                   Category:{" "}
-                  {flowSteps.find((s) => s.id === selectedCategory)?.title ||
+                  {flowSteps.find((s) => s.id.toString() === selectedCategory)?.title ||
                     selectedCategory}
                   <button
                     onClick={() => setSelectedCategory("all")}
@@ -216,7 +218,7 @@ export default function MyTasks({ user }: MyTasksProps) {
                     task={task}
                     variant="simple"
                     showProject
-                    projectName={getProjectName(task.projectId.toString())}
+                    projectName={getProjectName(task.projectId)}
                     stepName={getStepName(task.stepId)}
                     user={user}
                     users={mockUsers}
@@ -269,7 +271,7 @@ export default function MyTasks({ user }: MyTasksProps) {
                     task={task}
                     variant="simple"
                     showProject
-                    projectName={getProjectName(task.projectId.toString())}
+                    projectName={getProjectName(task.projectId)}
                     stepName={getStepName(task.stepId)}
                     user={user}
                     users={mockUsers}
@@ -322,7 +324,7 @@ export default function MyTasks({ user }: MyTasksProps) {
                     task={task}
                     variant="simple"
                     showProject
-                    projectName={getProjectName(task.projectId.toString())}
+                    projectName={getProjectName(task.projectId)}
                     stepName={getStepName(task.stepId)}
                     user={user}
                     users={mockUsers}
