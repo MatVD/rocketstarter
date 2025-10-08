@@ -10,11 +10,13 @@ import {
   Check,
 } from "lucide-react";
 import { Task, Project } from "../../types";
+import { getPriorityLabel, getPriorityStyle } from "../../utils/priorityUtils";
+import { getActiveFiltersCount } from "../../utils/taskFilterUtils";
 
 export interface TaskFilters {
   searchTerm: string;
   myTasks: boolean;
-  priority: string[];
+  priority: number[];
   categories: string[];
 }
 
@@ -65,19 +67,15 @@ export default function TaskFilter({
       tasks
         .map((task) => task.priority)
         .filter(
-          (priority): priority is "high" | "medium" | "low" =>
-            Boolean(priority) && priority !== ""
+          (priority): priority is 2 | 1 | 0 =>
+            Boolean(priority) && priority !== undefined
         )
     )
   );
   const projectCategories = project.categories || [];
 
-  // Count active filters
-  const activeFiltersCount =
-    (filters.searchTerm ? 1 : 0) +
-    (filters.myTasks ? 1 : 0) +
-    filters.priority.length +
-    filters.categories.length;
+  // Count active filters using utility function
+  const activeFiltersCount = getActiveFiltersCount(filters);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onFiltersChange({
@@ -93,7 +91,7 @@ export default function TaskFilter({
     });
   };
 
-  const handlePriorityToggle = (priority: string) => {
+  const handlePriorityToggle = (priority: number) => {
     const newPriorities = filters.priority.includes(priority)
       ? filters.priority.filter((p) => p !== priority)
       : [...filters.priority, priority];
@@ -122,19 +120,6 @@ export default function TaskFilter({
       priority: [],
       categories: [],
     });
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20";
-      case "medium":
-        return "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20";
-      case "low":
-        return "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20";
-      default:
-        return "text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800";
-    }
   };
 
   return (
@@ -216,11 +201,11 @@ export default function TaskFilter({
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         />
                         <span
-                          className={`text-xs px-2 py-1 rounded-full font-medium capitalize ${getPriorityColor(
-                            priority
-                          )}`}
+                          className={`text-xs px-2 py-1 rounded-full font-medium capitalize ${
+                            getPriorityStyle(priority).bg
+                          } ${getPriorityStyle(priority).text}`}
                         >
-                          {priority}
+                          {getPriorityLabel(priority as 0 | 1 | 2)}
                         </span>
                       </label>
                     ))}

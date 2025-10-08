@@ -2,13 +2,12 @@ import { COLORS } from "../constants/colors";
 
 // Priority utilities for managing task priorities
 export const PRIORITY_LEVELS = {
-  0: { label: "None", color: "gray" },
-  1: { label: "Low", color: "blue" },
-  2: { label: "Medium", color: "yellow" },
-  3: { label: "High", color: "red" },
+  0: { label: "Low", color: "blue" },
+  1: { label: "Medium", color: "yellow" },
+  2: { label: "High", color: "red" },
 };
 
-export const getPriorityLabel = (priority?: 0 | 1 | 2 | 3): string => {
+export const getPriorityLabel = (priority?: 0 | 1 | 2): string => {
   if (priority === undefined) return PRIORITY_LEVELS[0].label;
   return PRIORITY_LEVELS[priority]?.label || PRIORITY_LEVELS[0].label;
 };
