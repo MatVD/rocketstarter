@@ -10,9 +10,11 @@ import type { Column } from "./KanbanBoard/kanbanUtils";
 interface TaskTableProps {
   tasks: Task[];
   columns: Column[];
-  onAddTask: (task: Omit<Task, "id" | "stepId">) => void;
-  onEditTask: (taskId: string) => void;
-  onDeleteTask: (taskId: string) => void;
+  onAddTask: (
+    task: Omit<Task, "id" | "stepId" | "createdAt" | "updatedAt" | "projectId">
+  ) => void;
+  onEditTask: (taskId: number) => void;
+  onDeleteTask: (taskId: number) => void;
   user?: User;
 }
 

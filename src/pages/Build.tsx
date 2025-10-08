@@ -45,26 +45,35 @@ export default function Build({
     (task) => task.stepId === currentStep.id
   );
 
-  const handleAddTask = (newTask: Omit<Task, "id" | "stepId">) => {
+  const handleAddTask = (
+    newTask: Omit<
+      Task,
+      "id" | "stepId" | "createdAt" | "updatedAt" | "projectId"
+    >
+  ) => {
+    const now = new Date();
     const task: Task = {
       ...newTask,
-      id: Date.now().toString(),
+      id: Date.now(),
+      projectId: 1, // Default project
       stepId: currentStep.id, // Associate new task with current step
+      createdAt: now,
+      updatedAt: now,
     };
     setTasks([...tasks, task]);
   };
 
-  const handleEditTask = (taskId: string) => {
+  const handleEditTask = (taskId: number) => {
     alert(`Edit task ${taskId} - Feature to implement`);
   };
 
-  const handleDeleteTask = (taskId: string) => {
+  const handleDeleteTask = (taskId: number) => {
     if (confirm("Are you sure you want to delete this task?")) {
       setTasks(tasks.filter((task) => task.id !== taskId));
     }
   };
 
-  const handleMoveTask = (taskId: string, newStatus: Task["status"]) => {
+  const handleMoveTask = (taskId: number, newStatus: Task["status"]) => {
     setTasks(
       tasks.map((task) =>
         task.id === taskId ? { ...task, status: newStatus } : task
@@ -73,12 +82,14 @@ export default function Build({
   };
 
   // Builder-specific task assignment logic
-  const handleTaskAssignment = (taskId: string) => {
+  const handleTaskAssignment = (taskId: number) => {
     if (user.role === "builder") {
       const task = tasks.find((t) => t.id === taskId);
       if (task) {
         setTasks(
-          tasks.map((t) => (t.id === taskId ? { ...t, assignee: user.id } : t))
+          tasks.map((t) =>
+            t.id === taskId ? { ...t, builder: user.address } : t
+          )
         );
         setToast({
           message: `Successfully took task: ${task.title}`,

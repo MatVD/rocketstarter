@@ -11,7 +11,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Task, User } from "../../types";
+import { Task, User, TaskStatus } from "../../types";
 import Card from "../UI/Card";
 import TaskCard from "../UI/TaskCard";
 import DroppableColumn from "./KanbanBoard/DroppableColumn";
@@ -24,7 +24,7 @@ interface KanbanBoardProps {
   tasks: Task[];
   columns: Column[];
   setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
-  onMoveTask: (taskId: number, newStatus: number) => void;
+  onMoveTask: (taskId: number, newStatus: TaskStatus) => void;
   user?: User;
   onTaskAssignment?: (taskId: number) => void;
   isBuilderMode?: boolean; // New prop to indicate builder mode
@@ -46,7 +46,6 @@ export default function KanbanBoard({
     return tasks.filter((task) => task.status === status);
   };
 
-
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const task = tasks.find((t) => t.id === active.id);
@@ -66,7 +65,10 @@ export default function KanbanBoard({
     // If we drop on a column, move the task to that column's status
     const isColumn = columns.some((col) => col.id === overId);
     if (isColumn) {
-      onMoveTask(taskId, overId);
+      // Verify that overId is a valid TaskStatus
+      if (overId === 0 || overId === 1 || overId === 2 || overId === 3) {
+        onMoveTask(taskId, overId as TaskStatus);
+      }
       return;
     }
 
