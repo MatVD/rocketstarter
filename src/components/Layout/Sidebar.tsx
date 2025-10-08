@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import {
   LayoutDashboard,
-  BookTemplate as FileTemplate,
   Hammer,
   ChevronRight,
   X,
@@ -28,7 +27,6 @@ const getMenuItems = (userRole?: string) => {
   return [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "build", label: "Build", icon: Hammer },
-    { id: "templates", label: "Strategy", icon: FileTemplate },
   ];
 };
 
