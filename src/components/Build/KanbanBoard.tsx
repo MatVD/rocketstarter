@@ -48,11 +48,6 @@ export default function KanbanBoard({
     return tasks.filter((task) => task.status === status);
   };
 
-  // const handleAddColumn = () => {
-  //   const newColumn = createNewColumn(columns);
-  //   setColumns((prev) => [...prev, newColumn]);
-  // };
-
   const handleEditColumn = (id: string, title: string) => {
     setColumns((prev) => updateColumn(prev, id, title));
   };
@@ -108,13 +103,6 @@ export default function KanbanBoard({
             </p>
           )}
         </div>
-
-        {/* <button
-          onClick={handleAddColumn}
-          className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs md:text-sm"
-        >
-          + Add Column
-        </button> */}
       </div>
 
       <DndContext

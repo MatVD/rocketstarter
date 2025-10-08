@@ -73,10 +73,10 @@ export default function ProjectList({
                     </h3>
                     <span
                       className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getEnvironmentBadgeColor(
-                        project.environment
+                        project.environment || "testnet"
                       )}`}
                     >
-                      {project.environment}
+                      {project.environment || "testnet"}
                     </span>
                   </div>
                 </div>
