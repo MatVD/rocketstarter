@@ -253,17 +253,17 @@ export default function TaskFilter({
                   <div className="p-2">
                     {projectCategories.map((category) => (
                       <label
-                        key={category}
+                        key={category.name}
                         className="flex items-center space-x-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded cursor-pointer"
                       >
                         <input
                           type="checkbox"
-                          checked={filters.categories.includes(category)}
-                          onChange={() => handleCategoryToggle(category)}
+                          checked={filters.categories.includes(category.name)}
+                          onChange={() => handleCategoryToggle(category.name)}
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         />
                         <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">
-                          {category}
+                          {category.name}
                         </span>
                       </label>
                     ))}
