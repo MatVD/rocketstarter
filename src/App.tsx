@@ -18,7 +18,7 @@ function App() {
   const [activeStepId, setActiveStepId] = useState<number | null>(null);
   const [currentUser, setCurrentUser] = useState<User>(mockUsers[0]); // Default to Alice Admin
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const { projects, loading } = useProjects();
+  const { projects } = useProjects();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
@@ -82,9 +82,6 @@ function App() {
     setActiveStepId(stepId);
     setActiveTab("build");
   };
-
-  console.log(projects, loading);
-  
 
   const renderContent = () => {
     switch (activeTab) {
