@@ -14,7 +14,7 @@ import { User, Project } from "./types";
 function App() {
   const [activeTab, setActiveTab] = useState("projects");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeStepId, setActiveStepId] = useState<string | null>(null);
+  const [activeStepId, setActiveStepId] = useState<number | null>(null);
   const [currentUser, setCurrentUser] = useState<User>(mockUsers[0]); // Default to Alice Admin
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [projects] = useState<Project[]>(mockProjects);
@@ -27,10 +27,12 @@ function App() {
 
   // Sync wallet connection with user state
   useEffect(() => {
+    if (!address) return;
+
     setCurrentUser((prev) => ({
       ...prev,
       isConnected,
-      address: address || undefined,
+      address,
     }));
   }, [isConnected, address]);
 
@@ -44,7 +46,7 @@ function App() {
     }
   };
 
-  const handleProjectSelect = (projectId: string) => {
+  const handleProjectSelect = (projectId: number) => {
     const project = projects.find((p) => p.id === projectId);
     if (project) {
       setSelectedProject(project);
@@ -79,7 +81,7 @@ function App() {
     setShowToast(true);
   };
 
-  const handleNavigateToStep = (stepId: string) => {
+  const handleNavigateToStep = (stepId: number) => {
     setActiveStepId(stepId);
     setActiveTab("build");
   };

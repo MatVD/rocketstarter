@@ -4,7 +4,7 @@ import ProgressIndicator from "./StepNavigation/ProgressIndicator";
 interface StepNavigationProps {
   currentStep: Step | null;
   allSteps: Step[];
-  onStepChange: (stepId: string) => void;
+  onStepChange: (stepId: number) => void;
 }
 
 export default function StepNavigation({

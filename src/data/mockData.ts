@@ -1,119 +1,135 @@
-import { Step, Project, Task, User } from "../types";
+import { Step, Project, Task, User, Category } from "../types";
+
+
+export const mockCategories: Category[] = [
+  { id: 1, name: "DeFi" },
+  { id: 2, name: "NFT" },
+  { id: 3, name: "DAO" },
+  { id: 4, name: "GameFi" },
+  { id: 5, name: "ERC-20" },
+  { id: 6, name: "ERC-721" },
+  { id: 7, name: "Staking" },
+  { id: 8, name: "Marketplace" },
+  { id: 9, name: "Governance" },
+  { id: 10, name: "Voting" },
+  { id: 11, name: "P2E" },
+  { id: 12, name: "Gaming" },
+];
 
 export const mockProjects: Project[] = [
   {
-    id: "1",
+    id: 1,
     name: "My Web3 Project",
     description: "A comprehensive Web3 project with DeFi capabilities",
     progress: 75,
-    environment: "testnet",
     owner: "Alice",
-    createdAt: "2024-01-15",
-    categories: ["DeFi", "ERC-20", "Staking"],
+    createdAt: new Date("2024-01-15"),
+    updatedAt: new Date("2024-01-20"),
+    categories: [mockCategories[0], mockCategories[4], mockCategories[6]],
   },
   {
-    id: "2",
+    id: 2,
     name: "NFT Marketplace",
     description: "Decentralized marketplace for trading NFTs",
     progress: 45,
-    environment: "testnet",
     owner: "Bob",
-    createdAt: "2024-02-01",
-    categories: ["NFT", "Marketplace", "ERC-721"],
+    createdAt: new Date("2024-02-01"),
+    updatedAt: new Date("2024-02-10"),
+    categories: [mockCategories[1], mockCategories[7], mockCategories[5]],
   },
   {
-    id: "3",
+    id: 3,
     name: "DAO Governance Platform",
     description: "Decentralized autonomous organization management tool",
     progress: 20,
-    environment: "mainnet",
     owner: "Charlie",
-    createdAt: "2024-02-15",
-    categories: ["DAO", "Governance", "Voting"],
+    createdAt: new Date("2024-02-15"),
+    updatedAt: new Date("2024-02-20"),
+    categories: [mockCategories[2], mockCategories[8], mockCategories[9]],
   },
   {
-    id: "4",
+    id: 4,
     name: "GameFi Platform",
     description: "Play-to-earn gaming ecosystem with NFT rewards",
     progress: 60,
-    environment: "testnet",
     owner: "Diana",
-    createdAt: "2024-03-01",
-    categories: ["GameFi", "NFT", "P2E", "Gaming"],
+    createdAt: new Date("2024-03-01"),
+    updatedAt: new Date("2024-03-10"),
+    categories: [mockCategories[3], mockCategories[1], mockCategories[10], mockCategories[11]],
   },
 ];
 
 export const completedSteps: Step[] = [
   {
-    id: "1",
+    id: 1,
     title: "Initial setup",
     description: "Basic project setup",
-    status: "completed",
+    status: 2,
     completed: true,
   },
   {
-    id: "2",
+    id: 2,
     title: "Template selection",
     description: "ERC-20 template selection",
-    status: "completed",
+    status: 2,
     completed: true,
   },
   {
-    id: "3",
+    id: 3,
     title: "Smart contract setup",
     description: "Loyalty token parameters",
-    status: "completed",
+    status: 2,
     completed: true,
   },
 ];
 
 export const nextActions: Step[] = [
   {
-    id: "4",
+    id: 4,
     title: "Test on testnet",
     description: "Deploy and test the contract",
-    status: "in-progress",
+    status: 1,
     completed: false,
   },
   {
-    id: "5",
+    id: 5,
     title: "User interface",
     description: "Build the Web3 interface",
-    status: "todo",
+    status: 0,
     completed: false,
   },
 ];
 
 export const flowSteps: Step[] = [
   {
-    id: "1",
+    id: 1,
     title: "Requirements analysis",
     description: "Define Web3 objectives",
-    status: "completed",
+    status: 2,
   },
   {
-    id: "2",
+    id: 2,
     title: "Architecture choice",
     description: "Select blockchain and tools",
-    status: "completed",
+    status: 2,
   },
   {
-    id: "3",
+    id: 3,
     title: "Smart contracts",
     description: "Contract development",
-    status: "in-progress",
+    status: 1,
   },
   {
-    id: "4",
+    id: 4,
     title: "Tests & audit",
     description: "Security validation",
-    status: "todo",
+    status: 0,
   },
   {
-    id: "5",
+    id: 5,
     title: "Deployment",
     description: "Production release",
-    status: "todo",
+    status: 0,
   },
 ];
 
@@ -127,7 +143,7 @@ export const tasks: Task[] = [
     builder: "Alice Martin",
     createdAt: new Date("2025-01-10"),
     updatedAt: new Date("2025-01-10"),
-    stepId: "1", // Requirements analysis
+    stepId: 1, // Requirements analysis
     projectId: 1,
     priority: 1,
   },
@@ -139,7 +155,7 @@ export const tasks: Task[] = [
     builder: "",
     createdAt: new Date("2025-01-12"),
     updatedAt: new Date("2025-01-12"),
-    stepId: "1", // Requirements analysis
+    stepId: 1, // Requirements analysis
     projectId: 1,
     priority: 2,
   },
@@ -151,7 +167,7 @@ export const tasks: Task[] = [
     builder: "David Chen",
     createdAt: new Date("2025-01-15"),
     updatedAt: new Date("2025-01-15"),
-    stepId: "2", // Architecture choice
+    stepId: 2, // Architecture choice
     projectId: 1,
     priority: 2,
   },
@@ -163,7 +179,7 @@ export const tasks: Task[] = [
     builder: "Alice Martin",
     createdAt: new Date("2025-01-16"),
     updatedAt: new Date("2025-01-16"),
-    stepId: "3", // Smart contracts
+    stepId: 3, // Smart contracts
     projectId: 1,
     priority: 1,
   },
@@ -175,7 +191,7 @@ export const tasks: Task[] = [
     builder: "builder-1",
     createdAt: new Date("2025-01-17"),
     updatedAt: new Date("2025-01-17"),
-    stepId: "3", // Smart contracts
+    stepId: 3, // Smart contracts
     projectId: 1,
     priority: 1,
   },
@@ -187,7 +203,7 @@ export const tasks: Task[] = [
     builder: "",
     createdAt: new Date("2025-01-18"),
     updatedAt: new Date("2025-01-18"),
-    stepId: "3", // Smart contracts
+    stepId: 3, // Smart contracts
     projectId: 1,
     priority: 1,
   },
@@ -201,7 +217,7 @@ export const tasks: Task[] = [
     builder: "",
     createdAt: new Date("2025-01-14"),
     updatedAt: new Date("2025-01-14"),
-    stepId: "2", // Architecture choice
+    stepId: 2, // Architecture choice
     projectId: 2,
     priority: 1,
   },
@@ -213,7 +229,7 @@ export const tasks: Task[] = [
     builder: "builder-2",
     createdAt: new Date("2025-01-24"),
     updatedAt: new Date("2025-01-24"),
-    stepId: "3", // Smart contracts
+    stepId: 3, // Smart contracts
     projectId: 2,
     priority: 2,
   },
@@ -225,7 +241,7 @@ export const tasks: Task[] = [
     builder: "Emma Wilson",
     createdAt: new Date("2025-01-20"),
     updatedAt: new Date("2025-01-20"),
-    stepId: "4", // Tests & audit
+    stepId: 4, // Tests & audit
     projectId: 2,
     priority: 1,
   },
@@ -239,7 +255,7 @@ export const tasks: Task[] = [
     builder: "builder-1",
     createdAt: new Date("2025-01-19"),
     updatedAt: new Date("2025-01-19"),
-    stepId: "4", // Tests & audit
+    stepId: 4, // Tests & audit
     projectId: 3,
     priority: 1,
   },
@@ -251,7 +267,7 @@ export const tasks: Task[] = [
     builder: "Bob Dupont",
     createdAt: new Date("2025-01-22"),
     updatedAt: new Date("2025-01-22"),
-    stepId: "5", // Deployment
+    stepId: 5, // Deployment
     projectId: 3,
     priority: 1,
   },
@@ -263,7 +279,7 @@ export const tasks: Task[] = [
     builder: "builder-1",
     createdAt: new Date("2025-01-28"),
     updatedAt: new Date("2025-01-28"),
-    stepId: "3", // Smart contracts
+    stepId: 3, // Smart contracts
     projectId: 3,
     priority: 2,
   },
@@ -275,7 +291,7 @@ export const tasks: Task[] = [
     builder: "builder-3",
     createdAt: new Date("2025-02-07"),
     updatedAt: new Date("2025-02-07"),
-    stepId: "3", // Smart contracts
+    stepId: 3, // Smart contracts
     projectId: 3,
     priority: 1,
   },
@@ -289,7 +305,7 @@ export const tasks: Task[] = [
     builder: "builder-2",
     createdAt: new Date("2025-01-23"),
     updatedAt: new Date("2025-01-23"),
-    stepId: "1", // Requirements analysis
+    stepId: 1, // Requirements analysis
     projectId: 4,
     priority: 1,
   },
@@ -301,7 +317,7 @@ export const tasks: Task[] = [
     builder: "Sophia Kim",
     createdAt: new Date("2025-01-29"),
     updatedAt: new Date("2025-01-29"),
-    stepId: "2", // Architecture choice
+    stepId: 2, // Architecture choice
     projectId: 4,
     priority: 0,
   },
@@ -313,7 +329,7 @@ export const tasks: Task[] = [
     builder: "Liam Foster",
     createdAt: new Date("2025-02-03"),
     updatedAt: new Date("2025-02-03"),
-    stepId: "4", // Tests & audit
+    stepId: 4, // Tests & audit
     projectId: 4,
     priority: 1,
   },
@@ -327,7 +343,7 @@ export const tasks: Task[] = [
     builder: "",
     createdAt: new Date("2025-02-16"),
     updatedAt: new Date("2025-02-16"),
-    stepId: "3",
+    stepId: 3,
     projectId: 1,
     priority: 2,
   },
@@ -339,7 +355,7 @@ export const tasks: Task[] = [
     builder: "",
     createdAt: new Date("2025-02-17"),
     updatedAt: new Date("2025-02-17"),
-    stepId: "3",
+    stepId: 3,
     projectId: 1,
     priority: 0,
   },
@@ -351,7 +367,7 @@ export const tasks: Task[] = [
     builder: "builder-3",
     createdAt: new Date("2025-02-20"),
     updatedAt: new Date("2025-02-20"),
-    stepId: "3",
+    stepId: 3,
     projectId: 3,
     priority: 0,
   },

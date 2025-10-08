@@ -1,5 +1,5 @@
 import api from "./client";
-import { Task, ApiTask } from "../types";
+import { Task } from "../types";
 
 // Task API endpoints
 export interface CreateTaskRequest {
@@ -21,11 +21,11 @@ export interface UpdateTaskRequest {
 }
 
 // Transform API response to frontend format
-const transformTask = (apiTask: ApiTask): Task => ({
+const transformTask = (apiTask: Task): Task => ({
   ...apiTask,
-  id: apiTask.id.toString(),
-  projectId: apiTask.projectId.toString(),
-  status: apiTask.status.toString(),
+  id: apiTask.id,
+  projectId: apiTask.projectId,
+  status: apiTask.status,
   priority: apiTask.priority,
 });
 

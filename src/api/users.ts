@@ -1,5 +1,5 @@
 import api from "./client";
-import { User, ApiUser } from "../types";
+import { User } from "../types";
 
 // User API endpoints
 export interface CreateUserRequest {
@@ -14,11 +14,10 @@ export interface UpdateUserRequest {
 }
 
 // Transform API response to frontend format
-const transformUser = (apiUser: ApiUser): User => ({
-  id: apiUser.id.toString(),
-  address: apiUser.walletAddress,
+const transformUser = (apiUser: User): User => ({
+  address: apiUser.address,
   role: apiUser.role || "builder",
-  username: apiUser.name,
+  username: apiUser.username,
   email: apiUser.email,
   createdAt: new Date(apiUser.createdAt),
 });

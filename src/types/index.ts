@@ -1,21 +1,10 @@
 // ----------- User types ----------- //
 export interface User {
-  id: string;
   address: string;
   role: "owner" | "builder";
   username?: string;
   email?: string;
   createdAt: Date;
-}
-
-export interface ApiUser {
-  id: number;
-  walletAddress: string;
-  name: string;
-  email?: string;
-  role?: "owner" | "builder";
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface CreateUserRequest {
@@ -33,25 +22,14 @@ export interface UpdateUserRequest {
 
 // ----------- Project types ----------- //
 export interface Project {
-  id: string;
-  name: string;
-  description?: string;
-  progress?: number;
-  environment?: "testnet" | "mainnet";
-  owner?: string;
-  ownerAddress?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  categories?: string[];
-}
-
-export interface ApiProject {
   id: number;
   name: string;
+  progress: number;
   description?: string;
-  ownerAddress: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
+  owner: string;
+  categories?: Category[];
 }
 
 export interface CreateProjectRequest {
@@ -67,12 +45,11 @@ export interface UpdateProjectRequest {
 }
 
 // ---------- Task types ---------- //
-export type TaskPriority = 0 | 1 | 2 | 3;
+export type TaskPriority = 0 | 1 | 2;
 export const TaskPriorityLabel: Record<TaskPriority, string> = {
   0: "low",
   1: "medium",
   2: "high",
-  3: "urgent",
 };
 
 export type TaskStatus = 0 | 1 | 2 | 3;
@@ -84,9 +61,9 @@ export const TaskStatusLabel: Record<TaskStatus, string> = {
 };
 
 export interface Task {
-  id: string;
-  projectId: string;
-  stepId: string;
+  id: number;
+  projectId: number;
+  stepId?: number;
   title: string;
   description?: string;
   link?: string;
@@ -94,26 +71,13 @@ export interface Task {
   createdAt: Date;
   updatedAt: Date;
   effort?: string;
-  priority: TaskPriority;
-  status: string;
-}
-
-export interface ApiTask {
-  id: number;
-  projectId: number;
-  title: string;
-  description?: string;
-  priority: 0 | 1 | 2 | 3;
-  status: 0 | 1 | 2 | 3;
-  builderAddress?: string;
-  stepId?: string;
-  createdAt: string;
-  updatedAt: string;
+  priority?: TaskPriority;
+  status: TaskStatus;
 }
 
 export interface CreateTaskRequest {
   projectId: number;
-  stepId?: string;
+  stepId?: number;
   title: string;
   description?: string;
   link?: string;
@@ -124,7 +88,7 @@ export interface CreateTaskRequest {
 }
 
 export interface UpdateTaskRequest {
-  stepId?: string;
+  stepId?: number;
   title?: string;
   description?: string;
   link?: string;
@@ -140,33 +104,15 @@ export interface Category {
   name: string;
 }
 
-export interface ApiCategory {
-  id: number;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 // ----------- Step types ----------- //
 export interface Step {
-  id: string;
+  id: number;
   title: string;
   description: string;
-  status: "todo" | "in-progress" | "completed";
+  status: 0 | 1 | 2; // 0=todo, 1=in-progress, 2=done
   completed?: boolean;
   projectId?: string;
   order?: number;
-}
-
-export interface ApiStep {
-  id: number;
-  title: string;
-  description?: string;
-  projectId: number;
-  order: number;
-  status: 0 | 1 | 2; // 0=todo, 1=in-progress, 2=completed
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface CreateStepRequest {

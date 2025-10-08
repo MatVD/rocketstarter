@@ -1,5 +1,5 @@
 import api from "./client";
-import { Project, ApiProject } from "../types";
+import { Project } from "../types";
 
 // Project API endpoints
 export interface CreateProjectRequest {
@@ -14,9 +14,9 @@ export interface UpdateProjectRequest {
 }
 
 // Transform API response to frontend format
-const transformProject = (apiProject: ApiProject): Project => ({
+const transformProject = (apiProject: Project): Project => ({
   ...apiProject,
-  id: apiProject.id.toString(),
+  id: apiProject.id,
 });
 
 // Get all projects

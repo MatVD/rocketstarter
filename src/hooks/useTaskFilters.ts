@@ -5,7 +5,7 @@ import { TaskFilters } from "../components/UI/TaskFilterBar";
  * Custom hook to persist task filters in localStorage
  * This provides a better user experience by remembering filter preferences
  */
-export function useTaskFilters(projectId: string) {
+export function useTaskFilters(projectId: number) {
   const storageKey = `taskFilters_${projectId}`;
 
   const getInitialFilters = (): TaskFilters => {

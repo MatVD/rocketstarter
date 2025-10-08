@@ -28,13 +28,13 @@ export default function BuilderProjectView({
   const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
   const [filters, setFilters] = useTaskFilters(project.id);
   const [toast, setToast] = useState<{
-    message: string;
+    message: string; 
     type: "success" | "error" | "info";
   } | null>(null);
 
   // Filter tasks for this specific project
   const projectTasks = tasks.filter(
-    (task) => task.projectId === parseInt(project.id)
+    (task) => task.projectId === project.id
   );
 
   // Apply filters to project tasks
@@ -110,18 +110,6 @@ export default function BuilderProjectView({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              <span className="font-medium">Environment:</span>{" "}
-              <span
-                className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  project.environment === "mainnet"
-                    ? "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200"
-                    : "bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200"
-                }`}
-              >
-                {project.environment}
-              </span>
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
               <span className="font-medium">Progress:</span> {project.progress}%
             </div>
           </div>
@@ -132,7 +120,7 @@ export default function BuilderProjectView({
                   key={index}
                   className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full"
                 >
-                  {category}
+                  {category.name}
                 </span>
               ))}
             </div>

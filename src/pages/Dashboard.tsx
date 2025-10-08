@@ -9,11 +9,11 @@ import {
 } from "../data/mockData";
 
 interface DashboardProps {
-  onNavigateToStep: (stepId: string) => void;
+  onNavigateToStep: (stepId: number) => void;
 }
 
 export default function Dashboard({ onNavigateToStep }: DashboardProps) {
-  const handleStepDetails = (stepId: string) => {
+  const handleStepDetails = (stepId: number) => {
     onNavigateToStep(stepId);
   };
 

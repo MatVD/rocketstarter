@@ -14,8 +14,8 @@ import {
 } from "../components/Build/KanbanBoard/kanbanUtils";
 
 interface BuildProps {
-  activeStepId?: string | null;
-  onStepChange?: (stepId: string) => void;
+  activeStepId?: number | null;
+  onStepChange?: (stepId: number) => void;
   onSettingsClick?: () => void;
   project?: Project;
   onBackToProjects?: () => void;
