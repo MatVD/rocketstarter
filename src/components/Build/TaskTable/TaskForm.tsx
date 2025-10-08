@@ -8,7 +8,9 @@ import {
 import { COLORS } from "../../../constants/colors";
 
 interface TaskFormProps {
-  onSubmit: (task: Omit<Task, "id" | "stepId">) => void;
+  onSubmit: (
+    task: Omit<Task, "id" | "stepId" | "createdAt" | "updatedAt" | "projectId">
+  ) => void;
   onCancel: () => void;
 }
 
@@ -16,7 +18,7 @@ export default function TaskForm({ onSubmit, onCancel }: TaskFormProps) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    status: "todo" as const,
+    status: 0 as const, // 0 = todo, 1 = inprogress, 2 = inreview, 3 = done
     assignee: "",
     createdAt: new Date().toISOString().split("T")[0],
   });
@@ -64,7 +66,7 @@ export default function TaskForm({ onSubmit, onCancel }: TaskFormProps) {
       setFormData({
         title: "",
         description: "",
-        status: "todo",
+        status: 0, // Reset to todo
         assignee: "",
         createdAt: new Date().toISOString().split("T")[0],
       });

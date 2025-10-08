@@ -27,7 +27,12 @@ export default function TaskTable({
 }: TaskTableProps) {
   const [showAddForm, setShowAddForm] = useState(false);
 
-  const handleAddTask = (newTask: Omit<Task, "id" | "stepId">) => {
+  const handleAddTask = (
+    newTask: Omit<
+      Task,
+      "id" | "stepId" | "createdAt" | "updatedAt" | "projectId"
+    >
+  ) => {
     onAddTask(newTask);
     setShowAddForm(false);
   };
