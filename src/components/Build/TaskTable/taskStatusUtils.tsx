@@ -50,33 +50,48 @@ export const getStatusBadge = (status: Task["status"], columns: Column[]) => {
     typeof status === "number" ? numberToStatus(status) : status;
 
   // Try to find the column for this status
-  const column = columns.find((col) => col.id === statusString);
+  const column = columns.find((col) => col.id.toString() === statusString);
 
-  // Default styles for known statuses - using soft colors consistent with design
-  const defaultStyles = {
-    todo: "bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800",
-    inprogress:
-      "bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800",
-    inreview:
-      "bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800",
-    done: "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800",
-  } as const;
+  // Default styles based on column ID - using soft colors consistent with design
+  const getDefaultStylesByColumnId = (id: string) => {
+    switch (id) {
+      case "0":
+        return {
+          style:
+            "bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800",
+          label: column?.title || "To Do",
+        };
+      case "1":
+        return {
+          style:
+            "bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800",
+          label: column?.title || "In Progress",
+        };
+      case "2":
+        return {
+          style:
+            "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800",
+          label: column?.title || "In Review",
+        };
+      case "3":
+        return {
+          style:
+            "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800",
+          label: column?.title || "Done",
+        };
+      default:
+        return null;
+    }
+  };
 
-  const defaultLabels = {
-    todo: "To do",
-    inprogress: "In progress",
-    inreview: "In review",
-    done: "Done",
-  } as const;
-
-  // If it's a default status, use predefined styles
-  if (statusString in defaultStyles) {
-    const statusKey = statusString as keyof typeof defaultStyles;
+  // Check if it's a default column (0-3)
+  const defaultStyle = getDefaultStylesByColumnId(statusString);
+  if (defaultStyle) {
     return (
       <span
-        className={`px-2 py-1 rounded-full text-xs font-medium ${defaultStyles[statusKey]}`}
+        className={`px-2 py-1 rounded-full text-xs font-medium ${defaultStyle.style}`}
       >
-        {defaultLabels[statusKey]}
+        {defaultStyle.label}
       </span>
     );
   }
@@ -97,8 +112,8 @@ export const getStatusBadge = (status: Task["status"], columns: Column[]) => {
 
   // Fallback for unknown custom columns
   const fallbackStyle =
-    "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300";
-  const label = statusString;
+    "bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800";
+  const label = column?.title || statusString;
 
   return (
     <span
