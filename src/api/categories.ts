@@ -1,16 +1,10 @@
 import api from "./client";
-import { Category, ApiCategory } from "../types";
-
-// Transform API response to frontend format
-const transformCategory = (apiCategory: ApiCategory): Category => ({
-  id: apiCategory.id,
-  name: apiCategory.name,
-});
+import { Category } from "../types";
 
 // Get all categories
 export const getCategories = async (): Promise<Category[]> => {
   const response = await api.get("/categories");
-  return response.data.map(transformCategory);
+  return response.data;
 };
 
 // Get categories for a specific task
@@ -18,7 +12,7 @@ export const getTaskCategories = async (
   taskId: string
 ): Promise<Category[]> => {
   const response = await api.get(`/tasks/${taskId}/categories`);
-  return response.data.map(transformCategory);
+  return response.data;
 };
 
 // Add a category to a task

@@ -20,37 +20,28 @@ export interface UpdateTaskRequest {
   stepId?: string;
 }
 
-// Transform API response to frontend format
-const transformTask = (apiTask: Task): Task => ({
-  ...apiTask,
-  id: apiTask.id,
-  projectId: apiTask.projectId,
-  status: apiTask.status,
-  priority: apiTask.priority,
-});
-
 // Get all tasks
 export const getTasks = async (): Promise<Task[]> => {
   const response = await api.get("/tasks");
-  return response.data.map(transformTask);
+  return response.data;
 };
 
 // Get tasks by project ID
 export const getTasksByProject = async (projectId: string): Promise<Task[]> => {
   const response = await api.get(`/tasks?projectId=${projectId}`);
-  return response.data.map(transformTask);
+  return response.data;
 };
 
 // Get task by ID
 export const getTask = async (id: string): Promise<Task> => {
   const response = await api.get(`/tasks/${id}`);
-  return transformTask(response.data);
+  return response.data;
 };
 
 // Create new task
 export const createTask = async (data: CreateTaskRequest): Promise<Task> => {
   const response = await api.post("/tasks", data);
-  return transformTask(response.data);
+  return response.data;
 };
 
 // Update task (with workflow rules)
@@ -59,7 +50,7 @@ export const updateTask = async (
   data: UpdateTaskRequest
 ): Promise<Task> => {
   const response = await api.put(`/tasks/${id}`, data);
-  return transformTask(response.data);
+  return response.data;
 };
 
 // Delete task
