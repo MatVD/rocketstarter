@@ -4,7 +4,7 @@ import Card from "../components/UI/Card";
 import ProgressBar from "../components/UI/ProgressBar";
 import FlowStep from "../components/Flow/FlowStep";
 import {
-  mockProject,
+  mockProjects,
   flowSteps,
 } from "../data/mockData";
 
@@ -56,13 +56,13 @@ export default function Dashboard({ onNavigateToStep }: DashboardProps) {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {mockProject.progress}%
+                  {mockProjects[0].progress}%
                 </span>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
                   3/5 steps
                 </span>
               </div>
-              <ProgressBar progress={mockProject.progress} />
+              <ProgressBar progress={mockProjects[0].progress} />
             </div>
           </Card>
         </motion.div>

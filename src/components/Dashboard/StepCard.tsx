@@ -20,8 +20,7 @@ export default function StepCard({
         <div className="flex items-start space-x-3 flex-1">
           <div
             className={`p-2 rounded-lg ${getStatusColor(
-              step.status,
-              "border"
+              step.status
             )}`}
           >
             {getStatusIcon(step.status)}

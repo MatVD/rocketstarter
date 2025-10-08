@@ -8,14 +8,14 @@ import Build from "./pages/Build";
 import ProjectList from "./pages/ProjectList";
 import BuilderProjectView from "./pages/BuilderProjectView";
 import Toast from "./components/UI/Toast";
-import { mockProjects, mockUser } from "./data/mockData";
+import { mockProjects, mockUsers } from "./data/mockData";
 import { User, Project } from "./types";
 
 function App() {
   const [activeTab, setActiveTab] = useState("projects");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeStepId, setActiveStepId] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<User>(mockUser);
+  const [currentUser, setCurrentUser] = useState<User>(mockUsers[0]); // Default to Alice Admin
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [projects] = useState<Project[]>(mockProjects);
   const [showToast, setShowToast] = useState(false);

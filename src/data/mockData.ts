@@ -1,15 +1,5 @@
-import { Step, Template, Project, Task, User } from "../types";
+import { Step, Project, Task, User } from "../types";
 
-export const mockProject: Project = {
-  id: "1",
-  name: "My Web3 Project",
-  description: "A comprehensive Web3 project with DeFi capabilities",
-  progress: 75,
-  environment: "testnet",
-  owner: "Alice",
-  createdAt: "2024-01-15",
-  categories: ["DeFi", "ERC-20", "Staking"],
-};
 
 export const mockProjects: Project[] = [
   {
@@ -53,14 +43,6 @@ export const mockProjects: Project[] = [
     categories: ["GameFi", "NFT", "P2E", "Gaming"],
   },
 ];
-
-export const mockUser: User = {
-  id: "builder-1",
-  address: "0x9876543210987654321098765432109876543210",
-  role: "builder",
-  name: "Builder User",
-  isConnected: false,
-};
 
 export const completedSteps: Step[] = [
   {
@@ -133,144 +115,6 @@ export const flowSteps: Step[] = [
     title: "Deployment",
     description: "Production release",
     status: "todo",
-  },
-];
-
-export const templates: Template[] = [
-  {
-    id: "1",
-    title: "DeFi Protocol Launch",
-    description:
-      "Complete strategy for launching a decentralized finance protocol with smart contracts, frontend, and testing",
-    icon: "coins",
-    difficulty: "Advanced",
-    steps: [
-      {
-        id: "defi-1",
-        title: "Smart Contract Development",
-        description: "Develop and audit smart contracts for the DeFi protocol",
-        status: "todo",
-        completed: false,
-      },
-      {
-        id: "defi-2",
-        title: "Frontend Integration",
-        description: "Build user interface for protocol interaction",
-        status: "todo",
-        completed: false,
-      },
-      {
-        id: "defi-3",
-        title: "Security Audit",
-        description: "Conduct comprehensive security audit",
-        status: "todo",
-        completed: false,
-      },
-      {
-        id: "defi-4",
-        title: "Testnet Deployment",
-        description: "Deploy and test on testnet",
-        status: "todo",
-        completed: false,
-      },
-      {
-        id: "defi-5",
-        title: "Mainnet Launch",
-        description: "Deploy to mainnet and monitor",
-        status: "todo",
-        completed: false,
-      },
-    ],
-  },
-  {
-    id: "2",
-    title: "NFT Marketplace",
-    description:
-      "Strategy for building a complete NFT marketplace with minting, trading, and royalties",
-    icon: "image",
-    difficulty: "Intermediate",
-    steps: [
-      {
-        id: "nft-1",
-        title: "NFT Smart Contract",
-        description: "Create ERC721 contract with royalties",
-        status: "todo",
-        completed: false,
-      },
-      {
-        id: "nft-2",
-        title: "Marketplace Contract",
-        description: "Build marketplace smart contract for trading",
-        status: "todo",
-        completed: false,
-      },
-      {
-        id: "nft-3",
-        title: "Frontend Development",
-        description: "Create marketplace interface",
-        status: "todo",
-        completed: false,
-      },
-      {
-        id: "nft-4",
-        title: "IPFS Integration",
-        description: "Set up metadata storage on IPFS",
-        status: "todo",
-        completed: false,
-      },
-      {
-        id: "nft-5",
-        title: "Testing & Launch",
-        description: "Test all features and deploy",
-        status: "todo",
-        completed: false,
-      },
-    ],
-  },
-  {
-    id: "3",
-    title: "DAO Governance Platform",
-    description:
-      "Complete strategy for launching a DAO with voting, treasury management, and member onboarding",
-    icon: "users",
-    difficulty: "Advanced",
-    steps: [
-      {
-        id: "dao-1",
-        title: "Governance Token",
-        description: "Deploy ERC20 governance token",
-        status: "todo",
-        completed: false,
-      },
-      {
-        id: "dao-2",
-        title: "Voting Mechanism",
-        description: "Implement voting smart contracts",
-        status: "todo",
-        completed: false,
-      },
-      {
-        id: "dao-3",
-        title: "Treasury Setup",
-        description: "Create multi-sig treasury",
-        status: "todo",
-        completed: false,
-      },
-      {
-        id: "dao-4",
-        title: "Member Portal",
-        description: "Build member dashboard and voting interface",
-        status: "todo",
-        completed: false,
-      },
-      {
-        id: "dao-5",
-        title: "Community Launch",
-        description: "Onboard members and start governance",
-        status: "todo",
-        completed: false,
-      },
-    ],
   },
 ];
 

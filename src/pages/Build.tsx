@@ -6,7 +6,7 @@ import KanbanBoard from "../components/Build/KanbanBoard";
 import StepNavigation from "../components/Build/StepNavigation";
 import StepDetails from "../components/Build/StepDetails";
 import Toast from "../components/UI/Toast";
-import { tasks as initialTasks, flowSteps, mockUser } from "../data/mockData";
+import { tasks as initialTasks, flowSteps, mockUsers } from "../data/mockData";
 import { Task, Project, User } from "../types";
 import {
   DEFAULT_COLUMNS,
@@ -26,9 +26,7 @@ export default function Build({
   activeStepId,
   onStepChange,
   onSettingsClick,
-  project,
-  onBackToProjects,
-  user = mockUser,
+  user = mockUsers[1], // Default to Bob Builder
 }: BuildProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
@@ -72,10 +70,6 @@ export default function Build({
         task.id === taskId ? { ...task, status: newStatus } : task
       )
     );
-  };
-
-  const handleTaskUpdate = (taskId: string, newStatus: string) => {
-    handleMoveTask(taskId, newStatus as Task["status"]);
   };
 
   // Builder-specific task assignment logic
