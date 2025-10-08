@@ -1,20 +1,27 @@
-export interface Step {
-  id: string;
-  title: string;
-  description: string;
-  status: "todo" | "in-progress" | "completed";
-  completed?: boolean;
+// ----------- User types ----------- //
+export interface User {
+  address: string;
+  role: "owner" | "builder";
+  username?: string;
+  email?: string;
+  createdAt: Date;
 }
 
-export interface Template {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  difficulty: "Beginner" | "Intermediate" | "Advanced";
-  steps?: Step[]; // Optional pre-built steps for strategy templates
+export interface CreateUserRequest {
+  address: string;
+  role: 'Owner' | 'Builder';
+  username?: string;
+  email?: string;
 }
 
+export interface UpdateUserRequest {
+  role?: 'Owner' | 'Builder';
+  username?: string;
+  email?: string;
+}
+
+
+// ----------- Project types ----------- //
 export interface Project {
   id: string;
   name: string;
@@ -28,31 +35,84 @@ export interface Project {
   categories?: string[];
 }
 
-export interface User {
-  id: string;
-  address?: string;
-  walletAddress?: string;
-  role: "owner" | "builder";
-  name?: string;
-  email?: string;
-  isConnected: boolean;
-  createdAt?: string;
-  updatedAt?: string;
+export interface CreateProjectRequest {
+  name: string;
+  description?: string;
+  owner: string;
 }
 
+export interface UpdateProjectRequest {
+  name?: string;
+  progress?: number;
+  description?: string;
+}
+
+// ---------- Task types ---------- //
+export type TaskPriority = 0 | 1 | 2;
+export const TaskPriorityLabel: Record<TaskPriority, string> = {
+  0: 'low',
+  1: 'medium',
+  2: 'high',
+};
+
+export type TaskStatus = 0 | 1 | 2 | 3;
+export const TaskStatusLabel: Record<TaskStatus, string> = {
+  0: 'todo',
+  1: 'inprogress',
+  2: 'inreview',
+  3: 'done',
+};
+
 export interface Task {
-  id: string;
+  id: number;
+  projectId: number;
+  stepId?: number;
   title: string;
   description?: string;
-  status: string; // Accept any column id or backend status numbers
-  assignee?: string;
-  builderAddress?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  stepId: string; // Associate task with a specific step
-  projectId: string; // Associate task with a specific project
-  priority?: 0 | 1 | 2 | 3; // Task priority level (string or number)
-  categories?: string[]; // Task categories
+  link?: string;
+  builder?: string; // User address
+  createdAt: Date;
+  updatedAt: Date;
+  effort?: string;
+  priority?: TaskPriority;
+  status: TaskStatus;
+}
+
+export interface CreateTaskRequest {
+  projectId: number;
+  stepId?: number;
+  title: string;
+  description?: string;
+  link?: string;
+  builder?: string;
+  effort?: string;
+  priority?: TaskPriority;
+  status?: TaskStatus;
+}
+
+export interface UpdateTaskRequest {
+  stepId?: number;
+  title?: string;
+  description?: string;
+  link?: string;
+  builder?: string;
+  effort?: string;
+  priority?: TaskPriority;
+  status?: TaskStatus;
+}
+
+// ----------- Category types ----------- //
+export interface Category {
+  id: number;
+  name: string;
+}
+
+export interface Step {
+  id: string;
+  title: string;
+  description: string;
+  status: "todo" | "in-progress" | "completed";
+  completed?: boolean;
 }
 
 export interface Column {
@@ -60,21 +120,4 @@ export interface Column {
   title: string;
   color: string;
   headerColor: string;
-}
-
-// Backend-specific types for API responses
-export interface ApiProject extends Omit<Project, "id"> {
-  id: number;
-}
-
-export interface ApiTask
-  extends Omit<Task, "id" | "projectId" | "status" | "priority"> {
-  id: number;
-  projectId: number;
-  status: 0 | 1 | 2 | 3; // 0=todo, 1=inprogress, 2=inreview, 3=done
-  priority: 0 | 1 | 2 | 3; // 0=low, 1=medium, 2=high, 3=urgent
-}
-
-export interface ApiUser extends Omit<User, "id"> {
-  id: number;
 }

@@ -1,4 +1,4 @@
-import { CheckCircle, Clock, Circle, Check } from "lucide-react";
+import { CheckCircle, Clock, Circle, Check, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Step } from "../types";
 import { ReactElement } from "react";
 
@@ -6,7 +6,7 @@ import { ReactElement } from "react";
  * Centralized status utilities for consistent status handling across components
  */
 
-export const getStatusIcon = (
+export const getStatusStepIcon = (
   status: Step["status"],
   variant: "default" | "flow" = "default"
 ): ReactElement => {
@@ -57,6 +57,21 @@ export const getStatusLabel = (status: Step["status"]): string => {
   }
 };
 
+export const getStatusIcon = (status: number) => {
+    switch (status) {
+      case 0:
+        return <Circle className="w-4 h-4" />;
+      case 1:
+        return <AlertCircle className="w-4 h-4" />;
+      case 2:
+        return <Clock className="w-4 h-4" />;
+      case 3:
+        return <CheckCircle2 className="w-4 h-4" />;
+      default:
+        return <Circle className="w-4 h-4" />;
+    }
+  };
+
 export const getStatusStyles = (status: Step["status"]): string => {
   switch (status) {
     case "completed":
@@ -68,15 +83,15 @@ export const getStatusStyles = (status: Step["status"]): string => {
   }
 };
 
-export const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "todo":
+export const getStatusColor = (status: number) => {
+    switch (status) {
+      case 0:
         return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
-      case "in-progress":
+      case 1:
         return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
-      case "review":
+      case 2:
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
-      case "done":
+      case 3:
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
