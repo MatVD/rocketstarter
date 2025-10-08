@@ -6,8 +6,10 @@ import KanbanBoard from "../components/Build/KanbanBoard";
 import StepNavigation from "../components/Build/StepNavigation";
 import StepDetails from "../components/Build/StepDetails";
 import Toast from "../components/UI/Toast";
-import { tasks as initialTasks, flowSteps, mockUsers } from "../data/mockData";
+import DataBoundary from "../components/UI/DataBoundary";
+import { flowSteps } from "../data/mockData";
 import { Task, Project, User } from "../types";
+import { useTasks, useTaskMutations, useTaskWorkflow } from "../hooks/useTasks";
 import {
   DEFAULT_COLUMNS,
   Column,
@@ -24,9 +26,13 @@ interface BuildProps {
 export default function Build({
   activeStepId,
   onStepChange,
-  user = mockUsers[1], // Default to Bob Builder
+  project,
+  user,
 }: BuildProps) {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const projectId = project?.id?.toString();
+  const { tasks, loading, error, refetch } = useTasks(projectId);
+  const { create, update, remove } = useTaskMutations();
+  const { assignToSelf } = useTaskWorkflow();
   const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
   const [toast, setToast] = useState<{
     message: string;
@@ -43,56 +49,86 @@ export default function Build({
     (task) => task.stepId === currentStep.id
   );
 
-  const handleAddTask = (
+  const handleAddTask = async (
     newTask: Omit<
       Task,
       "id" | "stepId" | "createdAt" | "updatedAt" | "projectId"
     >
   ) => {
-    const now = new Date();
-    const task: Task = {
+    if (!projectId) return;
+
+    const result = await create({
       ...newTask,
-      id: Date.now(),
-      projectId: 1, // Default project
-      stepId: currentStep.id, // Associate new task with current step
-      createdAt: now,
-      updatedAt: now,
-    };
-    setTasks([...tasks, task]);
+      projectId: parseInt(projectId),
+      stepId: currentStep.id.toString(),
+    });
+
+    if (result) {
+      refetch();
+      setToast({
+        message: "Task created successfully",
+        type: "success",
+      });
+    } else {
+      setToast({
+        message: "Failed to create task",
+        type: "error",
+      });
+    }
   };
 
   const handleEditTask = (taskId: number) => {
     alert(`Edit task ${taskId} - Feature to implement`);
   };
 
-  const handleDeleteTask = (taskId: number) => {
+  const handleDeleteTask = async (taskId: number) => {
     if (confirm("Are you sure you want to delete this task?")) {
-      setTasks(tasks.filter((task) => task.id !== taskId));
+      const success = await remove(taskId.toString());
+      if (success) {
+        refetch();
+        setToast({
+          message: "Task deleted successfully",
+          type: "success",
+        });
+      } else {
+        setToast({
+          message: "Failed to delete task",
+          type: "error",
+        });
+      }
     }
   };
 
-  const handleMoveTask = (taskId: number, newStatus: Task["status"]) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, status: newStatus } : task
-      )
-    );
+  const handleMoveTask = async (taskId: number, newStatus: Task["status"]) => {
+    const result = await update(taskId.toString(), { status: newStatus });
+    if (result) {
+      refetch();
+    } else {
+      setToast({
+        message: "Failed to update task",
+        type: "error",
+      });
+    }
   };
 
   // Builder-specific task assignment logic
-  const handleTaskAssignment = (taskId: number) => {
-    if (user.role === "builder") {
+  const handleTaskAssignment = async (taskId: number) => {
+    if (user && user.role === "builder" && user.address) {
       const task = tasks.find((t) => t.id === taskId);
       if (task) {
-        setTasks(
-          tasks.map((t) =>
-            t.id === taskId ? { ...t, builder: user.address } : t
-          )
-        );
-        setToast({
-          message: `Successfully took task: ${task.title}`,
-          type: "success",
-        });
+        const result = await assignToSelf(taskId.toString(), user.address);
+        if (result) {
+          refetch();
+          setToast({
+            message: `Successfully took task: ${task.title}`,
+            type: "success",
+          });
+        } else {
+          setToast({
+            message: "Failed to assign task",
+            type: "error",
+          });
+        }
         // Auto-hide toast after 3 seconds
         setTimeout(() => setToast(null), 3000);
       }
@@ -100,98 +136,100 @@ export default function Build({
   };
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="w-full flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
-              <Hammer className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-            </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                Build
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                {user.role === "builder"
-                  ? "Choose and manage your tasks"
-                  : "Manage tasks for the current step"}
-              </p>
+    <DataBoundary isLoading={loading} error={error} dataType="tasks">
+      <div className="p-4 md:p-6 space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="w-full flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
+                <Hammer className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                  Build
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {user && user.role === "builder"
+                    ? "Choose and manage your tasks"
+                    : "Manage tasks for the current step"}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
 
-      {/* Step Navigation */}
-      {onStepChange && (
+        {/* Step Navigation */}
+        {onStepChange && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <StepNavigation
+              currentStep={currentStep}
+              allSteps={flowSteps}
+              onStepChange={onStepChange}
+            />
+          </motion.div>
+        )}
+
+        {/* Current Step Context */}
+        {currentStep && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <StepDetails step={currentStep} tasks={tasks} />
+          </motion.div>
+        )}
+
+        {/* Upper section - Task management */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <StepNavigation
-            currentStep={currentStep}
-            allSteps={flowSteps}
-            onStepChange={onStepChange}
+          <TaskTable
+            tasks={currentStepTasks}
+            columns={columns}
+            onAddTask={handleAddTask}
+            onEditTask={handleEditTask}
+            onDeleteTask={handleDeleteTask}
+            user={user}
           />
         </motion.div>
-      )}
 
-      {/* Current Step Context */}
-      {currentStep && (
+        {/* Lower section - Kanban board */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <StepDetails step={currentStep} tasks={tasks} />
+          <KanbanBoard
+            tasks={currentStepTasks}
+            columns={columns}
+            setColumns={setColumns}
+            onMoveTask={handleMoveTask}
+            user={user}
+            onTaskAssignment={handleTaskAssignment}
+          />
         </motion.div>
-      )}
 
-      {/* Upper section - Task management */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-      >
-        <TaskTable
-          tasks={currentStepTasks}
-          columns={columns}
-          onAddTask={handleAddTask}
-          onEditTask={handleEditTask}
-          onDeleteTask={handleDeleteTask}
-          user={user}
-        />
-      </motion.div>
-
-      {/* Lower section - Kanban board */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
-      >
-        <KanbanBoard
-          tasks={currentStepTasks}
-          columns={columns}
-          setColumns={setColumns}
-          onMoveTask={handleMoveTask}
-          user={user}
-          onTaskAssignment={handleTaskAssignment}
-        />
-      </motion.div>
-
-      {/* Toast notification */}
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          isVisible={true}
-          onClose={() => setToast(null)}
-        />
-      )}
-    </div>
+        {/* Toast notification */}
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            isVisible={true}
+            onClose={() => setToast(null)}
+          />
+        )}
+      </div>
+    </DataBoundary>
   );
 }

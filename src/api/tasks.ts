@@ -23,25 +23,25 @@ export interface UpdateTaskRequest {
 // Get all tasks
 export const getTasks = async (): Promise<Task[]> => {
   const response = await api.get("/tasks");
-  return response.data;
+  return response.data.data || response.data;
 };
 
 // Get tasks by project ID
 export const getTasksByProject = async (projectId: string): Promise<Task[]> => {
   const response = await api.get(`/tasks?projectId=${projectId}`);
-  return response.data;
+  return response.data.data || response.data;
 };
 
 // Get task by ID
 export const getTask = async (id: string): Promise<Task> => {
   const response = await api.get(`/tasks/${id}`);
-  return response.data;
+  return response.data.data || response.data;
 };
 
 // Create new task
 export const createTask = async (data: CreateTaskRequest): Promise<Task> => {
   const response = await api.post("/tasks", data);
-  return response.data;
+  return response.data.data || response.data;
 };
 
 // Update task (with workflow rules)
@@ -50,7 +50,7 @@ export const updateTask = async (
   data: UpdateTaskRequest
 ): Promise<Task> => {
   const response = await api.put(`/tasks/${id}`, data);
-  return response.data;
+  return response.data.data || response.data;
 };
 
 // Delete task

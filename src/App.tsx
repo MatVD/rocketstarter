@@ -8,8 +8,9 @@ import Build from "./pages/Build";
 import ProjectList from "./pages/ProjectList";
 import BuilderProjectView from "./pages/BuilderProjectView";
 import Toast from "./components/UI/Toast";
-import { mockProjects, mockUsers } from "./data/mockData";
+import { mockUsers } from "./data/mockData";
 import { User, Project } from "./types";
+import { useProjects } from "./hooks/useProjects";
 
 function App() {
   const [activeTab, setActiveTab] = useState("projects");
@@ -17,7 +18,7 @@ function App() {
   const [activeStepId, setActiveStepId] = useState<number | null>(null);
   const [currentUser, setCurrentUser] = useState<User>(mockUsers[0]); // Default to Alice Admin
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [projects] = useState<Project[]>(mockProjects);
+  const { projects, loading } = useProjects();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
@@ -81,6 +82,9 @@ function App() {
     setActiveStepId(stepId);
     setActiveTab("build");
   };
+
+  console.log(projects, loading);
+  
 
   const renderContent = () => {
     switch (activeTab) {
