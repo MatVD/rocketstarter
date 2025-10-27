@@ -139,6 +139,7 @@ export interface UpdateTaskRequest {
 // ----------- Category types ----------- //
 export interface Category {
   id: number;
+  type: string;
   name: string;
 }
 
@@ -147,13 +148,6 @@ export interface CreateStepRequest {
   description?: string;
   projectId: number;
   order: number;
-  status?: 0 | 1 | 2;
-}
-
-export interface UpdateStepRequest {
-  title?: string;
-  description?: string;
-  order?: number;
   status?: 0 | 1 | 2;
 }
 
