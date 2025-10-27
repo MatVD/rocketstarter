@@ -110,18 +110,6 @@ export default function BuilderProjectView({
                 {project.progress}%
               </div>
             </div>
-            {project.categories && (
-              <div className="flex flex-wrap gap-2">
-                {project.categories.map((category, index) => (
-                  <span
-                    key={index}
-                    className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full"
-                  >
-                    {category.name}
-                  </span>
-                ))}
-              </div>
-            )}
           </div>
         </motion.div>
 

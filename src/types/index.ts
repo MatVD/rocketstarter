@@ -24,24 +24,45 @@ export interface UpdateUserRequest {
 export interface Project {
   id: number;
   name: string;
-  progress: number;
   description?: string;
+  owner: string;
+  progress: number;
+  projectStatus: 0 | 1 | 2 | 3; // 0=unspecified, 1=pending, 2=approved, 3=rejected
+  providerId?: string;
   createdAt: Date;
   updatedAt: Date;
-  owner: string;
-  categories?: Category[];
+  bank: number;
+  whitelist: string[];
 }
 
 export interface CreateProjectRequest {
   name: string;
   description?: string;
   owner: string;
+  bank: number;
+  whitelist: string[];
+  providerId?: string;
+  projectStatus?: 0 | 1 | 2 | 3;
 }
 
 export interface UpdateProjectRequest {
   name?: string;
   progress?: number;
   description?: string;
+  bank?: number;
+  whitelist?: string[];
+  providerId?: string;
+  projectStatus?: 0 | 1 | 2 | 3;
+}
+
+export interface Step {
+  id: number;
+  projectId?: number;
+  title: string;
+  description: string;
+  status: 0 | 1 | 2; // 0=todo, 1=in-progress, 2=done
+  completed?: boolean;
+  order?: number;
 }
 
 // ---------- Task types ---------- //
@@ -102,17 +123,6 @@ export interface UpdateTaskRequest {
 export interface Category {
   id: number;
   name: string;
-}
-
-// ----------- Step types ----------- //
-export interface Step {
-  id: number;
-  title: string;
-  description: string;
-  status: 0 | 1 | 2; // 0=todo, 1=in-progress, 2=done
-  completed?: boolean;
-  projectId?: string;
-  order?: number;
 }
 
 export interface CreateStepRequest {
