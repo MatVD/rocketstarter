@@ -86,37 +86,54 @@ export interface Task {
   projectId: number;
   stepId?: number;
   title: string;
+  image?: string;
   description?: string;
   link?: string;
+  taskOwner?: string;
   builder?: string; // User address
   createdAt: Date;
   updatedAt: Date;
-  effort?: string;
+  effort?: number; // Fibonacci integer
   priority?: TaskPriority;
   status: TaskStatus;
+  claimedAt?: Date;
+  duration?: number; // in hours
+  dueDate?: Date;
+  dueDateStatus?: number;
 }
 
 export interface CreateTaskRequest {
   projectId: number;
   stepId?: number;
   title: string;
+  image?: string;
   description?: string;
   link?: string;
+  taskOwner?: string;
   builder?: string;
-  effort?: string;
+  effort?: number;
   priority?: TaskPriority;
   status?: TaskStatus;
+  duration?: number;
+  dueDate?: Date;
+  dueDateStatus?: number;
 }
 
 export interface UpdateTaskRequest {
   stepId?: number;
   title?: string;
+  image?: string;
   description?: string;
   link?: string;
+  taskOwner?: string;
   builder?: string;
-  effort?: string;
+  effort?: number;
   priority?: TaskPriority;
   status?: TaskStatus;
+  claimedAt?: Date;
+  duration?: number;
+  dueDate?: Date;
+  dueDateStatus?: number;
 }
 
 // ----------- Category types ----------- //
