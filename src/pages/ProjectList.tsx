@@ -1,12 +1,11 @@
 import { motion } from "framer-motion";
-import { Project, User } from "../types";
+import { Project } from "../types";
 import { Building2, Calendar, ChevronRight } from "lucide-react";
 import { COLORS } from "../constants/colors";
 import { formatDate } from "../utils/dateUtils";
 
 interface ProjectListProps {
   projects: Project[];
-  user: User;
   onProjectSelect: (projectId: number) => void;
   onConnectWallet: () => void;
 }

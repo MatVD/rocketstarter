@@ -8,33 +8,55 @@ import Build from "./pages/Build";
 import ProjectList from "./pages/ProjectList";
 import BuilderProjectView from "./pages/BuilderProjectView";
 import Toast from "./components/UI/Toast";
-import { mockUsers } from "./data/mockData";
 import { User, Project } from "./types";
 import { useProjects } from "./hooks/useProjects";
+import Onboarding from "./pages/Onboarding";
+import { getUserByAddress } from "./api/users";
 
 function App() {
   const [activeTab, setActiveTab] = useState("projects");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeStepId, setActiveStepId] = useState<number | null>(null);
-  const [currentUser, setCurrentUser] = useState<User>(mockUsers[0]); // Default to Alice Admin
+  const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const { projects } = useProjects();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [onboardingComplete, setOnboardingComplete] = useState(false);
+  const [checkingUser, setCheckingUser] = useState(true);
 
   // Web3 hooks
   const { address, isConnected } = useAccount();
   const { connectors, connect } = useConnect();
 
-  // Sync wallet connection with user state
+  // On wallet connect, check if user exists in backend
   useEffect(() => {
-    if (!address) return;
-
-    setCurrentUser((prev) => ({
-      ...prev,
-      isConnected,
-      address,
-    }));
+    const checkUser = async () => {
+      if (!address) {
+        setCurrentUser(undefined);
+        setCheckingUser(false);
+        return;
+      }
+      setCheckingUser(true);
+      try {
+        const user = await getUserByAddress(address);
+        setCurrentUser({ ...user, address });
+        setOnboardingComplete(true);
+      } catch {
+        // User not found, show onboarding
+        setCurrentUser(undefined);
+        setOnboardingComplete(false);
+      } finally {
+        setCheckingUser(false);
+      }
+    };
+    if (isConnected && address) {
+      checkUser();
+    } else {
+      setCurrentUser({} as User);
+      setOnboardingComplete(false);
+      setCheckingUser(false);
+    }
   }, [isConnected, address]);
 
   const handleConnectWallet = () => {
@@ -49,7 +71,7 @@ function App() {
       setSelectedProject(project);
       // For builders, go directly to project tasks view; for owners, go to build section
       setActiveTab(
-        currentUser.role === "builder" ? "builder-project" : "build"
+        currentUser?.role === "builder" ? "builder-project" : "build"
       );
     }
   };
@@ -61,17 +83,19 @@ function App() {
   };
 
   const handleRoleSwitch = () => {
+    if (!currentUser) return;
     const newRole = currentUser.role === "owner" ? "builder" : "owner";
-    setCurrentUser((prev) => ({
-      ...prev,
-      role: newRole,
-    }));
-    // Reset to appropriate starting view for the new role
+    setCurrentUser((prev) =>
+      prev
+        ? {
+            ...prev,
+            role: newRole,
+          }
+        : undefined
+    );
     setSelectedProject(null);
     setActiveStepId(null);
     setActiveTab(newRole === "builder" ? "projects" : "dashboard");
-
-    // Show toast notification
     setToastMessage(
       `Switched to ${newRole.charAt(0).toUpperCase() + newRole.slice(1)} role`
     );
@@ -84,12 +108,16 @@ function App() {
   };
 
   const renderContent = () => {
+    // Show onboarding if user is not found in backend and wallet is connected
+    if (!checkingUser && !isConnected && !onboardingComplete) {
+      return <Onboarding />;
+    }
+    // If user is loaded, show the app
     switch (activeTab) {
       case "projects":
         return (
           <ProjectList
             projects={projects}
-            user={currentUser}
             onProjectSelect={handleProjectSelect}
             onConnectWallet={handleConnectWallet}
           />
@@ -97,10 +125,9 @@ function App() {
       case "dashboard":
         return <Dashboard onNavigateToStep={handleNavigateToStep} />;
       case "build":
-        // For builders, auto-select first project if none is selected
         if (
           !selectedProject &&
-          currentUser.role === "builder" &&
+          currentUser?.role === "builder" &&
           projects.length > 0
         ) {
           const firstProject = projects[0];
@@ -115,7 +142,6 @@ function App() {
             />
           );
         }
-
         return selectedProject ? (
           <Build
             activeStepId={activeStepId}
@@ -127,7 +153,6 @@ function App() {
         ) : (
           <ProjectList
             projects={projects}
-            user={currentUser}
             onProjectSelect={handleProjectSelect}
             onConnectWallet={handleConnectWallet}
           />
@@ -137,12 +162,11 @@ function App() {
           <BuilderProjectView
             project={selectedProject}
             onBackToProjects={handleBackToProjects}
-            user={currentUser}
+            user={currentUser ? currentUser : {} as User}
           />
         ) : (
           <ProjectList
             projects={projects}
-            user={currentUser}
             onProjectSelect={handleProjectSelect}
             onConnectWallet={handleConnectWallet}
           />
@@ -151,7 +175,6 @@ function App() {
         return (
           <ProjectList
             projects={projects}
-            user={currentUser}
             onProjectSelect={handleProjectSelect}
             onConnectWallet={handleConnectWallet}
           />
@@ -202,7 +225,7 @@ function App() {
           onMenuClick={() => setIsMobileMenuOpen(true)}
           showBackButton={!!selectedProject && activeTab === "build"}
           onBackClick={handleBackToProjects}
-          user={currentUser}
+          user={currentUser ? currentUser : {} as User}
           onRoleSwitch={handleRoleSwitch}
         />
 
