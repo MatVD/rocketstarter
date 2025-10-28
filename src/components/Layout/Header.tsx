@@ -98,7 +98,7 @@ export default function Header({
                     <div className="flex items-center gap-2">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          user.role === "owner"
+                          user.role === "Owner"
                             ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
                             : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                         }`}
@@ -111,7 +111,7 @@ export default function Header({
                         onClick={onRoleSwitch}
                         className="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                         title={`Switch to ${
-                          user.role === "owner" ? "Builder" : "Owner"
+                          user.role === "Owner" ? "Builder" : "Owner"
                         } role`}
                       >
                         <RefreshCw className="w-3 h-3" />
