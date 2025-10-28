@@ -1,17 +1,7 @@
 import api from "./client";
-import { User } from "../types";
+import { CreateUserRequest, UpdateUserRequest, User } from "../types";
 
 // User API endpoints
-export interface CreateUserRequest {
-  name: string;
-  email?: string;
-  walletAddress: string;
-}
-
-export interface UpdateUserRequest {
-  name?: string;
-  email?: string;
-}
 
 // Transform API response to frontend format
 const transformUser = (apiUser: User): User => ({
