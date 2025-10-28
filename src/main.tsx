@@ -15,6 +15,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { mainnet, sepolia } from "wagmi/chains";
+import { UserProvider } from "./contexts/UserContext.tsx";
 
 // Use RainbowKit helper to build a wagmi config compatible with the installed versions.
 // projectId is required for WalletConnect v2; for local dev you can provide your own.
@@ -33,7 +34,9 @@ createRoot(document.getElementById("root")!).render(
         <RainbowKitProvider theme={rainbowDarkTheme()}>
           <ThemeProvider>
             <BackendProvider>
+              <UserProvider>
               <App />
+              </UserProvider>
             </BackendProvider>
           </ThemeProvider>
         </RainbowKitProvider>

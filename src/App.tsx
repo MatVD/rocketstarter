@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { UserProvider, useUser } from "./contexts/UserContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useConnect, useAccount } from "wagmi";
 import Sidebar from "./components/Layout/Sidebar";
@@ -13,51 +14,42 @@ import { useProjects } from "./hooks/useProjects";
 import Onboarding from "./pages/Onboarding";
 import { getUserByAddress } from "./api/users";
 
-function App() {
+function AppContent() {
   const [activeTab, setActiveTab] = useState("projects");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeStepId, setActiveStepId] = useState<number | null>(null);
-  const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const { projects } = useProjects();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [onboardingComplete, setOnboardingComplete] = useState(false);
-  const [checkingUser, setCheckingUser] = useState(true);
 
   // Web3 hooks
   const { address, isConnected } = useAccount();
   const { connectors, connect } = useConnect();
+  const { user, setUser, onboardingComplete, setOnboardingComplete } = useUser();
 
   // On wallet connect, check if user exists in backend
   useEffect(() => {
     const checkUser = async () => {
       if (!address) {
-        setCurrentUser(undefined);
-        setCheckingUser(false);
+        setUser(undefined);
         return;
       }
-      setCheckingUser(true);
       try {
-        const user = await getUserByAddress(address);
-        setCurrentUser({ ...user, address });
+        const fetchedUser = await getUserByAddress(address);
+        setUser({ ...fetchedUser, address });
         setOnboardingComplete(true);
       } catch {
         // User not found, show onboarding
-        setCurrentUser(undefined);
-        setOnboardingComplete(false);
-      } finally {
-        setCheckingUser(false);
+        setUser(undefined);
       }
     };
     if (isConnected && address) {
       checkUser();
     } else {
-      setCurrentUser({} as User);
-      setOnboardingComplete(false);
-      setCheckingUser(false);
+      setUser(undefined);
     }
-  }, [isConnected, address]);
+  }, [isConnected, address, setUser, setOnboardingComplete]);
 
   const handleConnectWallet = () => {
     if (connectors.length > 0) {
@@ -70,9 +62,7 @@ function App() {
     if (project) {
       setSelectedProject(project);
       // For builders, go directly to project tasks view; for owners, go to build section
-      setActiveTab(
-        currentUser?.role === "builder" ? "builder-project" : "build"
-      );
+      setActiveTab(user?.role === "builder" ? "builder-project" : "build");
     }
   };
 
@@ -83,16 +73,9 @@ function App() {
   };
 
   const handleRoleSwitch = () => {
-    if (!currentUser) return;
-    const newRole = currentUser.role === "owner" ? "builder" : "owner";
-    setCurrentUser((prev) =>
-      prev
-        ? {
-            ...prev,
-            role: newRole,
-          }
-        : undefined
-    );
+    if (!user) return;
+    const newRole = user.role === "owner" ? "builder" : "owner";
+    setUser({ ...user, role: newRole });
     setSelectedProject(null);
     setActiveStepId(null);
     setActiveTab(newRole === "builder" ? "projects" : "dashboard");
@@ -109,7 +92,7 @@ function App() {
 
   const renderContent = () => {
     // Show onboarding if user is not found in backend and wallet is connected
-    if (!checkingUser && !isConnected && !onboardingComplete) {
+    if (!isConnected || (isConnected && !onboardingComplete)) {
       return <Onboarding />;
     }
     // If user is loaded, show the app
@@ -127,7 +110,7 @@ function App() {
       case "build":
         if (
           !selectedProject &&
-          currentUser?.role === "builder" &&
+          user?.role === "builder" &&
           projects.length > 0
         ) {
           const firstProject = projects[0];
@@ -138,7 +121,7 @@ function App() {
               onStepChange={setActiveStepId}
               project={firstProject}
               onBackToProjects={handleBackToProjects}
-              user={currentUser}
+              user={user}
             />
           );
         }
@@ -148,7 +131,7 @@ function App() {
             onStepChange={setActiveStepId}
             project={selectedProject}
             onBackToProjects={handleBackToProjects}
-            user={currentUser}
+            user={user}
           />
         ) : (
           <ProjectList
@@ -162,7 +145,7 @@ function App() {
           <BuilderProjectView
             project={selectedProject}
             onBackToProjects={handleBackToProjects}
-            user={currentUser ? currentUser : {} as User}
+            user={user ? user : ({} as User)}
           />
         ) : (
           <ProjectList
@@ -189,7 +172,7 @@ function App() {
         <Sidebar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          user={currentUser}
+          user={user}
         />
       </div>
 
@@ -208,7 +191,7 @@ function App() {
                 setIsMobileMenuOpen(false);
               }}
               onClose={() => setIsMobileMenuOpen(false)}
-              user={currentUser}
+              user={user}
             />
             {/* Click area to close - to the right of the sidebar */}
             <div
@@ -225,7 +208,7 @@ function App() {
           onMenuClick={() => setIsMobileMenuOpen(true)}
           showBackButton={!!selectedProject && activeTab === "build"}
           onBackClick={handleBackToProjects}
-          user={currentUser ? currentUser : {} as User}
+          user={user ? user : ({} as User)}
           onRoleSwitch={handleRoleSwitch}
         />
 
@@ -256,4 +239,10 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <UserProvider>
+      <AppContent />
+    </UserProvider>
+  );
+}

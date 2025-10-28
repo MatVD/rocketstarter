@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "../components/UI/Card";
 import { createUser } from "../api/users";
 import ConnectButtonCustom from "../components/UI/ConnectButtonCustom";
 import { CreateUserRequest } from "../types";
+import { COLORS, COMMON_CLASSES } from "../constants/colors";
+import { useUser } from "../contexts/UserContext";
+import { useAccount } from "wagmi";
 
 function Onboarding() {
   const [step, setStep] = useState<1 | 2>(1);
@@ -15,15 +18,24 @@ function Onboarding() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const { setUser, onboardingComplete, setOnboardingComplete } = useUser();
+  const { isConnected} = useAccount();
 
-  // Simulate wallet connection detection (RainbowKit handles real state)
-  // (walletConnected is not used, but kept for possible future logic)
-  // const [walletConnected, setWalletConnected] = useState(false);
+  useEffect(() => {
+    if (!isConnected) {
+      setStep(1);
+    }
+    if (isConnected && !onboardingComplete) {
+      setStep(2);
+    }
+  }, [isConnected, onboardingComplete]);
 
   // RainbowKit exposes connection state, here we simulate for the example
   const handleWalletConnect = () => {
     // setWalletConnected(true);
-    setStep(2);
+    if (isConnected) {
+      setStep(2);
+    }
   };
 
   // Handle input changes for form fields
@@ -47,16 +59,19 @@ function Onboarding() {
         setLoading(false);
         return;
       }
-      await createUser({
+      const userCreated = await createUser({
         username: userInfo.username,
         email: userInfo.email,
         address: walletAddress,
         role: userInfo.role,
       });
+      setUser(userCreated);
       setSuccess(true);
-      // TODO: Redirect to dashboard or another page
+      setOnboardingComplete(true);
     } catch (err: any) {
       setError(err?.message || "Failed to create user.");
+      setLoading(false);
+      setSuccess(false);
     } finally {
       setLoading(false);
     }
@@ -79,47 +94,72 @@ function Onboarding() {
           </div>
         )}
         {step === 2 && !success && (
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <label className="flex flex-col gap-1">
-              <span className="font-medium">Role</span>
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white text-center">
+              Create your account
+            </h2>
+            <div className="flex flex-col gap-4">
+              <label
+                htmlFor="role"
+                className={`${COLORS.form.label} block mb-1 font-medium`}
+              >
+                Role
+              </label>
               <select
+                id="role"
                 name="role"
                 value={userInfo.role}
                 onChange={handleChange}
-                className="rounded border-gray-300 dark:bg-gray-800 dark:border-gray-700"
+                className={`${COMMON_CLASSES.input} w-full`}
               >
                 <option value="Owner">Owner</option>
                 <option value="Builder">Builder</option>
               </select>
-            </label>
-            <label className="flex flex-col gap-1">
-              <span className="font-medium">Username</span>
+            </div>
+            <div className="flex flex-col gap-4">
+              <label
+                htmlFor="username"
+                className={`${COLORS.form.label} block mb-1 font-medium`}
+              >
+                Username
+              </label>
               <input
+                id="username"
                 type="text"
                 name="username"
                 value={userInfo.username}
                 onChange={handleChange}
                 required
-                className="rounded border-gray-300 dark:bg-gray-800 dark:border-gray-700"
+                className={`${COMMON_CLASSES.input} w-full`}
                 placeholder="Your username"
               />
-            </label>
-            <label className="flex flex-col gap-1">
-              <span className="font-medium">Email</span>
+            </div>
+            <div className="flex flex-col gap-4">
+              <label
+                htmlFor="email"
+                className={`${COLORS.form.label} block mb-1 font-medium`}
+              >
+                Email
+              </label>
               <input
+                id="email"
                 type="email"
                 name="email"
                 value={userInfo.email}
                 onChange={handleChange}
                 required
-                className="rounded border-gray-300 dark:bg-gray-800 dark:border-gray-700"
+                className={`${COMMON_CLASSES.input} w-full`}
                 placeholder="your@email.com"
               />
-            </label>
-            {error && <div className="text-red-600 text-sm">{error}</div>}
+            </div>
+            {error && (
+              <div className={`${COLORS.form.error} text-sm text-center`}>
+                {error}
+              </div>
+            )}
             <button
               type="submit"
-              className="mt-4 bg-blue-600 text-white rounded py-2 font-semibold hover:bg-blue-700 transition-colors duration-200"
+              className={`${COMMON_CLASSES.button.primary} w-full font-semibold mt-2`}
               disabled={loading}
             >
               {loading ? "Submitting..." : "Continue"}
