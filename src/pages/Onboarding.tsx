@@ -4,11 +4,12 @@ import { createUser } from "../api/users";
 import ConnectButtonCustom from "../components/UI/ConnectButtonCustom";
 import { CreateUserRequest } from "../types";
 import { COLORS, COMMON_CLASSES } from "../constants/colors";
-import { useUser } from "../contexts/UserContext";
+import { useUserStore } from "../contexts/UserContext";
 import { useAccount } from "wagmi";
+import { useNavigate } from "react-router-dom";
 
 function Onboarding() {
-  
+  const navigation = useNavigate();
   const [userInfo, setUserInfo] = useState<CreateUserRequest>({
     address: "",
     role: "Owner",
@@ -18,8 +19,9 @@ function Onboarding() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const { setUser, onboardingComplete, setOnboardingComplete, step, setStep } = useUser();
-  const { isConnected} = useAccount();
+  const { setUser, onboardingComplete, setOnboardingComplete, step, setStep } =
+    useUserStore();
+  const { isConnected } = useAccount();
 
   useEffect(() => {
     if (!isConnected) {
@@ -28,7 +30,7 @@ function Onboarding() {
     if (isConnected && !onboardingComplete) {
       setStep(2);
     }
-  }, [isConnected, onboardingComplete, setStep]);
+  }, [isConnected, onboardingComplete, setStep, navigation]);
 
   // RainbowKit exposes connection state, here we simulate for the example
   const handleWalletConnect = () => {
@@ -68,6 +70,7 @@ function Onboarding() {
       setUser(userCreated);
       setSuccess(true);
       setOnboardingComplete(true);
+      navigation("/dashboard");
     } catch (err: any) {
       setError(err?.message || "Failed to create user.");
       setLoading(false);
@@ -165,14 +168,6 @@ function Onboarding() {
               {loading ? "Submitting..." : "Continue"}
             </button>
           </form>
-        )}
-        {success && (
-          <div className="flex flex-col items-center gap-4">
-            <p className="text-green-600 font-semibold">
-              Account created successfully!
-            </p>
-            {/* TODO: Add redirect or navigation button */}
-          </div>
         )}
       </Card>
     </div>

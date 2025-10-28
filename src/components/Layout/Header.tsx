@@ -103,7 +103,7 @@ export default function Header({
                             : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                         }`}
                       >
-                        {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                        {user.role}
                       </span>
                     </div>
                     {onRoleSwitch && (
