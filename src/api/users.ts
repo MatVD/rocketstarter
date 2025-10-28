@@ -18,7 +18,7 @@ export const getUser = async (id: string): Promise<User> => {
 // Get user by wallet address
 export const getUserByAddress = async (address: string): Promise<User> => {
   const response = await api.get(`/users/${address}`);
-  return response.data;
+  return response.data.data;
 };
 
 // Create new user
