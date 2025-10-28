@@ -8,7 +8,7 @@ import { useUser } from "../contexts/UserContext";
 import { useAccount } from "wagmi";
 
 function Onboarding() {
-  const [step, setStep] = useState<1 | 2>(1);
+  
   const [userInfo, setUserInfo] = useState<CreateUserRequest>({
     address: "",
     role: "Owner",
@@ -18,7 +18,7 @@ function Onboarding() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const { setUser, onboardingComplete, setOnboardingComplete } = useUser();
+  const { setUser, onboardingComplete, setOnboardingComplete, step, setStep } = useUser();
   const { isConnected} = useAccount();
 
   useEffect(() => {
@@ -28,7 +28,7 @@ function Onboarding() {
     if (isConnected && !onboardingComplete) {
       setStep(2);
     }
-  }, [isConnected, onboardingComplete]);
+  }, [isConnected, onboardingComplete, setStep]);
 
   // RainbowKit exposes connection state, here we simulate for the example
   const handleWalletConnect = () => {

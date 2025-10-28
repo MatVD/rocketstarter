@@ -10,34 +10,54 @@ import {
 } from "lucide-react";
 import { User } from "../../types";
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface SidebarProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
   onClose?: () => void;
   user?: User;
 }
 
 const getMenuItems = (userRole?: string) => {
-  if (userRole === "builder") {
-    return [{ id: "projects", label: "Projects", icon: FolderOpen }];
+  // If no user role, show only projects (limited view)
+  if (!userRole) {
+    return [{ id: "projects", label: "Projects", icon: FolderOpen, path: "/projects" }];
+  }
+  
+  if (userRole === "Builder") {
+    return [{ id: "projects", label: "Projects", icon: FolderOpen, path: "/projects" }];
   }
 
   // Owner role (default)
   return [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { id: "build", label: "Build", icon: Hammer },
+    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+    { id: "build", label: "Build", icon: Hammer, path: "/projects" },
   ];
 };
 
-export default function Sidebar({
-  activeTab,
-  setActiveTab,
-  onClose,
-  user,
-}: SidebarProps) {
+export default function Sidebar({ onClose, user }: SidebarProps) {
   const [isExpanded, setIsExpanded] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
   const menuItems = getMenuItems(user?.role);
+
+  // Determine active tab based on current route
+  const getActiveTab = () => {
+    const path = location.pathname;
+    if (path.startsWith("/dashboard")) return "dashboard";
+    if (path.startsWith("/build")) return "build";
+    if (path.startsWith("/projects")) return "projects";
+    if (path.startsWith("/builder/project")) return "projects";
+    return "projects";
+  };
+
+  const activeTab = getActiveTab();
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    if (onClose) {
+      onClose();
+    }
+  };
 
   return (
     <motion.div
@@ -98,7 +118,7 @@ export default function Sidebar({
             return (
               <li key={item.id}>
                 <motion.button
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => handleNavigation(item.path)}
                   className={`w-full flex items-center ${
                     isExpanded ? "px-4" : "px-0 justify-center"
                   } py-3 rounded-lg text-left transition-colors ${

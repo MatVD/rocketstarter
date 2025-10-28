@@ -47,8 +47,8 @@ export default function Header({
               Web2 → Web3 Transition
             </p>
           </div>
-
         </div>
+        
         <div className="flex items-center space-x-2 md:space-x-4">
           <motion.button
             onClick={toggleTheme}
@@ -88,7 +88,7 @@ export default function Header({
               exit={{ opacity: 0, y: -10 }}
               className="absolute top-16 right-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 z-50 min-w-[250px]"
             >
-              {/* User Role Section */}
+              {/* User Role Section - Only show if user exists */}
               {user && (
                 <div className="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
                   <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
@@ -103,7 +103,7 @@ export default function Header({
                             : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                         }`}
                       >
-                        {user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : "Role Not Set"}
+                        {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                       </span>
                     </div>
                     {onRoleSwitch && (
@@ -127,11 +127,12 @@ export default function Header({
                 </div>
               )}
 
+              {/* Connect Button - Always show */}
               <ConnectButtonCustom />
             </motion.div>
           )}
 
-          {/* Mobile menu button - moved to right side */}
+          {/* Mobile menu button */}
           <motion.button
             onClick={onMenuClick}
             className="md:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
