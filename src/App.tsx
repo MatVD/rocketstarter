@@ -12,7 +12,7 @@ import Toast from "./components/UI/Toast";
 import { User, Project } from "./types";
 import { useProjects } from "./hooks/useProjects";
 import Onboarding from "./pages/Onboarding";
-import { getUserByAddress } from "./api/users";
+import { getUserByAddress, updateUser } from "./api/users";
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState("projects");
@@ -62,7 +62,7 @@ function AppContent() {
     if (project) {
       setSelectedProject(project);
       // For builders, go directly to project tasks view; for owners, go to build section
-      setActiveTab(user?.role === "builder" ? "builder-project" : "build");
+      setActiveTab(user?.role === "Builder" ? "builder-project" : "build");
     }
   };
 
@@ -72,13 +72,14 @@ function AppContent() {
     setActiveStepId(null);
   };
 
-  const handleRoleSwitch = () => {
-    if (!user) return;
-    const newRole = user.role === "owner" ? "builder" : "owner";
-    setUser({ ...user, role: newRole });
+  const handleRoleSwitch = async () => {
+    if (!user || !address) return;
+    const newRole = user.role === "Owner" ? "Builder" : "Owner";
+    const updatedUser = await updateUser(address, { role: newRole });
+    setUser(updatedUser);
     setSelectedProject(null);
     setActiveStepId(null);
-    setActiveTab(newRole === "builder" ? "projects" : "dashboard");
+    setActiveTab(newRole === "Builder" ? "projects" : "dashboard");
     setToastMessage(
       `Switched to ${newRole.charAt(0).toUpperCase() + newRole.slice(1)} role`
     );
@@ -110,7 +111,7 @@ function AppContent() {
       case "build":
         if (
           !selectedProject &&
-          user?.role === "builder" &&
+          user?.role === "Builder" &&
           projects.length > 0
         ) {
           const firstProject = projects[0];
