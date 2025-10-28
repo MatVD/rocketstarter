@@ -8,8 +8,8 @@ interface TaskRowProps {
   task: Task;
   index: number;
   columns: Column[];
-  onEdit: (taskId: string) => void;
-  onDelete: (taskId: string) => void;
+  onEdit: (taskId: number) => void;
+  onDelete: (taskId: number) => void;
 }
 
 export default function TaskRow({
@@ -45,7 +45,7 @@ export default function TaskRow({
             <User className="w-3 h-3 text-white" />
           </div>
           <span className="text-sm text-gray-900 dark:text-white">
-            {task.assignee}
+            {task.builder || "Unassigned"}
           </span>
         </div>
       </td>

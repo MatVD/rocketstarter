@@ -1,8 +1,9 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { BackendProvider } from "./contexts/BackendContext";
+import { UserProvider } from "./contexts/UserContext.tsx";
 
 // wagmi / viem / rainbowkit
 import {
@@ -19,22 +20,24 @@ import { mainnet, sepolia } from "wagmi/chains";
 // projectId is required for WalletConnect v2; for local dev you can provide your own.
 const wagmiConfig = getDefaultConfig({
   appName: "Rocket Launch",
-  projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID,
+  projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || "YOUR_PROJECT_ID",
   chains: [mainnet, sepolia],
 });
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider theme={rainbowDarkTheme()}>
           <ThemeProvider>
-            <App />
+            <BackendProvider>
+              <UserProvider>
+                <App />
+              </UserProvider>
+            </BackendProvider>
           </ThemeProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
-  </StrictMode>
 );

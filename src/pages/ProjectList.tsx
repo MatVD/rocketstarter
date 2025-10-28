@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
-import { Project, User } from "../types";
-import { Building2, Calendar, Tag, ChevronRight } from "lucide-react";
+import { Project } from "../types";
+import { Building2, Calendar, ChevronRight } from "lucide-react";
 import { COLORS } from "../constants/colors";
+import { formatDate } from "../utils/dateUtils";
 
 interface ProjectListProps {
   projects: Project[];
-  user: User;
-  onProjectSelect: (projectId: string) => void;
+  onProjectSelect: (projectId: number) => void;
   onConnectWallet: () => void;
 }
 
@@ -14,19 +14,6 @@ export default function ProjectList({
   projects,
   onProjectSelect,
 }: ProjectListProps) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
-  const getEnvironmentBadgeColor = (environment: string) => {
-    return environment === "mainnet"
-      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-      : "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200";
-  };
 
   return (
     <motion.div
@@ -71,13 +58,6 @@ export default function ProjectList({
                     <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       {project.name}
                     </h3>
-                    <span
-                      className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getEnvironmentBadgeColor(
-                        project.environment
-                      )}`}
-                    >
-                      {project.environment}
-                    </span>
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
@@ -114,27 +94,6 @@ export default function ProjectList({
                   <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                     <Calendar className="w-4 h-4" />
                     <span>Created {formatDate(project.createdAt)}</span>
-                  </div>
-                )}
-
-                {project.categories && project.categories.length > 0 && (
-                  <div className="flex items-center gap-2">
-                    <Tag className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                    <div className="flex flex-wrap gap-1">
-                      {project.categories.slice(0, 3).map((category) => (
-                        <span
-                          key={category}
-                          className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs rounded-full"
-                        >
-                          {category}
-                        </span>
-                      ))}
-                      {project.categories.length > 3 && (
-                        <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs rounded-full">
-                          +{project.categories.length - 3}
-                        </span>
-                      )}
-                    </div>
                   </div>
                 )}
               </div>

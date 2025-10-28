@@ -15,22 +15,23 @@ export function filterTasks(
       const searchTerm = filters.searchTerm.toLowerCase();
       const titleMatch = task.title.toLowerCase().includes(searchTerm);
       const descriptionMatch = task.description
-        .toLowerCase()
-        .includes(searchTerm);
+        ? task.description.toLowerCase().includes(searchTerm)
+        : false;
       if (!titleMatch && !descriptionMatch) {
         return false;
       }
     }
 
     // Filter by "My Tasks" - tasks assigned to current user
-    if (filters.myTasks && task.assignee !== user.id) {
+    if (filters.myTasks && task.builder !== user.address) {
       return false;
     }
 
     // Filter by priority
     if (
       filters.priority.length > 0 &&
-      !filters.priority.includes(task.priority || "")
+      typeof task.priority !== "undefined" &&
+      !filters.priority.includes(task.priority)
     ) {
       return false;
     }

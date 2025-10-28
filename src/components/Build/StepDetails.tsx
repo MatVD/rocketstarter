@@ -16,7 +16,7 @@ export default function StepDetails({ step, tasks = [] }: StepDetailsProps) {
   const guidelines = getStepGuidelines(step.id);
   const stepTasks = tasks.filter((task) => task.stepId === step.id);
   const completedTasks = stepTasks.filter(
-    (task) => task.status === "done"
+    (task) => task.status === 3 // 3 represents "Done" status
   ).length;
   const totalTasks = stepTasks.length;
 

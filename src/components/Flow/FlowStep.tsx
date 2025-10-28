@@ -11,7 +11,7 @@ import {
 interface FlowStepProps {
   step: Step;
   isLast?: boolean;
-  onDetails: (stepId: string) => void;
+  onDetails: (stepId: number) => void;
 }
 
 export default function FlowStep({
@@ -29,7 +29,7 @@ export default function FlowStep({
       >
         <div className="flex items-start space-x-3">
           <div className={`p-2 rounded-full ${getStatusColor(step.status)}`}>
-            {getStatusIcon(step.status, "flow")}
+            {getStatusIcon(step.status, )}
           </div>
           <div className="flex-1">
             <h4 className="font-semibold text-gray-900 dark:text-white mb-1">

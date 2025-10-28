@@ -1,5 +1,9 @@
 # RocketStarter AI Coding Instructions
 
+## Developer Profile
+
+I am a senior fullstack developer. I follow modern web development best practices (clean architecture, SOLID, DRY, accessibility, security, performance).
+
 ## Project Overview
 
 RocketStarter is a Web3 project management platform built with React 18 + TypeScript + Vite, designed for Web2-to-Web3 transitions. It features a flexible, customizable workflow system where users can define their own steps and manage tasks within each step. The platform includes integrated Web3 tooling via Wagmi/RainbowKit and comes with example workflows (like the 5-step: Requirements → Architecture → Smart Contracts → Tests & Audit → Deployment).
@@ -58,10 +62,6 @@ const wagmiConfig = getDefaultConfig({
   chains: [mainnet, sepolia],
 });
 ```
-
-### Environment Handling
-
-Project mock data includes `environment: "testnet" | "mainnet"` field, used for chain switching context.
 
 ## Data Models & State
 

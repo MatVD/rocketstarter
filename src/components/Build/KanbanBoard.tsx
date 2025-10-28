@@ -11,13 +11,12 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Task, User } from "../../types";
+import { Task, User, TaskStatus } from "../../types";
 import Card from "../UI/Card";
 import TaskCard from "../UI/TaskCard";
 import DroppableColumn from "./KanbanBoard/DroppableColumn";
 import KanbanColumnHeader from "./KanbanBoard/KanbanColumnHeader";
 import { useKanbanSensors } from "./KanbanBoard/useKanbanSensors";
-import { updateColumn, deleteColumn } from "./KanbanBoard/kanbanUtils";
 
 import type { Column } from "./KanbanBoard/kanbanUtils";
 
@@ -25,16 +24,15 @@ interface KanbanBoardProps {
   tasks: Task[];
   columns: Column[];
   setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
-  onMoveTask: (taskId: string, newStatus: Task["status"]) => void;
+  onMoveTask: (taskId: number, newStatus: TaskStatus) => void;
   user?: User;
-  onTaskAssignment?: (taskId: string) => void;
+  onTaskAssignment?: (taskId: number) => void;
   isBuilderMode?: boolean; // New prop to indicate builder mode
 }
 
 export default function KanbanBoard({
   tasks,
   columns,
-  setColumns,
   onMoveTask,
   user,
   onTaskAssignment,
@@ -44,24 +42,8 @@ export default function KanbanBoard({
 
   const sensors = useKanbanSensors();
 
-  const getTasksByStatus = (status: string) => {
+  const getTasksByStatus = (status: number) => {
     return tasks.filter((task) => task.status === status);
-  };
-
-  // const handleAddColumn = () => {
-  //   const newColumn = createNewColumn(columns);
-  //   setColumns((prev) => [...prev, newColumn]);
-  // };
-
-  const handleEditColumn = (id: string, title: string) => {
-    setColumns((prev) => updateColumn(prev, id, title));
-  };
-
-  const handleDeleteColumn = (id: string) => {
-    setColumns((prev) => {
-      if (prev.length === 1) return prev;
-      return deleteColumn(prev, id);
-    });
   };
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -77,13 +59,16 @@ export default function KanbanBoard({
     // Disable drag and drop for builders
     if (isBuilderMode || !over) return;
 
-    const taskId = active.id as string;
-    const overId = over.id as string;
+    const taskId = active.id as number;
+    const overId = over.id as number;
 
     // If we drop on a column, move the task to that column's status
     const isColumn = columns.some((col) => col.id === overId);
     if (isColumn) {
-      onMoveTask(taskId, overId);
+      // Verify that overId is a valid TaskStatus
+      if (overId === 0 || overId === 1 || overId === 2 || overId === 3) {
+        onMoveTask(taskId, overId as TaskStatus);
+      }
       return;
     }
 
@@ -108,13 +93,6 @@ export default function KanbanBoard({
             </p>
           )}
         </div>
-
-        {/* <button
-          onClick={handleAddColumn}
-          className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs md:text-sm"
-        >
-          + Add Column
-        </button> */}
       </div>
 
       <DndContext
@@ -135,8 +113,6 @@ export default function KanbanBoard({
                   column={column}
                   taskCount={columnTasks.length}
                   canDelete={columns.length > 1}
-                  onEdit={handleEditColumn}
-                  onDelete={handleDeleteColumn}
                 />
 
                 <DroppableColumn

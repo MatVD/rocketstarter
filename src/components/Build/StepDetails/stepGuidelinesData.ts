@@ -5,9 +5,9 @@ export interface StepGuideline {
   duration: string;
 }
 
-export const getStepGuidelines = (stepId: string): StepGuideline => {
-  const guidelines: Record<string, StepGuideline> = {
-    "1": {
+export const getStepGuidelines = (stepId: number): StepGuideline => {
+  const guidelines: Record<number, StepGuideline> = {
+    1: {
       objective: "Define clear Web3 project requirements and success metrics",
       tasks: [
         "Identify target blockchain",

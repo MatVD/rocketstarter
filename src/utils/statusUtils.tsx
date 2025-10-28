@@ -1,4 +1,4 @@
-import { CheckCircle, Clock, Circle, Check } from "lucide-react";
+import { CheckCircle, Clock, Circle, Check, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Step } from "../types";
 import { ReactElement } from "react";
 
@@ -6,14 +6,14 @@ import { ReactElement } from "react";
  * Centralized status utilities for consistent status handling across components
  */
 
-export const getStatusIcon = (
+export const getStatusStepIcon = (
   status: Step["status"],
   variant: "default" | "flow" = "default"
 ): ReactElement => {
   const baseClasses = variant === "flow" ? "w-5 h-5 text-white" : "w-5 h-5";
 
   switch (status) {
-    case "completed": {
+    case 2: {
       const CompletedIcon = variant === "flow" ? Check : CheckCircle;
       return (
         <CompletedIcon
@@ -25,7 +25,7 @@ export const getStatusIcon = (
         />
       );
     }
-    case "in-progress":
+    case 1:
       return (
         <Clock
           className={
@@ -48,56 +48,63 @@ export const getStatusIcon = (
 
 export const getStatusLabel = (status: Step["status"]): string => {
   switch (status) {
-    case "completed":
+    case 2:
       return "Completed";
-    case "in-progress":
+    case 1:
       return "In Progress";
     default:
       return "To Do";
   }
 };
 
+export const getStatusIcon = (status: number) => {
+    switch (status) {
+      case 0:
+        return <Circle className="w-4 h-4" />;
+      case 1:
+        return <AlertCircle className="w-4 h-4" />;
+      case 2:
+        return <Clock className="w-4 h-4" />;
+      case 3:
+        return <CheckCircle2 className="w-4 h-4" />;
+      default:
+        return <Circle className="w-4 h-4" />;
+    }
+  };
+
 export const getStatusStyles = (status: Step["status"]): string => {
   switch (status) {
-    case "completed":
+    case 2:
       return "bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800";
-    case "in-progress":
+    case 1:
       return "bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-200 border border-orange-200 dark:border-orange-800";
     default:
       return "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-800";
   }
 };
 
-export const getStatusColor = (
-  status: Step["status"],
-  type: "background" | "border" = "background"
-): string => {
-  if (type === "background") {
+export const getStatusColor = (status: number) => {
     switch (status) {
-      case "completed":
-        return "bg-green-500";
-      case "in-progress":
-        return "bg-orange-500";
+      case 0:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
+      case 1:
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+      case 2:
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+      case 3:
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
       default:
-        return "bg-gray-400";
+        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
     }
-  } else {
-    switch (status) {
-      case "completed":
-        return "border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20";
-      case "in-progress":
-        return "border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/20";
-      default:
-        return "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800";
-    }
-  }
-};
+  };
+
+
 
 export const getBorderColor = (status: Step["status"]): string => {
   switch (status) {
-    case "completed":
+    case 2:
       return "border-green-200 dark:border-green-800";
-    case "in-progress":
+    case 1:
       return "border-orange-200 dark:border-orange-800";
     default:
       return "border-gray-200 dark:border-gray-700";

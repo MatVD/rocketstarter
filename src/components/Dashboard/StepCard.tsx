@@ -6,7 +6,7 @@ import { getStatusIcon, getStatusColor } from "../../utils/statusUtils";
 interface StepCardProps {
   step: Step;
   showButton?: boolean;
-  onComplete?: (stepId: string) => void;
+  onComplete?: (stepId: number) => void;
 }
 
 export default function StepCard({
@@ -20,8 +20,7 @@ export default function StepCard({
         <div className="flex items-start space-x-3 flex-1">
           <div
             className={`p-2 rounded-lg ${getStatusColor(
-              step.status,
-              "border"
+              step.status
             )}`}
           >
             {getStatusIcon(step.status)}
@@ -35,8 +34,8 @@ export default function StepCard({
             </p>
           </div>
         </div>
-
-        {showButton && step.status !== "completed" && (
+ 
+        {showButton && step.status !== 2 && (
           <motion.button
             onClick={() => onComplete?.(step.id)}
             className="ml-4 px-3 py-1 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white text-sm rounded-lg transition-colors"

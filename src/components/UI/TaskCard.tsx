@@ -1,9 +1,11 @@
 import { User, Calendar, GripVertical, Plus, Clock } from "lucide-react";
-import { COLORS } from "../../constants/colors";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Task, User as UserType } from "../../types";
 import Card from "./Card";
+import { getPriorityLabel, getPriorityStyle } from "../../utils/priorityUtils";
+import { formatDate } from "../../utils/dateUtils";
+import { getStatusColor, getStatusIcon } from "../../utils/statusUtils";
 
 interface TaskCardProps {
   task: Task;
@@ -21,19 +23,19 @@ interface TaskCardProps {
   // User and assignment
   user?: UserType;
   users?: UserType[]; // List of users to get names for assignees
-  onTaskAssignment?: (taskId: string) => void;
+  onTaskAssignment?: (taskId: number) => void;
 
   // Status actions
-  onStatusChange?: (taskId: string, status: string) => void;
+  onStatusChange?: (taskId: number, status: number) => void;
   statusButtons?: Array<{
     label: string;
-    targetStatus: string;
+    targetStatus: number;
     show: boolean;
   }>;
 
   // Utility functions
-  getStatusColor?: (status: string) => string;
-  getStatusIcon?: (status: string) => React.ReactNode;
+  getStatusColor?: (status: number) => string;
+  getStatusIcon?: (status: number) => React.ReactNode;
 }
 
 interface TaskCardContentProps {
@@ -44,45 +46,13 @@ interface TaskCardContentProps {
   stepName?: string;
   user?: UserType;
   users?: UserType[];
-  onTaskAssignment?: (taskId: string) => void;
-  onStatusChange?: (taskId: string, status: string) => void;
+  onTaskAssignment?: (taskId: number) => void;
+  onStatusChange?: (taskId: number, status: number) => void;
   statusButtons?: Array<{
     label: string;
-    targetStatus: string;
+    targetStatus: number;
     show: boolean;
   }>;
-  getStatusColor?: (status: string) => string;
-  getStatusIcon?: (status: string) => React.ReactNode;
-}
-
-// Priority color mapping helper
-function getPriorityStyle(priority?: "high" | "medium" | "low" | "") {
-  switch (priority) {
-    case "high":
-      return {
-        bg: COLORS.status.error.bg,
-        text: COLORS.status.error.text,
-        border: COLORS.status.error.border,
-      };
-    case "medium":
-      return {
-        bg: COLORS.status.warning.bg,
-        text: COLORS.status.warning.text,
-        border: COLORS.status.warning.border,
-      };
-    case "low":
-      return {
-        bg: COLORS.status.success.bg,
-        text: COLORS.status.success.text,
-        border: COLORS.status.success.border,
-      };
-    default:
-      return {
-        bg: COLORS.status.neutral.bg,
-        text: COLORS.status.neutral.text,
-        border: COLORS.status.neutral.border,
-      };
-  }
 }
 
 function TaskCardContent({
@@ -95,13 +65,11 @@ function TaskCardContent({
   onTaskAssignment,
   onStatusChange,
   statusButtons,
-  getStatusColor,
-  getStatusIcon,
 }: TaskCardContentProps) {
   const isBuilderMode = user?.role === "builder";
-  const isAssignedToCurrentUser = user && task.assignee === user.id;
-  const isUnassigned = !task.assignee || task.assignee === "";
-  const isInTodoStatus = task.status === "todo";
+  const isAssignedToCurrentUser = user && task.builder === user.address;
+  const isUnassigned = !task.builder || task.builder === "";
+  const isInTodoStatus = task.status === 0;
   const canTakeTask =
     isBuilderMode &&
     !isAssignedToCurrentUser &&
@@ -114,8 +82,8 @@ function TaskCardContent({
     taskId,
     label,
   }: {
-    targetStatus: string;
-    taskId: string;
+    targetStatus: number;
+    taskId: number;
     label: string;
   }) => (
     <button
@@ -130,7 +98,7 @@ function TaskCardContent({
     <>
       <div className="flex items-start justify-between">
         {/* Priority badge (always visible) */}
-        {typeof task.priority !== "undefined" && task.priority !== "" && (
+        {typeof task.priority !== "undefined" && getPriorityLabel(task.priority) !== "" && (
           <div className="flex items-center">
             <span className="text-sm text-white mr-2">Priority:</span>
             <span
@@ -140,11 +108,11 @@ function TaskCardContent({
                 getPriorityStyle(task.priority).border
               }`}
               title={`Priority: ${
-                task.priority.charAt(0).toUpperCase() + task.priority.slice(1)
+                getPriorityLabel(task.priority).charAt(0).toUpperCase() + getPriorityLabel(task.priority).slice(1)
               }`}
               style={{ minWidth: 60, justifyContent: "center" }}
             >
-              {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+              {getPriorityLabel(task.priority)}
             </span>
           </div>
         )}
@@ -157,21 +125,21 @@ function TaskCardContent({
         {/* Assignee section - Top Right */}
         {variant === "simple" && user && (
           <div className="flex items-center space-x-2 ml-3 flex-shrink-0">
-            {task.assignee === user.id ? (
+            {task.builder === user.address ? (
               <div className="flex items-center space-x-2 text-sm text-blue-600 dark:text-blue-400">
                 <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
                   <User className="w-3 h-3 text-white" />
                 </div>
                 <span className="font-medium">You</span>
               </div>
-            ) : task.assignee ? (
+            ) : task.builder ? (
               <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
                 <div className="w-6 h-6 rounded-full bg-gray-500 flex items-center justify-center flex-shrink-0">
                   <User className="w-3 h-3 text-white" />
                 </div>
                 <span className="font-medium">
-                  {users?.find((u) => u.id === task.assignee)?.name ||
-                    task.assignee}
+                  {users?.find((u) => u.address === task.builder)?.username ||
+                    task.builder}
                 </span>
               </div>
             ) : onTaskAssignment ? (
@@ -223,7 +191,7 @@ function TaskCardContent({
       {variant === "kanban" &&
         canTakeTask &&
         (isUnassigned ||
-          (!isAssignedToCurrentUser && task.assignee !== user.id)) && (
+          (!isAssignedToCurrentUser && task.builder !== user.address)) && (
           <div className="mb-1">
             <button
               onClick={(e) => {
@@ -264,13 +232,12 @@ function TaskCardContent({
                   ? "You"
                   : isUnassigned
                   ? "Unassigned"
-                  : task.assignee}
+                  : task.builder}
               </span>
             </div>
             <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 flex-shrink-0">
               <Calendar className="w-2 h-2 md:w-3 md:h-3" />
-              <span className="hidden md:inline">{task.createdAt}</span>
-              <span className="md:hidden">{task.createdAt.split("-")[2]}</span>
+              <span className="hidden md:inline">{formatDate(task.createdAt)}</span>
             </div>
           </>
         ) : (
@@ -285,15 +252,15 @@ function TaskCardContent({
                 }`}
               >
                 {getStatusIcon && getStatusIcon(task.status)}
-                <span className={getStatusIcon ? "ml-1" : ""}>
+                <span className="ml-1">
                   {task.status}
                 </span>
               </span>
               <span className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                 <Clock className="w-3 h-3 mr-1" />
                 {variant === "list"
-                  ? new Date(task.createdAt).toLocaleDateString()
-                  : task.createdAt}
+                  ? task.createdAt ? new Date(task.createdAt).toLocaleDateString() : "No date"
+                  : task.createdAt ? (task.createdAt instanceof Date ? task.createdAt.toLocaleDateString() : task.createdAt) : "No date"}
               </span>
             </div>
 
@@ -332,8 +299,6 @@ export default function TaskCard({
   onTaskAssignment,
   onStatusChange,
   statusButtons,
-  getStatusColor,
-  getStatusIcon,
 }: TaskCardProps) {
   // Drag and drop setup (only if draggable)
   const sortable = useSortable({
@@ -374,8 +339,6 @@ export default function TaskCard({
       onTaskAssignment={onTaskAssignment}
       onStatusChange={onStatusChange}
       statusButtons={statusButtons}
-      getStatusColor={getStatusColor}
-      getStatusIcon={getStatusIcon}
     />
   );
 

@@ -1,9 +1,10 @@
 import { Task } from "../../../types";
 import type { Column } from "../KanbanBoard/kanbanUtils";
+import { numberToStatus } from "../../../utils/taskUtils";
 
-// Fonction pour convertir une couleur de colonne en couleur de badge
+// Function to convert a column color to a badge color
 const getColumnBadgeStyle = (columnColor: string) => {
-  // Mapping des couleurs de colonnes vers des styles de badge avec texte approprié
+  // Mapping of column colors to badge styles with appropriate text
   const colorMap = {
     "bg-blue-50 dark:bg-blue-900/20":
       "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300",
@@ -44,31 +45,53 @@ const getColumnBadgeStyle = (columnColor: string) => {
 };
 
 export const getStatusBadge = (status: Task["status"], columns: Column[]) => {
+  // Convert numeric status to string status if needed
+  const statusString =
+    typeof status === "number" ? numberToStatus(status) : status;
+
   // Try to find the column for this status
-  const column = columns.find((col) => col.id === status);
+  const column = columns.find((col) => col.id.toString() === statusString);
 
-  // Default styles for known statuses - using soft colors consistent with design
-  const defaultStyles = {
-    todo: "bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800",
-    "in-progress":
-      "bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800",
-    done: "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800",
-  } as const;
+  // Default styles based on column ID - using soft colors consistent with design
+  const getDefaultStylesByColumnId = (id: string) => {
+    switch (id) {
+      case "0":
+        return {
+          style:
+            "bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800",
+          label: column?.title || "To Do",
+        };
+      case "1":
+        return {
+          style:
+            "bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800",
+          label: column?.title || "In Progress",
+        };
+      case "2":
+        return {
+          style:
+            "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800",
+          label: column?.title || "In Review",
+        };
+      case "3":
+        return {
+          style:
+            "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800",
+          label: column?.title || "Done",
+        };
+      default:
+        return null;
+    }
+  };
 
-  const defaultLabels = {
-    todo: "To do",
-    "in-progress": "In progress",
-    done: "Done",
-  } as const;
-
-  // If it's a default status, use predefined styles
-  if (status in defaultStyles) {
-    const statusKey = status as keyof typeof defaultStyles;
+  // Check if it's a default column (0-3)
+  const defaultStyle = getDefaultStylesByColumnId(statusString);
+  if (defaultStyle) {
     return (
       <span
-        className={`px-2 py-1 rounded-full text-xs font-medium ${defaultStyles[statusKey]}`}
+        className={`px-2 py-1 rounded-full text-xs font-medium ${defaultStyle.style}`}
       >
-        {defaultLabels[statusKey]}
+        {defaultStyle.label}
       </span>
     );
   }
@@ -76,7 +99,7 @@ export const getStatusBadge = (status: Task["status"], columns: Column[]) => {
   // For custom columns, use the column's color with appropriate text color
   if (column?.color) {
     const badgeStyle = getColumnBadgeStyle(column.color);
-    const label = column?.title || status;
+    const label = column?.title || statusString;
 
     return (
       <span
@@ -89,8 +112,8 @@ export const getStatusBadge = (status: Task["status"], columns: Column[]) => {
 
   // Fallback for unknown custom columns
   const fallbackStyle =
-    "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300";
-  const label = status;
+    "bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800";
+  const label = column?.title || statusString;
 
   return (
     <span

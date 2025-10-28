@@ -1,9 +1,9 @@
 import { User, Menu, Sun, Moon, ArrowLeft, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useState } from "react";
 import { User as UserType } from "../../types";
+import ConnectButtonCustom from "../UI/ConnectButtonCustom";
 
 interface HeaderProps {
   projectName: string;
@@ -48,72 +48,8 @@ export default function Header({
             </p>
           </div>
         </div>
-
+        
         <div className="flex items-center space-x-2 md:space-x-4">
-          {/* Desktop Connect Wallet Button
-          <div className="hidden md:flex items-center">
-            <ConnectButton.Custom>
-              {({
-                account,
-                chain,
-                openAccountModal,
-                openChainModal,
-                openConnectModal,
-                mounted,
-              }) => {
-                const ready = mounted;
-                const connected = ready && account && chain;
-
-                return (
-                  <div
-                    {...(!ready && {
-                      "aria-hidden": true,
-                      style: {
-                        opacity: 0,
-                        pointerEvents: "none",
-                        userSelect: "none",
-                      },
-                    })}
-                  >
-                    {(() => {
-                      if (!connected) {
-                        return (
-                          <button
-                            onClick={openConnectModal}
-                            type="button"
-                            className="bg-[#2463eb] text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors"
-                          >
-                            Connect Wallet
-                          </button>
-                        );
-                      }
-                      if (chain.unsupported) {
-                        return (
-                          <button
-                            onClick={openChainModal}
-                            type="button"
-                            className="bg-red-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-red-600 transition-colors"
-                          >
-                            Wrong network
-                          </button>
-                        );
-                      }
-                      return (
-                        <button
-                          onClick={openAccountModal}
-                          type="button"
-                          className="bg-[#2463eb] text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors"
-                        >
-                          {account.displayName}
-                        </button>
-                      );
-                    })()}
-                  </div>
-                );
-              }}
-            </ConnectButton.Custom>
-          </div> */}
-
           <motion.button
             onClick={toggleTheme}
             className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
@@ -152,7 +88,7 @@ export default function Header({
               exit={{ opacity: 0, y: -10 }}
               className="absolute top-16 right-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 z-50 min-w-[250px]"
             >
-              {/* User Role Section */}
+              {/* User Role Section - Only show if user exists */}
               {user && (
                 <div className="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
                   <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
@@ -162,7 +98,7 @@ export default function Header({
                     <div className="flex items-center gap-2">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          user.role === "owner"
+                          user.role === "Owner"
                             ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
                             : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                         }`}
@@ -175,7 +111,7 @@ export default function Header({
                         onClick={onRoleSwitch}
                         className="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                         title={`Switch to ${
-                          user.role === "owner" ? "Builder" : "Owner"
+                          user.role === "Owner" ? "Builder" : "Owner"
                         } role`}
                       >
                         <RefreshCw className="w-3 h-3" />
@@ -183,83 +119,20 @@ export default function Header({
                       </button>
                     )}
                   </div>
-                  {user.name && (
+                  {user.username && (
                     <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      {user.name}
+                      {user.username}
                     </div>
                   )}
                 </div>
               )}
 
-              <ConnectButton.Custom>
-                {({
-                  account,
-                  chain,
-                  openAccountModal,
-                  openChainModal,
-                  openConnectModal,
-                  mounted,
-                }) => {
-                  const ready = mounted;
-                  const connected = ready && account && chain;
-
-                  return (
-                    <div
-                      {...(!ready && {
-                        "aria-hidden": true,
-                        style: {
-                          opacity: 0,
-                          pointerEvents: "none",
-                          userSelect: "none",
-                        },
-                      })}
-                    >
-                      {(() => {
-                        if (!connected) {
-                          return (
-                            <button
-                              onClick={openConnectModal}
-                              type="button"
-                              className="w-full bg-[#2463eb] text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors"
-                            >
-                              Connect Wallet
-                            </button>
-                          );
-                        }
-                        if (chain.unsupported) {
-                          return (
-                            <button
-                              onClick={openChainModal}
-                              type="button"
-                              className="w-full bg-red-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-red-600 transition-colors"
-                            >
-                              Wrong network
-                            </button>
-                          );
-                        }
-                        return (
-                          <div className="space-y-2">
-                            <div className="text-sm text-gray-600 dark:text-gray-400">
-                              Connected: {account.displayName}
-                            </div>
-                            <button
-                              onClick={openAccountModal}
-                              type="button"
-                              className="w-full bg-[#2463eb] text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors"
-                            >
-                              Manage Account
-                            </button>
-                          </div>
-                        );
-                      })()}
-                    </div>
-                  );
-                }}
-              </ConnectButton.Custom>
+              {/* Connect Button - Always show */}
+              <ConnectButtonCustom />
             </motion.div>
           )}
 
-          {/* Mobile menu button - moved to right side */}
+          {/* Mobile menu button */}
           <motion.button
             onClick={onMenuClick}
             className="md:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"

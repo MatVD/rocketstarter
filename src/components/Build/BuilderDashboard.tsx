@@ -1,12 +1,13 @@
 import { motion } from "framer-motion";
-import { User, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { User, Clock, CheckCircle, AlertCircle, Eye } from "lucide-react";
 import { Task, User as UserType } from "../../types";
 import { COLORS } from "../../constants/colors";
+import { getStatusColor, getStatusIcon } from "../../utils/statusUtils";
 
 interface BuilderDashboardProps {
   tasks: Task[];
   user: UserType;
-  onTaskUpdate: (taskId: string, status: string) => void;
+  onTaskUpdate: (taskId: number, status: number) => void;
 }
 
 export default function BuilderDashboard({
@@ -14,38 +15,11 @@ export default function BuilderDashboard({
   user,
   onTaskUpdate,
 }: BuilderDashboardProps) {
-  const builderTasks = tasks.filter((task) => task.assignee === user.id);
-  const todoTasks = builderTasks.filter((task) => task.status === "todo");
-  const inProgressTasks = builderTasks.filter(
-    (task) => task.status === "in-progress"
-  );
-  const completedTasks = builderTasks.filter((task) => task.status === "done");
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "todo":
-        return <Clock className="w-4 h-4 text-gray-500" />;
-      case "in-progress":
-        return <AlertCircle className="w-4 h-4 text-orange-500" />;
-      case "done":
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
-      default:
-        return <Clock className="w-4 h-4 text-gray-500" />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "todo":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
-      case "in-progress":
-        return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200";
-      case "done":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
-    }
-  };
+  const builderTasks = tasks.filter((task) => task.builder === user.address);
+  const todoTasks = builderTasks.filter((task) => task.status === 0);
+  const inProgressTasks = builderTasks.filter((task) => task.status === 1);
+  const inReviewTasks = builderTasks.filter((task) => task.status === 2);
+  const completedTasks = builderTasks.filter((task) => task.status === 3);
 
   return (
     <motion.div
@@ -65,13 +39,13 @@ export default function BuilderDashboard({
               Builder Dashboard
             </h1>
             <p className="text-gray-600 dark:text-gray-300">
-              Welcome back, {user.name || "Builder"}
+              Welcome back, {user.username || "Builder"}
             </p>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
@@ -97,6 +71,20 @@ export default function BuilderDashboard({
                 </p>
               </div>
               <AlertCircle className="w-8 h-8 text-orange-400" />
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  In Review
+                </p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {inReviewTasks.length}
+                </p>
+              </div>
+              <Eye className="w-8 h-8 text-purple-400" />
             </div>
           </div>
 
@@ -158,23 +146,28 @@ export default function BuilderDashboard({
                     Created: {new Date(task.createdAt).toLocaleDateString()}
                   </span>
 
-                  {task.status !== "done" && (
+                  {task.status !== 3 && (
                     <div className="flex gap-2">
-                      {task.status === "todo" && (
+                      {task.status === 0 && (
                         <button
-                          onClick={() => onTaskUpdate(task.id, "in-progress")}
+                          onClick={() => onTaskUpdate(task.id, 1)}
                           className={`px-4 py-2 rounded-lg text-sm font-medium ${COLORS.button.primary} transition-colors`}
                         >
                           Start Task
                         </button>
                       )}
-                      {task.status === "in-progress" && (
+                      {task.status === 1 && (
                         <button
-                          onClick={() => onTaskUpdate(task.id, "done")}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium ${COLORS.status.success.button} text-white transition-colors`}
+                          onClick={() => onTaskUpdate(task.id, 2)}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium bg-purple-600 hover:bg-purple-700 text-white transition-colors`}
                         >
-                          Complete Task
+                          Submit for Review
                         </button>
+                      )}
+                      {task.status === 2 && (
+                        <span className="px-4 py-2 rounded-lg text-sm font-medium bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">
+                          Waiting for Review
+                        </span>
                       )}
                     </div>
                   )}
