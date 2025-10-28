@@ -1,7 +1,7 @@
 // ----------- User types ----------- //
 export interface User {
   address: string;
-  role: "owner" | "builder";
+  role: "Owner" | "Builder";
   username?: string;
   email?: string;
   createdAt: Date;
@@ -15,7 +15,7 @@ export interface CreateUserRequest {
 }
 
 export interface UpdateUserRequest {
-  role?: "Owner" | "Builder";
+  role: "Owner" | "Builder";
   username?: string;
   email?: string;
 }
