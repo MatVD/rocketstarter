@@ -59,7 +59,7 @@ export default function Sidebar({
                 {user && (
                   <span
                     className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                      user.role === "owner"
+                      user.role === "Owner"
                         ? "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200"
                         : "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200"
                     }`}
