@@ -37,7 +37,7 @@ function AppContent() {
       }
       try {
         const fetchedUser = await getUserByAddress(address);
-        setUser({ ...fetchedUser, address });
+        setUser(fetchedUser);
         setOnboardingComplete(true);
       } catch {
         // User not found, show onboarding
@@ -50,7 +50,7 @@ function AppContent() {
       setUser(undefined);
     }
   }, [isConnected, address, setUser, setOnboardingComplete]);
-
+  
   const handleConnectWallet = () => {
     if (connectors.length > 0) {
       connect({ connector: connectors[0] });
