@@ -53,11 +53,7 @@ export const BackendProvider: React.FC<BackendProviderProps> = ({
   useEffect(() => {
     if (isConnected && address) {
       setUserAddress(address);
-    } else {
-      // In development, use a default address if no wallet is connected
-      const defaultDevAddress = "0xOWNER1234567890";
-      setUserAddress(defaultDevAddress);
-    }
+    } 
   }, [isConnected, address]);
 
   const value: BackendContextType = {
