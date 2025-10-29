@@ -160,17 +160,15 @@ function Onboarding() {
 
   const onboardingStepThree = () => (
     <div className="mt-4 text-center">
-      {
-        user?.role === "Owner" ? (
-          <p className="text-gray-700 dark:text-gray-200">
-            You can now create and manage your projects from the dashboard.
-          </p>
-        ) : (
-          <p className="text-gray-700 dark:text-gray-200">
-            You can now explore projects and contribute to their success.
-          </p>
-        )
-      }
+      {user?.role === "Owner" ? (
+        <p className="text-gray-700 dark:text-gray-200">
+          You can now create and manage your projects from the dashboard.
+        </p>
+      ) : (
+        <p className="text-gray-700 dark:text-gray-200">
+          You can now explore projects and contribute to their success.
+        </p>
+      )}
     </div>
   );
 
@@ -180,6 +178,9 @@ function Onboarding() {
         <h1 className="text-2xl font-bold mb-6 text-center dark:text-gray-200">
           Welcome to RocketStarter 🚀
         </h1>
+        <h2 className="text-center text-gray-600 dark:text-gray-400 mb-6">
+          Your gateway to innovative projects
+        </h2>
         {onboardingStep === 1 && !isConnected && onboardingStepOne()}
         {onboardingStep === 2 &&
           isConnected &&
