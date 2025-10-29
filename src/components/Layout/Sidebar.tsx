@@ -17,36 +17,47 @@ interface SidebarProps {
   user?: User;
 }
 
-const getMenuItems = (userRole?: string) => {
-  // If no user role, show only projects (limited view)
-  if (!userRole) {
-    return [{ id: "projects", label: "Projects", icon: FolderOpen, path: "/projects" }];
-  }
-  
-  if (userRole === "Builder") {
-    return [{ id: "projects", label: "Projects", icon: FolderOpen, path: "/projects" }];
-  }
-
-  // Owner role (default)
-  return [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
-    { id: "build", label: "Build", icon: Hammer, path: "/projects" },
-  ];
-};
+// Centralized menu items definition
+const MENU_ITEMS = [
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    path: "/dashboard",
+    roles: ["Owner"],
+  },
+  {
+    id: "build",
+    label: "Build",
+    icon: Hammer,
+    path: "/projects",
+    roles: ["Owner"],
+  },
+  {
+    id: "projects",
+    label: "Projects",
+    icon: FolderOpen,
+    path: "/projects",
+    roles: ["Builder"],
+  },
+];
 
 export default function Sidebar({ onClose, user }: SidebarProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
-  const menuItems = getMenuItems(user?.role);
+
+  // Filter menu items based on user role
+  const menuItems = MENU_ITEMS.filter((item) =>
+    user?.role ? item.roles.includes(user.role) : false
+  );
 
   // Determine active tab based on current route
   const getActiveTab = () => {
     const path = location.pathname;
+    if (user?.role === "Owner" && path.startsWith("/projects")) return "build";
     if (path.startsWith("/dashboard")) return "dashboard";
-    if (path.startsWith("/build")) return "build";
     if (path.startsWith("/projects")) return "projects";
-    if (path.startsWith("/builder/project")) return "projects";
     return "projects";
   };
 
