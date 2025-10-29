@@ -76,17 +76,6 @@ export default function Sidebar({ onClose, user }: SidebarProps) {
                 <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
                   By Kudora
                 </p>
-                {user && (
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                      user.role === "Owner"
-                        ? "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200"
-                        : "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200"
-                    }`}
-                  >
-                    {user.role}
-                  </span>
-                )}
               </div>
             </div>
             {onClose && (
