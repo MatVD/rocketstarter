@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useAccount } from "wagmi";
 import { getUserByAddress } from "../api/users";
 import { useUserStore } from "../store/user.store";
@@ -10,14 +10,13 @@ export function useAuth() {
   const { address, isConnected } = useAccount();
   const { user, setUser, onboardingComplete, setOnboardingComplete } =
     useUserStore();
-  const checkInProgress = useRef(false);
 
   useEffect(() => {
     let mounted = true;
 
     const checkUser = async () => {
       // Éviter les vérifications multiples
-      if (checkInProgress.current || (user && user.address === address)) {
+      if (user && user.address === address) {
         return;
       }
 
@@ -30,8 +29,6 @@ export function useAuth() {
         return;
       }
 
-      checkInProgress.current = true;
-
       try {
         const fetchedUser = await getUserByAddress(address);
         if (mounted) {
@@ -43,8 +40,6 @@ export function useAuth() {
           setUser(undefined);
           setOnboardingComplete(false);
         }
-      } finally {
-        checkInProgress.current = false;
       }
     };
 
