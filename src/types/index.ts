@@ -33,6 +33,8 @@ export interface Project {
   updatedAt: Date;
   bank: number;
   whitelist: string[];
+  logo?: string;
+  slug?: string;
 }
 
 export interface CreateProjectRequest {
@@ -43,6 +45,8 @@ export interface CreateProjectRequest {
   whitelist: string[];
   providerId?: string;
   projectStatus?: 0 | 1 | 2 | 3;
+  logo?: string;
+  slug?: string;
 }
 
 export interface UpdateProjectRequest {
@@ -53,6 +57,8 @@ export interface UpdateProjectRequest {
   whitelist?: string[];
   providerId?: string;
   projectStatus?: 0 | 1 | 2 | 3;
+  logo?: string;
+  slug?: string;
 }
 
 export interface Step {
