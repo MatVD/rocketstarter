@@ -8,13 +8,13 @@ interface UserState {
   users: User[];
   loadingUser: boolean;
   onboardingComplete: boolean;
-  step: 1 | 2;
+  onboardingStep: 1 | 2 | 3;
 
   setUser: (user: User | undefined) => void;
   setUsers: (users: User[]) => void;
   setLoadingUser: (loading: boolean) => void;
   setOnboardingComplete: (complete: boolean) => void;
-  setStep: (step: 1 | 2) => void;
+  setOnboardingStep: (step: 1 | 2 | 3) => void;
   logout: () => void;
 
   fetchUsers: () => Promise<void>;
@@ -26,12 +26,12 @@ interface UserState {
 export const useUserStore = create<UserState>((set) => ({
   user: undefined,
   users: [],
-  step: 1,
+  onboardingStep: 1,
   loadingUser: true,
   onboardingComplete: false,
 
   setUser: (user) => set({ user }),
-  setStep: (step) => set({ step }),
+  setOnboardingStep: (step) => set({ onboardingStep: step }),
   setUsers: (users) => set({ users }),
   setLoadingUser: (loading) => set({ loadingUser: loading }),
   setOnboardingComplete: (complete) => set({ onboardingComplete: complete }),

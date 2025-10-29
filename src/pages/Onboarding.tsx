@@ -19,24 +19,26 @@ function Onboarding() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const { setUser, onboardingComplete, setOnboardingComplete, step, setStep } =
+  const { setUser, onboardingComplete, setOnboardingComplete, onboardingStep, setOnboardingStep } =
     useUserStore();
   const { isConnected } = useAccount();
 
   useEffect(() => {
-    if (!isConnected) {
-      setStep(1);
+    if (isConnected && onboardingComplete) {
+      setOnboardingStep(3);
     }
     if (isConnected && !onboardingComplete) {
-      setStep(2);
+      setOnboardingStep(2);
     }
-  }, [isConnected, onboardingComplete, setStep, navigation]);
+    if (!isConnected) {
+      setOnboardingStep(1);
+    }
+  }, [isConnected, onboardingComplete, setOnboardingStep, navigation]);
 
-  // RainbowKit exposes connection state, here we simulate for the example
+
   const handleWalletConnect = () => {
-    // setWalletConnected(true);
     if (isConnected) {
-      setStep(2);
+      setOnboardingStep(2);
     }
   };
 
@@ -70,7 +72,8 @@ function Onboarding() {
       setUser(userCreated);
       setSuccess(true);
       setOnboardingComplete(true);
-      navigation("/dashboard");
+      setOnboardingStep(3);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err?.message || "Failed to create user.");
       setLoading(false);
@@ -86,17 +89,14 @@ function Onboarding() {
         <h1 className="text-2xl font-bold mb-6 text-center dark:text-gray-200">
           Welcome to RocketStarter 🚀
         </h1>
-        {step === 1 && (
-          <div className="flex flex-col items-center gap-4">
-            <p className="mb-2 text-gray-700 dark:text-gray-200">
-              Connect your wallet to get started
+        {onboardingStep === 3 && (
+          <div className="mt-4 text-center">
+            <p className="text-gray-700 dark:text-gray-200">
+              Welcome to RocketStarter!
             </p>
-            <div onClick={handleWalletConnect}>
-              <ConnectButtonCustom />
-            </div>
           </div>
         )}
-        {step === 2 && !success && (
+        {onboardingStep === 2 && !success && (
           <form className="space-y-6" onSubmit={handleSubmit}>
             <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white text-center">
               Create your account
@@ -168,6 +168,16 @@ function Onboarding() {
               {loading ? "Submitting..." : "Continue"}
             </button>
           </form>
+        )}
+        {onboardingStep === 1 && (
+          <div className="flex flex-col items-center gap-4">
+            <p className="mb-2 text-gray-700 dark:text-gray-200">
+              Connect your wallet to get started
+            </p>
+            <div onClick={handleWalletConnect}>
+              <ConnectButtonCustom />
+            </div>
+          </div>
         )}
       </Card>
     </div>
