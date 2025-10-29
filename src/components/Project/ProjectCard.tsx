@@ -9,10 +9,27 @@ interface ProjectCardProps {
   index: number;
 }
 
+import { useNavigate } from "react-router-dom";
+import { useUserStore } from "../../store";
+
 function ProjectCard({ project, index }: ProjectCardProps) {
+  const navigate = useNavigate();
+  const { user } = useUserStore();
+
+  const onProjectClick = () => {
+    // Navigate to project details page
+    if (user?.role === "Owner") {
+      navigate(`/owner/projects/${project.id}`);
+      return;
+    }
+    
+    navigate(`/builder/projects/${project.id}`);
+  };
+
   return (
     <motion.div
       key={project.id}
+      onClick={onProjectClick}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
