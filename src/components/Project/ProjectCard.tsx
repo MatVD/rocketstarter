@@ -10,12 +10,19 @@ interface ProjectCardProps {
 }
 
 import { useNavigate } from "react-router-dom";
+import { useUserStore } from "../../store";
 
 function ProjectCard({ project, index }: ProjectCardProps) {
   const navigate = useNavigate();
+  const { user } = useUserStore();
 
   const onProjectClick = () => {
     // Navigate to project details page
+    if (user?.role === "Owner") {
+      navigate(`/owner/projects/${project.id}`);
+      return;
+    }
+    
     navigate(`/builder/projects/${project.id}`);
   };
 

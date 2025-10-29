@@ -8,17 +8,17 @@ import StepDetails from "../components/Build/StepDetails";
 import Toast from "../components/UI/Toast";
 import DataBoundary from "../components/UI/DataBoundary";
 import { flowSteps } from "../data/mockData";
-import { Task, Project, User } from "../types";
+import { Task, User } from "../types";
 import { useTasks, useTaskMutations, useTaskWorkflow } from "../hooks/useTasks";
 import {
   DEFAULT_COLUMNS,
   Column,
 } from "../components/Build/KanbanBoard/kanbanUtils";
+import { useParams } from "react-router-dom";
 
 interface BuildProps {
   activeStepId?: number | null;
   onStepChange?: (stepId: number) => void;
-  project?: Project;
   onBackToProjects?: () => void;
   user?: User;
 }
@@ -26,10 +26,9 @@ interface BuildProps {
 export default function Build({
   activeStepId,
   onStepChange,
-  project,
   user,
 }: BuildProps) {
-  const projectId = project?.id?.toString();
+  const { projectId } = useParams<{ projectId: string }>();
   const { tasks, loading, error, refetch } = useTasks(projectId);
   const { create, update, remove } = useTaskMutations();
   const { assignToSelf } = useTaskWorkflow();

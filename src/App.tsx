@@ -32,7 +32,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/build/:projectId"
+          path="/owner/projects/:projectId"
           element={
             <ProtectedRoute>
               <OwnerProjectView />
