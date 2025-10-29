@@ -12,22 +12,27 @@ RocketStarter is a Web3 project management platform built with React 18 + TypeSc
 
 ### Application Structure
 
-- **Single-page application** with tab-based navigation (no React Router)
-- **State management**: Local state with useState, no global state library
-- **Data flow**: Props drilling with event handlers passed down from App.tsx
-- **Page structure**: `App.tsx` → pages (Dashboard, Build, Templates, Settings) → components
+- **Multi-page application** with React Router (BrowserRouter)
+- **State management**: Zustand for global state (projects, steps, tasks, users)
+- **Data flow**: API calls via stores, local component state for UI-only concerns
+- **Page structure**: `App.tsx` (routing) → pages (Dashboard, Build, ProjectList, etc.) → components
+- **Routes**: Role-based navigation (Builder → `/projects`, Owner → `/dashboard`)
 
 ### Component Hierarchy
 
 ```
-App.tsx (root state: activeTab, activeStepId)
-├── Layout/ (Sidebar, Header)
-├── pages/ (Dashboard, Build, Templates, Settings)
+App.tsx (routing with React Router)
+├── AppLayout/ (wrapper with Sidebar, Header, Outlet)
+├── pages/
+│   ├── Onboarding (authentication)
+│   ├── Dashboard (owner project overview)
+│   ├── ProjectList (builder view)
+│   ├── Build (kanban/task management)
+│   └── BuilderProjectView (builder-specific project view)
 └── components/
     ├── Build/ (KanbanBoard, TaskTable, StepNavigation, StepDetails)
-    ├── Dashboard/ (StepCard)
-    ├── Templates/ (TemplateCard)
-    └── UI/ (Card, ProgressBar - reusable components)
+    ├── Dashboard/ (StepCard, ProjectProgress, StepByStep)
+    └── UI/ (Card, ProgressBar, Toast, TaskCard - reusable components)
 ```
 
 ### Critical Patterns
@@ -40,11 +45,30 @@ const currentStepTasks = tasks.filter((task) => task.stepId === currentStep.id);
 
 **Dynamic Step Management**: Steps can be added, modified, or removed. Templates provide pre-built step collections, but users can create custom workflows.
 
-**Navigation Pattern**: Use callback props for cross-component navigation:
+**Navigation Pattern**: Use React Router's `useNavigate` hook for programmatic navigation:
 
 ```typescript
-// Dashboard → Build with specific step
-onNavigateToStep={(stepId: string) => { setActiveStepId(stepId); setActiveTab("build"); }}
+// Navigate to specific project build view
+const navigate = useNavigate();
+navigate(`/build/${projectId}`);
+
+// Navigate with step selection via store
+const { setActiveStepId } = useStepStore();
+setActiveStepId(stepId);
+navigate(`/build/${projectId}`);
+```
+
+**State Management with Zustand**: Access global state via hooks from stores:
+
+```typescript
+// Example: Accessing projects from store
+import { useProjectStore } from '../store/project.store';
+
+const { projects, fetchProjects, selectedProject } = useProjectStore();
+
+useEffect(() => {
+  fetchProjects();
+}, [fetchProjects]);
 ```
 
 **Theme Implementation**: Uses Tailwind's `dark:` classes with centralized color constants in `src/constants/colors.ts`. Theme state in `ThemeContext` applies `dark` class to document root.
@@ -67,17 +91,39 @@ const wagmiConfig = getDefaultConfig({
 
 ### Core Types (src/types/index.ts)
 
-- **Step**: Workflow steps with status tracking
-- **Task**: Associated with stepId, flexible status field (accepts any column id)
-- **Template**: Pre-built strategy templates with optional steps
-- **Project**: Basic project info with progress and environment
+- **User**: User profile with wallet address and role (Builder/Owner)
+- **Project**: Project entity with owner, status, and progress tracking
+- **Step**: Workflow steps with status tracking (todo/inprogress/done) and auto-calculated progress
+- **Task**: Associated with stepId and projectId, numeric status field (0=todo, 1=inprogress, 2=inreview, 3=done)
+- **Category**: Task categorization (optional many-to-many)
 
-### Mock Data Structure (src/data/mockData.ts)
+### API Request/Response Types
 
-- Example workflow steps (`flowSteps`) - represents one possible workflow configuration
-- Template definitions with pre-built step collections and difficulty levels
-- Tasks associated with specific steps via `stepId`
-- Demonstrates the flexible step-task relationship for custom workflows
+Each entity has corresponding request types:
+- **CreateProjectRequest** / **UpdateProjectRequest**
+- **CreateStepRequest** / **UpdateStepRequest** 
+- **CreateTaskRequest** / **UpdateTaskRequest**
+- **CreateUserRequest** / **UpdateUserRequest**
+
+These define what you **send** to the API (subset of fields), while the main types represent what you **receive**.
+
+### Zustand Stores (src/store/)
+
+- **useProjectStore**: Projects and tasks management
+- **useStepStore**: Steps management with active step tracking
+- **useUserStore**: Users list and authentication state
+
+Each store follows this pattern:
+- State: data arrays, selected items, loading/error states
+- Actions: CRUD operations (fetch, create, update, delete)
+- Utility methods: refetch, setters for selected items
+
+### Data Source
+
+**Backend API** via axios client (`src/api/client.ts`):
+- Base URL configured in environment variables
+- Authentication via `x-user-address` header (wallet address)
+- Response format: `{ success: boolean, data: T, message?: string }`
 
 ## Development Workflows
 
@@ -91,9 +137,40 @@ const wagmiConfig = getDefaultConfig({
 ### Adding New Features
 
 1. **New components**: Follow existing folder structure (feature/ComponentName/)
-2. **New pages**: Add to pages/ directory, update App.tsx switch statement
-3. **State changes**: Consider if state should live in App.tsx or locally
-4. **Styling**: Use Tailwind classes, reference colors.ts for consistency
+2. **New pages**: Add to pages/ directory, add route in App.tsx `<Routes>` section
+3. **State changes**: 
+   - Global data (projects, tasks, steps) → Add to existing Zustand stores
+   - API entities → Create corresponding store
+   - UI-only state (modals, filters) → Local `useState` in component
+4. **API integration**: Add endpoint functions in `src/api/`, use in store actions
+5. **Styling**: Use Tailwind classes, reference colors.ts for consistency
+
+### Working with Stores
+
+**Pattern**: Fetch data on component mount, access via destructuring
+
+```typescript
+// In component
+import { useProjectStore } from '../store/project.store';
+
+const MyComponent = () => {
+  const { projects, fetchProjects, projectsLoading, projectsError } = useProjectStore();
+  
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+  
+  if (projectsLoading) return <div>Loading...</div>;
+  if (projectsError) return <div>Error: {projectsError}</div>;
+  
+  return <div>{projects.map(p => ...)}</div>;
+};
+```
+
+**Store actions return values** for optimistic updates:
+- Create/update methods return the entity or null on error
+- Delete methods return boolean success
+- Use returned values to show toasts or handle errors locally
 
 ### Component Patterns
 
@@ -128,8 +205,11 @@ className={`${COLORS.status.success.bg} ${COLORS.status.success.text}`}
 
 ## Key Files to Understand
 
-- `src/App.tsx` - Main navigation and state management
-- `src/data/mockData.ts` - Data structure examples
+- `src/App.tsx` - React Router configuration and role-based routing
+- `src/store/` - Zustand stores for global state management
+- `src/api/` - Backend API integration with typed requests/responses
+- `src/types/index.ts` - Complete TypeScript type definitions
 - `src/components/Build/KanbanBoard.tsx` - Complex drag & drop implementation
+- `src/hooks/useAuth.ts` - Authentication logic with wallet integration
 - `src/constants/colors.ts` - Centralized theming
-- `main.tsx` - Web3 provider setup pattern
+- `src/main.tsx` - Web3 provider setup pattern (RainbowKit + Wagmi)
