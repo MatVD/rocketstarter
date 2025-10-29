@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import ProjectList from "./pages/ProjectList";
-import Build from "./pages/Build";
+import OwnerProjectView from "./pages/OwnerProjectView";
 import BuilderProjectView from "./pages/BuilderProjectView";
 import { AppLayout } from "./components/AppLayout";
 import { useAuth } from "./hooks/useAuth";
@@ -35,7 +35,7 @@ function AppRoutes() {
           path="/build/:projectId"
           element={
             <ProtectedRoute>
-              <Build />
+              <OwnerProjectView />
             </ProtectedRoute>
           }
         />
