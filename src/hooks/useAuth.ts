@@ -4,23 +4,28 @@ import { getUserByAddress } from "../api/users";
 import { useUserStore } from "../store/user.store";
 
 /**
- * Hook centralisé pour gérer l'authentification et la vérification de l'utilisateur
+ * Central authentication hook to manage user state based on wallet connection and onboarding status.
  */
 export function useAuth() {
   const { address, isConnected } = useAccount();
-  const { user, setUser, onboardingComplete, setOnboardingComplete, setOnboardingStep } =
-    useUserStore();
+  const {
+    user,
+    setUser,
+    onboardingComplete,
+    setOnboardingComplete,
+    setOnboardingStep,
+  } = useUserStore();
 
   useEffect(() => {
     let mounted = true;
 
     const checkUser = async () => {
-      // Éviter les vérifications multiples
+      // Avoid multiple checks
       if (user && user.address === address) {
         return;
       }
 
-      // Déconnexion
+      // Logout
       if (!address) {
         if (mounted) {
           setUser(undefined);
@@ -54,7 +59,14 @@ export function useAuth() {
     return () => {
       mounted = false;
     };
-  }, [isConnected, address, setUser, setOnboardingComplete, user]);
+  }, [
+    isConnected,
+    address,
+    setUser,
+    setOnboardingComplete,
+    user,
+    setOnboardingStep,
+  ]);
 
   return {
     user,
