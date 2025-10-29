@@ -1,20 +1,11 @@
 import { motion } from "framer-motion";
-import { Project } from "../types";
 import { Building2, Calendar, ChevronRight } from "lucide-react";
 import { COLORS } from "../constants/colors";
 import { formatDate } from "../utils/dateUtils";
+import { useProjectStore } from "../store/project.store";
 
-interface ProjectListProps {
-  projects: Project[];
-  onProjectSelect: (projectId: number) => void;
-  onConnectWallet: () => void;
-}
-
-export default function ProjectList({
-  projects,
-  onProjectSelect,
-}: ProjectListProps) {
-
+export default function ProjectList() {
+  const { projects } = useProjectStore();
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -45,7 +36,6 @@ export default function ProjectList({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
             className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-200 cursor-pointer group"
-            onClick={() => onProjectSelect(project.id)}
           >
             <div className="p-6">
               {/* Project Header */}

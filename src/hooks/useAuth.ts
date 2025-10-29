@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useAccount } from "wagmi";
-import { useUserStore } from "../contexts/UserContext";
 import { getUserByAddress } from "../api/users";
+import { useUserStore } from "../store/user.store";
 
 /**
  * Hook centralisé pour gérer l'authentification et la vérification de l'utilisateur

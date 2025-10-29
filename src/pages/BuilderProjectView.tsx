@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
-import { Project, User as UserType } from "../types";
 import { useTasks, useTaskWorkflow } from "../hooks/useTasks";
 import DataBoundary from "../components/UI/DataBoundary";
 import KanbanBoard from "../components/Build/KanbanBoard";
@@ -13,27 +11,40 @@ import {
   DEFAULT_COLUMNS,
   Column,
 } from "../components/Build/KanbanBoard/kanbanUtils";
+import { useUserStore } from "../store/user.store";
+import { useParams } from "react-router-dom";
+import { useProjectStore } from "../store/project.store";
 
-interface BuilderProjectViewProps {
-  project: Project;
-  onBackToProjects: () => void;
-  user: UserType;
-}
-
-export default function BuilderProjectView({
-  project,
-  onBackToProjects,
-  user,
-}: BuilderProjectViewProps) {
-  const projectId = project.id.toString();
+export default function BuilderProjectView() {
+  const { user } = useUserStore();
+  const { projectId } = useParams<{ projectId: string }>();
+  const project = useProjectStore((state) =>
+    state.projects.find((p) => p.id === Number(projectId))
+  );
   const { tasks, loading, error, refetch } = useTasks(projectId);
   const { assignToSelf } = useTaskWorkflow();
   const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
-  const [filters, setFilters] = useTaskFilters(project.id);
+  const [filters, setFilters] = useTaskFilters(projectId);
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error" | "info";
   } | null>(null);
+
+  if (!user) {
+    return (
+      <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+        <p className="text-red-500">User not found.</p>
+      </div>
+    );
+  }
+
+  if (!project) {
+    return (
+      <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+        <p className="text-red-500">Project not found.</p>
+      </div>
+    );
+  }
 
   // Apply filters to project tasks
   const filteredTasks = filterTasks(tasks, filters, user);
@@ -78,12 +89,6 @@ export default function BuilderProjectView({
           className="mb-6"
         >
           <div className="flex items-center space-x-4 mb-4">
-            <button
-              onClick={onBackToProjects}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            </button>
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
                 {project.name}
@@ -157,7 +162,6 @@ export default function BuilderProjectView({
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={1}
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                   />
                 </svg>
               </div>

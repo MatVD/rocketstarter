@@ -11,7 +11,7 @@ import {
 } from "../api";
 
 // Hook for fetching all projects
-export const useProjects = () => {
+export const useProjectStore = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

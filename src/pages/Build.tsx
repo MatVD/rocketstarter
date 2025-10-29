@@ -113,7 +113,7 @@ export default function Build({
 
   // Builder-specific task assignment logic
   const handleTaskAssignment = async (taskId: number) => {
-    if (user && user.role === "builder" && user.address) {
+    if (user && user.role === "Builder" && user.address) {
       const task = tasks.find((t) => t.id === taskId);
       if (task) {
         const result = await assignToSelf(taskId.toString(), user.address);
@@ -153,7 +153,7 @@ export default function Build({
                   Build
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
-                  {user && user.role === "builder"
+                  {user && user.role === "Builder"
                     ? "Choose and manage your tasks"
                     : "Manage tasks for the current step"}
                 </p>

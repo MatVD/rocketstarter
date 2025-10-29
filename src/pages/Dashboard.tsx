@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 import DataBoundary from "../components/UI/DataBoundary";
 import ProjectProgress from "../components/Dashboard/ProjectProgress";
 import StepByStep from "../components/Dashboard/StepByStep";
-import { useProjectStoretore } from "../store/project.store";
+import { useProjectStore } from "../store/project.store";
 
 export default function Dashboard() {
-  const { projects, projectsLoading, projectsError } = useProjectStoretore();
+  const { projects, projectsLoading, projectsError } = useProjectStore();
   const project = projects[0]; // First project for demo
 
   return (

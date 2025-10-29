@@ -41,7 +41,7 @@ interface ProjectState {
   refetchTasks: () => Promise<void>;
 }
 
-export const useProjectStoretore = create<ProjectState>((set, get) => ({
+export const useProjectStore = create<ProjectState>((set, get) => ({
   // Initial state
   projects: [],
   selectedProject: null,

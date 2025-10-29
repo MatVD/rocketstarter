@@ -4,9 +4,9 @@ import { createUser } from "../api/users";
 import ConnectButtonCustom from "../components/UI/ConnectButtonCustom";
 import { CreateUserRequest } from "../types";
 import { COLORS, COMMON_CLASSES } from "../constants/colors";
-import { useUserStore } from "../contexts/UserContext";
 import { useAccount } from "wagmi";
 import { useNavigate } from "react-router-dom";
+import { useUserStore } from "../store/user.store";
 
 function Onboarding() {
   const navigation = useNavigate();
