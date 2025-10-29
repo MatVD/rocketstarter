@@ -3,7 +3,6 @@ import App from "./App.tsx";
 import "./index.css";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { BackendProvider } from "./contexts/BackendContext";
-import { UserProvider } from "./contexts/UserContext.tsx";
 
 // wagmi / viem / rainbowkit
 import {
@@ -27,17 +26,15 @@ const wagmiConfig = getDefaultConfig({
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={rainbowDarkTheme()}>
-          <ThemeProvider>
-            <BackendProvider>
-              <UserProvider>
-                <App />
-              </UserProvider>
-            </BackendProvider>
-          </ThemeProvider>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+  <WagmiProvider config={wagmiConfig}>
+    <QueryClientProvider client={queryClient}>
+      <RainbowKitProvider theme={rainbowDarkTheme()}>
+        <ThemeProvider>
+          <BackendProvider>
+            <App />
+          </BackendProvider>
+        </ThemeProvider>
+      </RainbowKitProvider>
+    </QueryClientProvider>
+  </WagmiProvider>
 );

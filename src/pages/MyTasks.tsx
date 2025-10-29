@@ -9,15 +9,11 @@ import {
   X,
 } from "lucide-react";
 import { Task, TaskStatus, User as UserType } from "../types";
-import {
-  tasks as initialTasks,
-  mockUsers,
-  flowSteps,
-} from "../data/mockData";
+import { tasks as initialTasks, mockUsers, flowSteps } from "../data/mockData";
 import Toast from "../components/UI/Toast";
 import TaskCard from "../components/UI/TaskCard";
 import { getStatusColor, getStatusIcon } from "../utils/statusUtils";
-import { useProjects } from "../hooks/useProjects";
+import { useProjectStore } from "../hooks/useProjects";
 
 interface MyTasksProps {
   user: UserType;
@@ -29,7 +25,7 @@ export default function MyTasks({ user }: MyTasksProps) {
     message: string;
     type: "success" | "error" | "info";
   } | null>(null);
-  const { projects } = useProjects();
+  const { projects } = useProjectStore();
   const [selectedProject, setSelectedProject] = useState<string>("all");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
@@ -45,7 +41,8 @@ export default function MyTasks({ user }: MyTasksProps) {
       task.projectId.toString() === selectedProject;
 
     const categoryMatch =
-      selectedCategory === "all" || task.stepId?.toString() === selectedCategory;
+      selectedCategory === "all" ||
+      task.stepId?.toString() === selectedCategory;
 
     return projectMatch && categoryMatch;
   });
@@ -184,8 +181,8 @@ export default function MyTasks({ user }: MyTasksProps) {
               {selectedCategory !== "all" && (
                 <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs rounded-full">
                   Category:{" "}
-                  {flowSteps.find((s) => s.id.toString() === selectedCategory)?.title ||
-                    selectedCategory}
+                  {flowSteps.find((s) => s.id.toString() === selectedCategory)
+                    ?.title || selectedCategory}
                   <button
                     onClick={() => setSelectedCategory("all")}
                     className="ml-1 hover:text-green-600 dark:hover:text-green-300"

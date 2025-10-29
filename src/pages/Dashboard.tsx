@@ -1,21 +1,12 @@
 import { motion } from "framer-motion";
-
-import { useProjects } from "../hooks/useProjects";
 import DataBoundary from "../components/UI/DataBoundary";
 import ProjectProgress from "../components/Dashboard/ProjectProgress";
 import StepByStep from "../components/Dashboard/StepByStep";
+import { useProjectStore } from "../store/project.store";
 
-interface DashboardProps {
-  onNavigateToStep: (stepId: number) => void;
-}
-
-export default function Dashboard({ onNavigateToStep }: DashboardProps) {
-  const { projects, loading, error } = useProjects();
+export default function Dashboard() {
+  const { projects, projectsLoading, projectsError } = useProjectStore();
   const project = projects[0]; // First project for demo
-
-  const handleStepDetails = (stepId: number) => {
-    onNavigateToStep(stepId);
-  };
 
   return (
     <div className="p-4 md:p-6 space-y-4 md:space-y-6">
@@ -33,8 +24,8 @@ export default function Dashboard({ onNavigateToStep }: DashboardProps) {
       </motion.div>
 
       <DataBoundary
-        isLoading={loading}
-        error={error}
+        isLoading={projectsLoading}
+        error={projectsError}
         isEmpty={!project}
         dataType="projects"
       >
@@ -43,7 +34,7 @@ export default function Dashboard({ onNavigateToStep }: DashboardProps) {
           <ProjectProgress project={project} />
 
           {/* Step by step journey */}
-          <StepByStep handleStepDetails={handleStepDetails} />
+          <StepByStep />
         </div>
       </DataBoundary>
     </div>

@@ -6,7 +6,6 @@ import { User as UserType } from "../../types";
 import ConnectButtonCustom from "../UI/ConnectButtonCustom";
 
 interface HeaderProps {
-  projectName: string;
   onMenuClick?: () => void;
   showBackButton?: boolean;
   onBackClick?: () => void;
@@ -15,7 +14,6 @@ interface HeaderProps {
 }
 
 export default function Header({
-  projectName,
   onMenuClick,
   showBackButton = false,
   onBackClick,
@@ -24,6 +22,7 @@ export default function Header({
 }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const projectName = "Project Alpha"; // This can be made dynamic based on props or context
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 md:px-6 py-4">
@@ -103,7 +102,7 @@ export default function Header({
                             : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                         }`}
                       >
-                        {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                        {user.role}
                       </span>
                     </div>
                     {onRoleSwitch && (

@@ -5,7 +5,6 @@ export interface User {
   username?: string;
   email?: string;
   createdAt: Date;
-  
 }
 
 export interface CreateUserRequest {

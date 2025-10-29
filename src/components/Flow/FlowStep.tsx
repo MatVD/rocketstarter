@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Step } from "../../types";
 import Card from "../UI/Card";
@@ -11,13 +10,11 @@ import {
 interface FlowStepProps {
   step: Step;
   isLast?: boolean;
-  onDetails: (stepId: number) => void;
 }
 
 export default function FlowStep({
   step,
   isLast = false,
-  onDetails,
 }: FlowStepProps) {
   return (
     <div className="flex items-center">
@@ -38,7 +35,7 @@ export default function FlowStep({
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
               {step.description}
             </p>
-            <motion.button
+            {/* <motion.button
               onClick={() => onDetails(step.id)}
               className="inline-flex items-center space-x-2 text-blue-600 dark:text-blue-400 text-sm font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors group"
               whileHover={{ scale: 1.05 }}
@@ -57,7 +54,7 @@ export default function FlowStep({
                   d="M9 5l7 7-7 7"
                 />
               </svg>
-            </motion.button>
+            </motion.button> */}
           </div>
         </div>
       </Card>

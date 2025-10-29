@@ -4,12 +4,8 @@ import { Route } from "lucide-react";
 import { flowSteps } from "../../data/mockData";
 import FlowStep from "../Flow/FlowStep";
 
-interface StepByStepProps {
-  handleStepDetails: (stepId: number) => void;
-}
 
-
-function StepByStep({ handleStepDetails }: StepByStepProps) {
+function StepByStep() {
   return (
     <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -45,7 +41,6 @@ function StepByStep({ handleStepDetails }: StepByStepProps) {
                       <FlowStep
                         step={step}
                         isLast={index === flowSteps.length - 1}
-                        onDetails={handleStepDetails}
                       />
                     </motion.div>
                   ))}
