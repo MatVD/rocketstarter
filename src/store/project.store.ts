@@ -1,14 +1,12 @@
-// src/stores/useProjectStoretore.ts
+// src/stores/useProjectStore.ts
 import { create } from "zustand";
-import { Project, Task } from "../types";
+import { Project } from "../types";
 import {
   getProjects,
   getProject,
   createProject,
   updateProject,
   deleteProject,
-  getTasks,
-  getTasksByProject,
   CreateProjectRequest,
   UpdateProjectRequest,
 } from "../api";
@@ -20,11 +18,6 @@ interface ProjectState {
   projectsLoading: boolean;
   projectsError: string | null;
 
-  // Tasks
-  tasks: Task[];
-  tasksLoading: boolean;
-  tasksError: string | null;
-
   // Projects actions
   fetchProjects: () => Promise<void>;
   fetchProject: (id: string) => Promise<void>;
@@ -35,10 +28,7 @@ interface ProjectState {
   ) => Promise<Project | null>;
   removeProject: (id: string) => Promise<boolean>;
   setSelectedProject: (project: Project | null) => void;
-
-  // Tasks actions
-  fetchTasks: (projectId?: string) => Promise<void>;
-  refetchTasks: () => Promise<void>;
+  refetchProjects: () => Promise<void>;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
@@ -47,9 +37,6 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   selectedProject: null,
   projectsLoading: false,
   projectsError: null,
-  tasks: [],
-  tasksLoading: false,
-  tasksError: null,
 
   // Projects actions
   fetchProjects: async () => {
@@ -145,25 +132,8 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
   setSelectedProject: (project) => set({ selectedProject: project }),
 
-  // Tasks actions
-  fetchTasks: async (projectId?: string) => {
-    set({ tasksLoading: true, tasksError: null });
-    try {
-      const data = projectId
-        ? await getTasksByProject(projectId)
-        : await getTasks();
-      set({ tasks: data, tasksLoading: false });
-    } catch (err) {
-      set({
-        tasksError:
-          err instanceof Error ? err.message : "Failed to fetch tasks",
-        tasksLoading: false,
-      });
-    }
-  },
-
-  refetchTasks: async () => {
-    const { selectedProject, fetchTasks } = get();
-    await fetchTasks(selectedProject?.id.toString());
+  refetchProjects: async () => {
+    const { fetchProjects } = get();
+    await fetchProjects();
   },
 }));
