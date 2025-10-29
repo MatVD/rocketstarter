@@ -1,53 +1,40 @@
-import { User, Menu, Sun, Moon, ArrowLeft, RefreshCw } from "lucide-react";
+import { User, Menu, Sun, Moon, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useState } from "react";
 import { User as UserType } from "../../types";
 import ConnectButtonCustom from "../UI/ConnectButtonCustom";
+import { useProjectStore } from "../../store/project.store";
 
 interface HeaderProps {
   onMenuClick?: () => void;
-  showBackButton?: boolean;
-  onBackClick?: () => void;
   user?: UserType;
   onRoleSwitch?: () => void;
 }
 
 export default function Header({
   onMenuClick,
-  showBackButton = false,
-  onBackClick,
   user,
   onRoleSwitch,
 }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-  const projectName = "Project Alpha"; // This can be made dynamic based on props or context
+  const { selectedProject } = useProjectStore();
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 md:px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          {showBackButton && (
-            <button
-              onClick={onBackClick}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              title="Back to Projects"
-            >
-              <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            </button>
-          )}
-
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
-              {projectName}
+              {selectedProject?.name || "Rocket Launch"}
             </h2>
             <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
               Web2 → Web3 Transition
             </p>
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-2 md:space-x-4">
           <motion.button
             onClick={toggleTheme}
