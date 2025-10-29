@@ -109,8 +109,9 @@ These define what you **send** to the API (subset of fields), while the main typ
 
 ### Zustand Stores (src/store/)
 
-- **useProjectStore**: Projects and tasks management
+- **useProjectStore**: Projects management only
 - **useStepStore**: Steps management with active step tracking
+- **useTaskStore**: Tasks management with workflow actions
 - **useUserStore**: Users list and authentication state
 
 Each store follows this pattern:
