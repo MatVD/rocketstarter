@@ -4,9 +4,15 @@ import { COLORS } from "../constants/colors";
 import { formatDate } from "../utils/dateUtils";
 import { useProjectStore } from "../store/project.store";
 import DataBoundary from "../components/UI/DataBoundary";
+import { useEffect } from "react";
 
 export default function ProjectList() {
-  const { projects, projectsLoading, projectsError } = useProjectStore();
+  const { projects, projectsLoading, projectsError, fetchProjects } = useProjectStore();
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
