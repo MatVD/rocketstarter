@@ -4,7 +4,6 @@ import Dashboard from "./pages/Dashboard";
 import ProjectList from "./pages/ProjectList";
 import Build from "./pages/Build";
 import BuilderProjectView from "./pages/BuilderProjectView";
-import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppLayout } from "./components/AppLayout";
 import { useAuth } from "./hooks/useAuth";
 
