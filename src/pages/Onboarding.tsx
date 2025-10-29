@@ -19,8 +19,13 @@ function Onboarding() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const { setUser, onboardingComplete, setOnboardingComplete, onboardingStep, setOnboardingStep } =
-    useUserStore();
+  const {
+    setUser,
+    onboardingComplete,
+    setOnboardingComplete,
+    onboardingStep,
+    setOnboardingStep,
+  } = useUserStore();
   const { isConnected } = useAccount();
 
   useEffect(() => {
@@ -34,7 +39,6 @@ function Onboarding() {
       setOnboardingStep(1);
     }
   }, [isConnected, onboardingComplete, setOnboardingStep, navigation]);
-
 
   const handleWalletConnect = () => {
     if (isConnected) {
@@ -73,7 +77,7 @@ function Onboarding() {
       setSuccess(true);
       setOnboardingComplete(true);
       setOnboardingStep(3);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err?.message || "Failed to create user.");
       setLoading(false);
@@ -89,11 +93,14 @@ function Onboarding() {
         <h1 className="text-2xl font-bold mb-6 text-center dark:text-gray-200">
           Welcome to RocketStarter 🚀
         </h1>
-        {onboardingStep === 3 && (
-          <div className="mt-4 text-center">
-            <p className="text-gray-700 dark:text-gray-200">
-              Welcome to RocketStarter!
+        {onboardingStep === 1 && (
+          <div className="flex flex-col items-center gap-4">
+            <p className="mb-2 text-gray-700 dark:text-gray-200">
+              Connect your wallet to get started
             </p>
+            <div onClick={handleWalletConnect}>
+              <ConnectButtonCustom />
+            </div>
           </div>
         )}
         {onboardingStep === 2 && !success && (
@@ -169,14 +176,11 @@ function Onboarding() {
             </button>
           </form>
         )}
-        {onboardingStep === 1 && (
-          <div className="flex flex-col items-center gap-4">
-            <p className="mb-2 text-gray-700 dark:text-gray-200">
-              Connect your wallet to get started
+        {onboardingStep === 3 && (
+          <div className="mt-4 text-center">
+            <p className="text-gray-700 dark:text-gray-200">
+              Welcome to RocketStarter!
             </p>
-            <div onClick={handleWalletConnect}>
-              <ConnectButtonCustom />
-            </div>
           </div>
         )}
       </Card>
