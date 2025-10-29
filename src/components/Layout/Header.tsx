@@ -1,4 +1,4 @@
-import { User, Menu, Sun, Moon, RefreshCw } from "lucide-react";
+import { User, Menu, Sun, Moon, RefreshCw, Rocket } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useState } from "react";
@@ -25,6 +25,11 @@ export default function Header({
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 md:px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
+          <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+            {/* Fake Logo placeholder in css with icon */}
+            {/* Icon from lucide-react */}
+            <Rocket className="w-5 h-5 text-gray-500 dark:text-gray-400 m-auto" />
+          </div>
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
               {selectedProject?.name || "Rocket Launch"}
