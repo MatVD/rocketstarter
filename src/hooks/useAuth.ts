@@ -8,7 +8,7 @@ import { useUserStore } from "../store/user.store";
  */
 export function useAuth() {
   const { address, isConnected } = useAccount();
-  const { user, setUser, onboardingComplete, setOnboardingComplete } =
+  const { user, setUser, onboardingComplete, setOnboardingComplete, setOnboardingStep } =
     useUserStore();
 
   useEffect(() => {
@@ -34,6 +34,7 @@ export function useAuth() {
         if (mounted) {
           setUser({ ...fetchedUser, address });
           setOnboardingComplete(true);
+          setOnboardingStep(3);
         }
       } catch {
         if (mounted) {

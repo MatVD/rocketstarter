@@ -6,6 +6,7 @@ import Build from "./pages/Build";
 import BuilderProjectView from "./pages/BuilderProjectView";
 import { AppLayout } from "./components/AppLayout";
 import { useAuth } from "./hooks/useAuth";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function AppRoutes() {
   const { isAuthenticated, user } = useAuth();
@@ -14,13 +15,37 @@ function AppRoutes() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-
-        <Route path="/projects" element={<ProjectList />} />
-        <Route path="/build/:projectId" element={<Build />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <ProtectedRoute>
+              <ProjectList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/build/:projectId"
+          element={
+            <ProtectedRoute>
+              <Build />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/builder/project/:projectId"
-          element={<BuilderProjectView />}
+          element={
+            <ProtectedRoute>
+              <BuilderProjectView />
+            </ProtectedRoute>
+          }
         />
       </Route>
 
