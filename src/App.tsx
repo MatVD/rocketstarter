@@ -40,7 +40,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/builder/project/:projectId"
+          path="/builder/projects/:projectId"
           element={
             <ProtectedRoute>
               <BuilderProjectView />

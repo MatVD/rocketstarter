@@ -32,17 +32,21 @@ export default function BuilderProjectView() {
 
   if (!user) {
     return (
-      <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
-        <p className="text-red-500">User not found.</p>
-      </div>
+      <DataBoundary isLoading={loading} error={error} isEmpty={!user} dataType="user">
+        <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+          <p className="text-red-500">User not found.</p>
+        </div>
+      </DataBoundary>
     );
   }
 
   if (!project) {
     return (
-      <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
-        <p className="text-red-500">Project not found.</p>
-      </div>
+      <DataBoundary isLoading={loading} error={error} isEmpty={!project} dataType="project">
+        <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+          <p className="text-red-500">Project not found.</p>
+        </div>
+      </DataBoundary>
     );
   }
 
