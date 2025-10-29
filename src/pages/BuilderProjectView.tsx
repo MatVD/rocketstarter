@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useTasks, useTaskWorkflow } from "../hooks/useTasks";
+import { useTaskWorkflow } from "../hooks/useTasks";
 import DataBoundary from "../components/UI/DataBoundary";
 import KanbanBoard from "../components/Build/KanbanBoard";
 import TaskFilterBar from "../components/UI/TaskFilterBar";
@@ -14,14 +14,13 @@ import {
 import { useUserStore } from "../store/user.store";
 import { useParams } from "react-router-dom";
 import { useProjectStore } from "../store/project.store";
+import { useTaskStore } from "../store";
 
 export default function BuilderProjectView() {
-  const { user } = useUserStore();
+  const { user, userLoading, userError } = useUserStore();
   const { projectId } = useParams<{ projectId: string }>();
-  const project = useProjectStore((state) =>
-    state.projects.find((p) => p.id === Number(projectId))
-  );
-  const { tasks, loading, error, refetch } = useTasks(projectId);
+  const { projectsLoading, projectsError, fetchProject } = useProjectStore();
+  const { tasks, fetchTasks, tasksLoading, tasksError } = useTaskStore();
   const { assignToSelf } = useTaskWorkflow();
   const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
   const [filters, setFilters] = useTaskFilters(projectId);
@@ -30,9 +29,28 @@ export default function BuilderProjectView() {
     type: "success" | "error" | "info";
   } | null>(null);
 
+  useEffect(() => {
+    if (projectId) {
+      fetchProject(projectId);
+    }
+  }, [projectId, fetchProject]);
+
+  useEffect(() => {
+    if (projectId) {
+      fetchTasks(projectId);
+    }
+  }, [projectId, fetchTasks]);
+
+  const { selectedProject } = useProjectStore();
+
   if (!user) {
     return (
-      <DataBoundary isLoading={loading} error={error} isEmpty={!user} dataType="user">
+      <DataBoundary
+        isLoading={userLoading}
+        error={userError}
+        isEmpty={!user}
+        dataType="user"
+      >
         <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
           <p className="text-red-500">User not found.</p>
         </div>
@@ -40,9 +58,14 @@ export default function BuilderProjectView() {
     );
   }
 
-  if (!project) {
+  if (!selectedProject) {
     return (
-      <DataBoundary isLoading={loading} error={error} isEmpty={!project} dataType="project">
+      <DataBoundary
+        isLoading={projectsLoading}
+        error={projectsError}
+        isEmpty={!selectedProject}
+        dataType="project"
+      >
         <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
           <p className="text-red-500">Project not found.</p>
         </div>
@@ -63,7 +86,6 @@ export default function BuilderProjectView() {
     ) {
       const result = await assignToSelf(taskId.toString(), user.address);
       if (result) {
-        refetch();
         setToast({
           message: "Task assigned and moved to In Progress",
           type: "success",
@@ -83,7 +105,7 @@ export default function BuilderProjectView() {
   };
 
   return (
-    <DataBoundary isLoading={loading} error={error} dataType="tasks">
+    <DataBoundary isLoading={tasksLoading} error={tasksError} dataType="tasks">
       <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -95,7 +117,7 @@ export default function BuilderProjectView() {
           <div className="flex items-center space-x-4 mb-4">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                {project.name}
+                {selectedProject.name}
               </h1>
               <p className="text-gray-600 dark:text-gray-300 mt-1">
                 Project tasks organized by status ({filteredTasks.length} of{" "}
@@ -116,7 +138,7 @@ export default function BuilderProjectView() {
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 <span className="font-medium">Progress:</span>{" "}
-                {project.progress}%
+                {selectedProject.progress}%
               </div>
             </div>
           </div>
@@ -131,7 +153,7 @@ export default function BuilderProjectView() {
         >
           <TaskFilterBar
             tasks={tasks}
-            project={project}
+            project={selectedProject}
             filters={filters}
             onFiltersChange={setFilters}
           />

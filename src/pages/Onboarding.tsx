@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "../components/UI/Card";
 import { createUser } from "../api/users";
 import ConnectButtonCustom from "../components/UI/ConnectButtonCustom";
@@ -6,7 +6,6 @@ import { CreateUserRequest } from "../types";
 import { COLORS, COMMON_CLASSES } from "../constants/colors";
 import { useAccount } from "wagmi";
 import { useUserStore } from "../store/user.store";
-import { useAuth } from "../hooks/useAuth";
 
 function Onboarding() {
   const [userInfo, setUserInfo] = useState<CreateUserRequest>({
@@ -26,7 +25,18 @@ function Onboarding() {
     setOnboardingStep,
   } = useUserStore();
   const { isConnected } = useAccount();
-  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isConnected && onboardingStep === 1) {
+      setOnboardingStep(2);
+    }
+    if (!isConnected) {
+      setOnboardingStep(1);
+    }
+    if (onboardingComplete) {
+      setOnboardingStep(3);
+    }
+  }, [isConnected, onboardingStep, setOnboardingStep, onboardingComplete]);
 
   const handleWalletConnect = () => {
     if (isConnected) {
@@ -162,11 +172,13 @@ function Onboarding() {
     <div className="mt-4 text-center">
       {user?.role === "Owner" ? (
         <p className="text-gray-700 dark:text-gray-200">
-          On the left sidebar, you can now build your projects from the dashboard.
+          On the left sidebar, you can now build your projects from the
+          dashboard.
         </p>
       ) : (
         <p className="text-gray-700 dark:text-gray-200">
-          On the left sidebar, you can now contribute to projects and their success.
+          On the left sidebar, you can now contribute to projects and their
+          success.
         </p>
       )}
     </div>
@@ -186,7 +198,10 @@ function Onboarding() {
           isConnected &&
           !onboardingComplete &&
           onboardingStepTwo()}
-        {onboardingStep === 3 && isAuthenticated && onboardingStepThree()}
+        {onboardingStep === 3 &&
+          isConnected &&
+          onboardingComplete &&
+          onboardingStepThree()}
       </Card>
     </div>
   );
