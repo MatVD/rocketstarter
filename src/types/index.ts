@@ -150,6 +150,12 @@ export interface CreateStepRequest {
   order: number;
   status?: 0 | 1 | 2;
 }
+export interface UpdateStepRequest {
+  title?: string;
+  description?: string;
+  order?: number;
+  status?: 0 | 1 | 2;
+}
 
 // ----------- Column types ----------- //
 export interface Column {
