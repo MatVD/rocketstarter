@@ -121,6 +121,17 @@ export default function BuilderProjectView() {
       });
       return;
     }
+
+    // Prevent moving tasks that are not assigned to the current user
+    const task = tasks.find((t) => t.id === taskId);
+    if (task?.builder !== user.address) {
+      setToast({
+        message: "You can only move tasks assigned to you",
+        type: "error",
+      });
+      return;
+    }
+    
     try {
       const result = await updateExistingTask(taskId.toString(), {
         status: newStatus,
