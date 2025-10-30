@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import DataBoundary from "../components/UI/DataBoundary";
@@ -113,14 +114,23 @@ export default function BuilderProjectView() {
   };
 
   const handleMoveTask = async (taskId: number, newStatus: Task["status"]) => {
-    const result = await updateExistingTask(taskId.toString(), {
-      status: newStatus,
-    });
-    if (result) {
-      refetchTasks();
-    } else {
+    if (newStatus === 3) {
       setToast({
-        message: "Failed to update task",
+        message: "Tasks cannot be moved back to 'Done' status",
+        type: "error",
+      });
+      return;
+    }
+    try {
+      const result = await updateExistingTask(taskId.toString(), {
+        status: newStatus,
+      });
+      if (result) {
+        refetchTasks();
+      }
+    } catch (error: any) {
+      setToast({
+        message: "Failed to update task: " + (error.message || ""),
         type: "error",
       });
     }
