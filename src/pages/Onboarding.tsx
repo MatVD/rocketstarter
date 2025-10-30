@@ -185,7 +185,7 @@ function Onboarding() {
   );
 
   return (
-    <div className="flex items-center h-full justify-center bg-gray-50 dark:bg-gray-900">
+    <div className="flex items-center h-full justify-center bg-gray-50 dark:bg-gray-900 m-4 md:m-0">
       <Card className="w-full max-w-md p-8">
         <h1 className="text-2xl font-bold mb-6 text-center dark:text-gray-200">
           Welcome to RocketStarter 🚀
