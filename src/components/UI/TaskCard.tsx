@@ -66,7 +66,7 @@ function TaskCardContent({
   onStatusChange,
   statusButtons,
 }: TaskCardContentProps) {
-  const isBuilderMode = user?.role === "builder";
+  const isBuilderMode = user?.role === "Builder";
   const isAssignedToCurrentUser = user && task.builder === user.address;
   const isUnassigned = !task.builder || task.builder === "";
   const isInTodoStatus = task.status === 0;

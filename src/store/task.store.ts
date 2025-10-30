@@ -9,6 +9,7 @@ import {
   deleteTask,
   CreateTaskRequest,
   UpdateTaskRequest,
+  assignTaskToSelf,
 } from "../api/tasks";
 
 interface TaskState {
@@ -27,6 +28,7 @@ interface TaskState {
   removeTask: (id: string) => Promise<boolean>;
   setSelectedTask: (task: Task | null) => void;
   refetchTasks: () => Promise<void>;
+  assignTaskToSelf: (taskId: number, builderAddress: string) => Promise<Task | null>;
 }
 
 export const useTaskStore = create<TaskState>((set, get) => ({
@@ -139,4 +141,29 @@ export const useTaskStore = create<TaskState>((set, get) => ({
     const { lastProjectId, fetchTasks } = get();
     await fetchTasks(lastProjectId ?? undefined);
   },
+
+  assignTaskToSelf: async (taskId: number, builderAddress: string) => {
+    set({ tasksLoading: true, tasksError: null });
+    try {
+      const updatedTask = await assignTaskToSelf(taskId.toString(), builderAddress);
+      set((state) => ({
+        tasks: state.tasks.map((t) =>
+          t.id === taskId ? updatedTask : t
+        ),
+        selectedTask:
+          state.selectedTask?.id === taskId
+            ? updatedTask
+            : state.selectedTask,
+        tasksLoading: false,
+      }));
+      return updatedTask;
+    } catch (err) {
+      set({
+        tasksError:
+          err instanceof Error ? err.message : "Failed to assign task",
+        tasksLoading: false,
+      });
+      return null;
+    }
+  }
 }));

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useTaskWorkflow } from "../hooks/useTasks";
 import DataBoundary from "../components/UI/DataBoundary";
 import KanbanBoard from "../components/Build/KanbanBoard";
 import TaskFilterBar from "../components/UI/TaskFilterBar";
@@ -20,8 +19,7 @@ export default function BuilderProjectView() {
   const { user, userLoading, userError } = useUserStore();
   const { projectId } = useParams<{ projectId: string }>();
   const { projectsLoading, projectsError, fetchProject } = useProjectStore();
-  const { tasks, fetchTasks, tasksLoading, tasksError } = useTaskStore();
-  const { assignToSelf } = useTaskWorkflow();
+  const { tasks, fetchTasks, tasksLoading, tasksError, assignTaskToSelf, refetchTasks } = useTaskStore();
   const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
   const [filters, setFilters] = useTaskFilters(projectId);
   const [toast, setToast] = useState<{
@@ -84,12 +82,13 @@ export default function BuilderProjectView() {
       (!task.builder || task.builder === "") &&
       task.status === 0 // todo status
     ) {
-      const result = await assignToSelf(taskId.toString(), user.address);
+      const result = await assignTaskToSelf(taskId, user.address);
       if (result) {
         setToast({
           message: "Task assigned and moved to In Progress",
           type: "success",
         });
+        refetchTasks();
       } else {
         setToast({
           message: "Failed to assign task",
@@ -173,7 +172,7 @@ export default function BuilderProjectView() {
               onMoveTask={() => {}} // Disabled for builders
               user={user}
               onTaskAssignment={handleTaskAssignment}
-              isBuilderMode={true} // Add this prop to indicate builder mode
+              isBuilderMode={false} // Add this prop to indicate builder mode
             />
           ) : (
             <div className="text-center py-12">
