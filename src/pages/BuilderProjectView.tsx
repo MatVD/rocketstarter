@@ -14,12 +14,21 @@ import { useUserStore } from "../store/user.store";
 import { useParams } from "react-router-dom";
 import { useProjectStore } from "../store/project.store";
 import { useTaskStore } from "../store";
+import { Task } from "../types";
 
 export default function BuilderProjectView() {
   const { user, userLoading, userError } = useUserStore();
   const { projectId } = useParams<{ projectId: string }>();
   const { projectsLoading, projectsError, fetchProject } = useProjectStore();
-  const { tasks, fetchTasks, tasksLoading, tasksError, assignTaskToSelf, refetchTasks } = useTaskStore();
+  const {
+    tasks,
+    fetchTasks,
+    tasksLoading,
+    tasksError,
+    assignTaskToSelf,
+    refetchTasks,
+    updateExistingTask,
+  } = useTaskStore();
   const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
   const [filters, setFilters] = useTaskFilters(projectId);
   const [toast, setToast] = useState<{
@@ -103,6 +112,20 @@ export default function BuilderProjectView() {
     }
   };
 
+  const handleMoveTask = async (taskId: number, newStatus: Task["status"]) => {
+    const result = await updateExistingTask(taskId.toString(), {
+      status: newStatus,
+    });
+    if (result) {
+      refetchTasks();
+    } else {
+      setToast({
+        message: "Failed to update task",
+        type: "error",
+      });
+    }
+  };
+
   return (
     <DataBoundary isLoading={tasksLoading} error={tasksError} dataType="tasks">
       <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
@@ -169,7 +192,7 @@ export default function BuilderProjectView() {
               tasks={filteredTasks}
               columns={columns}
               setColumns={setColumns}
-              onMoveTask={() => {}} // Disabled for builders
+              onMoveTask={handleMoveTask}
               user={user}
               onTaskAssignment={handleTaskAssignment}
               isBuilderMode={false} // Add this prop to indicate builder mode

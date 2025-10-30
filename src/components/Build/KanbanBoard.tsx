@@ -17,7 +17,6 @@ import TaskCard from "../UI/TaskCard";
 import DroppableColumn from "./KanbanBoard/DroppableColumn";
 import KanbanColumnHeader from "./KanbanBoard/KanbanColumnHeader";
 import { useKanbanSensors } from "./KanbanBoard/useKanbanSensors";
-
 import type { Column } from "./KanbanBoard/kanbanUtils";
 
 interface KanbanBoardProps {
