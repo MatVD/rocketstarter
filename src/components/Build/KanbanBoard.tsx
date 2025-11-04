@@ -1,11 +1,13 @@
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useMemo, useCallback, memo } from "react";
 import {
   DndContext,
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
-  closestCorners,
+  CollisionDetection,
+  pointerWithin,
+  rectIntersection,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -18,6 +20,54 @@ import DroppableColumn from "./KanbanBoard/DroppableColumn";
 import KanbanColumnHeader from "./KanbanBoard/KanbanColumnHeader";
 import { useKanbanSensors } from "./KanbanBoard/useKanbanSensors";
 import type { Column } from "./KanbanBoard/kanbanUtils";
+
+/**
+ * Custom collision detection specifically for Kanban columns
+ * Only detects columns (IDs: 0, 1, 2, 3), not individual task cards
+ */
+const columnOnlyCollisionDetection: CollisionDetection = (args) => {
+  // First try pointerWithin
+  const pointerCollisions = pointerWithin(args);
+  
+  // Filter to only include column IDs (0, 1, 2, 3)
+  const columnCollisions = pointerCollisions.filter(
+    (collision) => 
+      typeof collision.id === 'number' && 
+      collision.id >= 0 && 
+      collision.id <= 3
+  );
+  
+  if (columnCollisions.length > 0) {
+    return columnCollisions;
+  }
+  
+  // Fallback to rectIntersection
+  const rectCollisions = rectIntersection(args);
+  
+  // Filter to only include column IDs
+  const columnRectCollisions = rectCollisions.filter(
+    (collision) => 
+      typeof collision.id === 'number' && 
+      collision.id >= 0 && 
+      collision.id <= 3
+  );
+  
+  return columnRectCollisions.length > 0 ? [columnRectCollisions[0]] : [];
+};
+
+// Memoized TaskCard to prevent unnecessary re-renders
+// Only re-renders when task properties actually change
+const MemoizedTaskCard = memo(TaskCard, (prevProps, nextProps) => {
+  return (
+    prevProps.task.id === nextProps.task.id &&
+    prevProps.task.status === nextProps.task.status &&
+    prevProps.task.title === nextProps.task.title &&
+    prevProps.task.priority === nextProps.task.priority &&
+    prevProps.isDragging === nextProps.isDragging
+  );
+});
+
+MemoizedTaskCard.displayName = 'MemoizedTaskCard';
 
 interface KanbanBoardProps {
   tasks: Task[];
@@ -41,42 +91,59 @@ export default function KanbanBoard({
 
   const sensors = useKanbanSensors();
 
-  const getTasksByStatus = (status: number) => {
-    return tasks.filter((task) => task.status === status);
-  };
+  // Memoize tasks filtering by status to avoid recalculation on every render
+  const getTasksByStatus = useCallback(
+    (status: number) => {
+      return tasks.filter((task) => task.status === status);
+    },
+    [tasks]
+  );
 
-  const handleDragStart = (event: DragStartEvent) => {
+  // Memoize columns with their tasks to prevent unnecessary recalculations
+  const columnsWithTasks = useMemo(() => {
+    return columns.map((column) => ({
+      ...column,
+      tasks: getTasksByStatus(column.id),
+    }));
+  }, [columns, getTasksByStatus]);
+
+  // Memoize drag start handler to maintain stable reference
+  const handleDragStart = useCallback((event: DragStartEvent) => {
     const { active } = event;
     const task = tasks.find((t) => t.id === active.id);
     setActiveTask(task || null);
-  };
+  }, [tasks]);
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    setActiveTask(null);
+  // Memoize drag end handler to maintain stable reference
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      setActiveTask(null);
 
-    // Disable drag and drop for builders
-    if (isBuilderMode || !over) return;
+      if (!over) return;
 
-    const taskId = active.id as number;
-    const overId = over.id as number;
+      const taskId = active.id as number;
+      const overId = over.id as number;
 
-    // If we drop on a column, move the task to that column's status
-    const isColumn = columns.some((col) => col.id === overId);
-    if (isColumn) {
-      // Verify that overId is a valid TaskStatus
-      if (overId === 0 || overId === 1 || overId === 2 || overId === 3) {
-        onMoveTask(taskId, overId as TaskStatus);
+      // Only handle drops on columns (IDs: 0, 1, 2, 3)
+      if (typeof overId !== 'number' || overId < 0 || overId > 3) {
+        return;
       }
-      return;
-    }
 
-    // If dropped on another task, take the status of that task
-    const overTask = tasks.find((t) => t.id === overId);
-    if (overTask && overTask.status !== active.data.current?.task.status) {
-      onMoveTask(taskId, overTask.status);
-    }
-  };
+      const newStatus = overId as TaskStatus;
+      
+      // Don't move if already in the same status
+      const currentTask = tasks.find((t) => t.id === taskId);
+      if (currentTask && currentTask.status === newStatus) {
+        return;
+      }
+
+      // Call update function - parent component handles validation and restrictions
+      // (optimistic update handled by store)
+      onMoveTask(taskId, newStatus);
+    },
+    [tasks, onMoveTask]
+  );
 
   return (
     <Card className="p-4 md:p-6">
@@ -96,66 +163,70 @@ export default function KanbanBoard({
 
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCorners}
+        collisionDetection={columnOnlyCollisionDetection}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex gap-4 md:gap-6 overflow-x-auto">
-          {columns.map((column) => {
-            const columnTasks = getTasksByStatus(column.id);
-            return (
-              <div
-                key={column.id}
-                className="flex-1 min-w-[250px] space-y-3 md:space-y-4 relative"
-              >
-                <KanbanColumnHeader
-                  column={column}
-                  taskCount={columnTasks.length}
-                  canDelete={columns.length > 1}
-                />
+        <div className="flex gap-4 md:gap-6 overflow-x-auto pb-4">
+          {columnsWithTasks.map((column) => (
+            <DroppableColumn
+              key={column.id}
+              id={column.id}
+              className="flex-1 min-w-[280px] max-w-[350px] space-y-3 md:space-y-4"
+            >
+              <KanbanColumnHeader
+                column={column}
+                taskCount={column.tasks.length}
+                canDelete={columns.length > 1}
+              />
 
-                <DroppableColumn
-                  id={column.id}
-                  className={`${column.color} rounded-lg p-2 md:p-3 min-h-[300px] md:min-h-[400px]`}
+              <div className={`${column.color} rounded-lg p-3 min-h-[400px] transition-colors duration-200`}>
+                <SortableContext
+                  items={column.tasks.map((task) => task.id)}
+                  strategy={verticalListSortingStrategy}
                 >
-                  <SortableContext
-                    items={columnTasks.map((task) => task.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    <div className="space-y-2 md:space-y-3">
-                      {columnTasks.map((task, index) => (
+                  <AnimatePresence mode="popLayout">
+                    <div className="space-y-3">
+                      {column.tasks.map((task) => (
                         <motion.div
                           key={task.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.1 }}
+                          layout
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.8 }}
+                          transition={{
+                            layout: { duration: 0.2 },
+                            opacity: { duration: 0.15 },
+                          }}
                         >
-                          <TaskCard
+                          <MemoizedTaskCard
                             task={task}
                             variant="kanban"
-                            isDraggable={!isBuilderMode} // Disable dragging for builders
+                            isDraggable={true}
                             user={user}
                             onTaskAssignment={onTaskAssignment}
                           />
                         </motion.div>
                       ))}
                     </div>
-                  </SortableContext>
-                </DroppableColumn>
+                  </AnimatePresence>
+                </SortableContext>
               </div>
-            );
-          })}
+            </DroppableColumn>
+          ))}
         </div>
 
         <DragOverlay>
           {activeTask ? (
-            <TaskCard
-              task={activeTask}
-              variant="kanban"
-              isDragging
-              user={user}
-              onTaskAssignment={onTaskAssignment}
-            />
+            <div className="rotate-3 cursor-grabbing">
+              <MemoizedTaskCard
+                task={activeTask}
+                variant="kanban"
+                isDragging
+                user={user}
+                onTaskAssignment={onTaskAssignment}
+              />
+            </div>
           ) : null}
         </DragOverlay>
       </DndContext>

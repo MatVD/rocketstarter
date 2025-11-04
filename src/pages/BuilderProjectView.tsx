@@ -27,7 +27,6 @@ export default function BuilderProjectView() {
     tasksLoading,
     tasksError,
     assignTaskToSelf,
-    refetchTasks,
     updateExistingTask,
   } = useTaskStore();
   const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
@@ -98,7 +97,7 @@ export default function BuilderProjectView() {
           message: "Task assigned and moved to In Progress",
           type: "success",
         });
-        refetchTasks();
+        // No refetch needed - store handles optimistic update
       } else {
         setToast({
           message: "Failed to assign task",
@@ -114,30 +113,91 @@ export default function BuilderProjectView() {
   };
 
   const handleMoveTask = async (taskId: number, newStatus: Task["status"]) => {
+    const task = tasks.find((t) => t.id === taskId);
+    
+    // Prevent moving tasks to 'Done' status (only task owner can approve)
     if (newStatus === 3) {
+      // Check if user is the task owner
+      if (task?.taskOwner && task.taskOwner !== user.address) {
+        setToast({
+          message: "Only the task owner can move tasks to 'Done'",
+          type: "error",
+        });
+        return;
+      }
+    }
+
+    // Special case: Moving back to "todo" = releasing the task
+    if (newStatus === 0) {
+      try {
+        // Use updateExistingTask which handles optimistic update
+        // Pass empty string to clear builder assignment
+        await updateExistingTask(taskId.toString(), {
+          builderAddress: "",  // Empty string to remove builder
+          status: 0,
+        });
+        
+        setToast({
+          message: "Task released back to 'To Do'",
+          type: "success",
+        });
+      } catch (error: any) {
+        setToast({
+          message: "Failed to release task: " + (error.message || ""),
+          type: "error",
+        });
+      }
+      return;
+    }
+
+    // Verify task exists
+    if (!task) {
       setToast({
-        message: "Tasks cannot be moved back to 'Done' status",
+        message: "Task not found",
         type: "error",
       });
       return;
     }
 
-    // Prevent moving tasks that are not assigned to the current user
-    const task = tasks.find((t) => t.id === taskId);
-    if (task?.builder !== user.address) {
-      setToast({
-        message: "You can only move tasks assigned to you",
-        type: "error",
-      });
-      return;
-    }
-    
     try {
-      const result = await updateExistingTask(taskId.toString(), {
-        status: newStatus,
-      });
-      if (result) {
-        refetchTasks();
+      // If task owner is moving to "done" status
+      if (newStatus === 3) {
+        if (task.taskOwner === user.address) {
+          await updateExistingTask(taskId.toString(), {
+            status: newStatus,
+          });
+          setToast({
+            message: "Task marked as Done",
+            type: "success",
+          });
+        } else {
+          setToast({
+            message: "Only the task owner can mark tasks as Done",
+            type: "error",
+          });
+        }
+        return;
+      }
+
+      // Allow movement between "in progress" (1) and "in review" (2)
+      if ((task.status === 1 && newStatus === 2) || (task.status === 2 && newStatus === 1)) {
+        // Check if task is assigned to current user
+        if (task.builder !== user.address) {
+          setToast({
+            message: "You can only move tasks assigned to you",
+            type: "error",
+          });
+          return;
+        }
+        
+        await updateExistingTask(taskId.toString(), {
+          status: newStatus,
+        });
+      } else {
+        setToast({
+          message: "Invalid status transition",
+          type: "error",
+        });
       }
     } catch (error: any) {
       setToast({
@@ -216,7 +276,7 @@ export default function BuilderProjectView() {
               onMoveTask={handleMoveTask}
               user={user}
               onTaskAssignment={handleTaskAssignment}
-              isBuilderMode={false} // Add this prop to indicate builder mode
+              isBuilderMode={true} // Builder mode: enables drag restrictions
             />
           ) : (
             <div className="text-center py-12">

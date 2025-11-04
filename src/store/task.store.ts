@@ -92,26 +92,58 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   updateExistingTask: async (id: string, data: UpdateTaskRequest) => {
-    set({ tasksLoading: true, tasksError: null });
+    const taskId = parseInt(id);
+    
+    // 1. Optimistic update - Update UI immediately WITHOUT loading state
+    // This prevents full page re-render and gives instant feedback
+    set((state) => ({
+      tasks: state.tasks.map((t) => {
+        if (t.id !== taskId) return t;
+        
+        // Merge update data with existing task
+        const updatedTask = {
+          ...t,
+          ...data,
+          // Map builderAddress from API to builder in Task type
+          builder: data.builderAddress !== undefined ? data.builderAddress : t.builder,
+          // Ensure stepId is number if provided
+          stepId: data.stepId !== undefined 
+            ? (typeof data.stepId === 'string' ? parseInt(data.stepId) : data.stepId)
+            : t.stepId,
+        } as Task;
+        
+        return updatedTask;
+      }),
+      // ⚠️ NO tasksLoading: true here to avoid re-rendering all components
+    }));
+
     try {
+      // 2. API call in background
       const updatedTask = await updateTask(id, data);
+      
+      // 3. Confirm with backend data
       set((state) => ({
         tasks: state.tasks.map((t) =>
-          t.id === parseInt(id) ? updatedTask : t
+          t.id === taskId ? updatedTask : t
         ),
         selectedTask:
-          state.selectedTask?.id === parseInt(id)
+          state.selectedTask?.id === taskId
             ? updatedTask
             : state.selectedTask,
-        tasksLoading: false,
       }));
+      
       return updatedTask;
     } catch (err) {
+      // 4. Rollback on error - refetch to restore correct state
       set({
         tasksError:
           err instanceof Error ? err.message : "Failed to update task",
-        tasksLoading: false,
       });
+      
+      // Refetch all tasks to restore correct state after error
+      const { fetchTasks, lastProjectId } = get();
+      await fetchTasks(lastProjectId ?? undefined);
+      
       return null;
     }
   },
@@ -143,26 +175,50 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   assignTaskToSelf: async (taskId: number, builderAddress: string) => {
-    set({ tasksLoading: true, tasksError: null });
+    // 1. Optimistic update - Update UI immediately WITHOUT loading state
+    set((state) => ({
+      tasks: state.tasks.map((t) => {
+        if (t.id !== taskId) return t;
+        return {
+          ...t,
+          builder: builderAddress,
+          status: 1, // Move to "in progress"
+        } as Task;
+      }),
+      selectedTask:
+        state.selectedTask?.id === taskId
+          ? { ...state.selectedTask, builder: builderAddress, status: 1 }
+          : state.selectedTask,
+      // ⚠️ NO tasksLoading: true to avoid re-rendering
+    }));
+
     try {
+      // 2. API call in background
       const updatedTask = await assignTaskToSelf(taskId.toString(), builderAddress);
+      
+      // 3. Confirm with backend data
       set((state) => ({
         tasks: state.tasks.map((t) =>
           t.id === taskId ? updatedTask : t
         ),
         selectedTask:
-          state.selectedTask?.id === taskId
-            ? updatedTask
-            : state.selectedTask,
-        tasksLoading: false,
+          state.selectedTask?.id === taskId ? updatedTask : state.selectedTask,
       }));
       return updatedTask;
     } catch (err) {
-      set({
+      // 4. Rollback on error
+      set((state) => ({
+        tasks: state.tasks.map((t) => {
+          if (t.id !== taskId) return t;
+          return {
+            ...t,
+            builder: undefined,
+            status: 0, // Revert to "todo"
+          } as Task;
+        }),
         tasksError:
           err instanceof Error ? err.message : "Failed to assign task",
-        tasksLoading: false,
-      });
+      }));
       return null;
     }
   }

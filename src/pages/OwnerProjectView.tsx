@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Hammer } from "lucide-react";
 import TaskTable from "../components/Build/TaskTable";
@@ -9,7 +9,7 @@ import Toast from "../components/UI/Toast";
 import DataBoundary from "../components/UI/DataBoundary";
 import { flowSteps } from "../data/mockData";
 import { Task, User } from "../types";
-import { useTasks, useTaskMutations, useTaskWorkflow } from "../hooks/useTasks";
+import { useTaskStore } from "../store";
 import {
   DEFAULT_COLUMNS,
   Column,
@@ -29,14 +29,30 @@ export default function Build({
   user,
 }: BuildProps) {
   const { projectId } = useParams<{ projectId: string }>();
-  const { tasks, loading, error, refetch } = useTasks(projectId);
-  const { create, update, remove } = useTaskMutations();
-  const { assignToSelf } = useTaskWorkflow();
+  
+  // Use Zustand store instead of custom hook for better performance
+  const { 
+    tasks, 
+    tasksLoading: loading, 
+    tasksError: error,
+    fetchTasks,
+    createNewTask,
+    updateExistingTask,
+    removeTask,
+  } = useTaskStore();
+  
   const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error" | "info";
   } | null>(null);
+
+  // Fetch tasks when component mounts or projectId changes
+  useEffect(() => {
+    if (projectId) {
+      fetchTasks(projectId);
+    }
+  }, [projectId, fetchTasks]);
 
   // Find the current step based on activeStepId, default to first step if none provided
   const currentStep = activeStepId
@@ -45,7 +61,7 @@ export default function Build({
 
   // Filter tasks for the current step
   const currentStepTasks = tasks.filter(
-    (task) => task.stepId === currentStep.id
+    (task: Task) => task.stepId === currentStep.id
   );
 
   const handleAddTask = async (
@@ -56,14 +72,14 @@ export default function Build({
   ) => {
     if (!projectId) return;
 
-    const result = await create({
+    const result = await createNewTask({
       ...newTask,
       projectId: parseInt(projectId),
       stepId: currentStep.id.toString(),
     });
 
     if (result) {
-      refetch();
+      // No refetch needed - store handles optimistic update
       setToast({
         message: "Task created successfully",
         type: "success",
@@ -82,9 +98,9 @@ export default function Build({
 
   const handleDeleteTask = async (taskId: number) => {
     if (confirm("Are you sure you want to delete this task?")) {
-      const success = await remove(taskId.toString());
+      const success = await removeTask(taskId.toString());
       if (success) {
-        refetch();
+        // No refetch needed - store handles optimistic update
         setToast({
           message: "Task deleted successfully",
           type: "success",
@@ -99,25 +115,23 @@ export default function Build({
   };
 
   const handleMoveTask = async (taskId: number, newStatus: Task["status"]) => {
-    const result = await update(taskId.toString(), { status: newStatus });
-    if (result) {
-      refetch();
-    } else {
-      setToast({
-        message: "Failed to update task",
-        type: "error",
-      });
-    }
+    // Optimistic update - no await, no refetch
+    // Store handles the update immediately and syncs with backend
+    await updateExistingTask(taskId.toString(), { status: newStatus });
+    // Don't show error toast here - store will handle rollback on error
   };
 
   // Builder-specific task assignment logic
   const handleTaskAssignment = async (taskId: number) => {
     if (user && user.role === "Builder" && user.address) {
-      const task = tasks.find((t) => t.id === taskId);
+      const task = tasks.find((t: Task) => t.id === taskId);
       if (task) {
-        const result = await assignToSelf(taskId.toString(), user.address);
+        const result = await updateExistingTask(taskId.toString(), { 
+          builderAddress: user.address,
+          status: 1, // Move to "in progress"
+        });
         if (result) {
-          refetch();
+          // No refetch needed - store handles optimistic update
           setToast({
             message: `Successfully took task: ${task.title}`,
             type: "success",
