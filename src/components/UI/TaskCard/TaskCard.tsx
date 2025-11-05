@@ -1,11 +1,14 @@
 import { User, Calendar, GripVertical, Plus, Clock } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Task, User as UserType } from "../../types";
-import Card from "./Card";
-import { getPriorityLabel, getPriorityStyle } from "../../utils/priorityUtils";
-import { formatDate } from "../../utils/dateUtils";
-import { getStatusColor, getStatusIcon } from "../../utils/statusUtils";
+import { Task, User as UserType } from "../../../types";
+import Card from "../Card";
+import {
+  getPriorityLabel,
+  getPriorityStyle,
+} from "../../../utils/priorityUtils";
+import { formatDate } from "../../../utils/dateUtils";
+import { getStatusColor, getStatusIcon } from "../../../utils/statusUtils";
 
 interface TaskCardProps {
   task: Task;
@@ -98,24 +101,26 @@ function TaskCardContent({
     <>
       <div className="flex items-start justify-between">
         {/* Priority badge (always visible) */}
-        {typeof task.priority !== "undefined" && getPriorityLabel(task.priority) !== "" && (
-          <div className="flex items-center">
-            <span className="text-sm text-white mr-2">Priority:</span>
-            <span
-              className={`flex items-center gap-1 px-2 py-0.5 rounded-md border text-xs font-medium select-none ${
-                getPriorityStyle(task.priority).bg
-              } ${getPriorityStyle(task.priority).text} ${
-                getPriorityStyle(task.priority).border
-              }`}
-              title={`Priority: ${
-                getPriorityLabel(task.priority).charAt(0).toUpperCase() + getPriorityLabel(task.priority).slice(1)
-              }`}
-              style={{ minWidth: 60, justifyContent: "center" }}
-            >
-              {getPriorityLabel(task.priority)}
-            </span>
-          </div>
-        )}
+        {typeof task.priority !== "undefined" &&
+          getPriorityLabel(task.priority) !== "" && (
+            <div className="flex items-center">
+              <span className="text-sm text-white mr-2">Priority:</span>
+              <span
+                className={`flex items-center gap-1 px-2 py-0.5 rounded-md border text-xs font-medium select-none ${
+                  getPriorityStyle(task.priority).bg
+                } ${getPriorityStyle(task.priority).text} ${
+                  getPriorityStyle(task.priority).border
+                }`}
+                title={`Priority: ${
+                  getPriorityLabel(task.priority).charAt(0).toUpperCase() +
+                  getPriorityLabel(task.priority).slice(1)
+                }`}
+                style={{ minWidth: 60, justifyContent: "center" }}
+              >
+                {getPriorityLabel(task.priority)}
+              </span>
+            </div>
+          )}
         {/* Project and Step info for Builder mode */}
         {variant === "simple" && (projectName || stepName) && (
           <span className="text-xs py-1 text-blue-700 dark:text-blue-300 rounded-md font-medium ml-2">
@@ -237,7 +242,9 @@ function TaskCardContent({
             </div>
             <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 flex-shrink-0">
               <Calendar className="w-2 h-2 md:w-3 md:h-3" />
-              <span className="hidden md:inline">{formatDate(task.createdAt)}</span>
+              <span className="hidden md:inline">
+                {formatDate(task.createdAt)}
+              </span>
             </div>
           </>
         ) : (
@@ -252,15 +259,19 @@ function TaskCardContent({
                 }`}
               >
                 {getStatusIcon && getStatusIcon(task.status)}
-                <span className="ml-1">
-                  {task.status}
-                </span>
+                <span className="ml-1">{task.status}</span>
               </span>
               <span className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                 <Clock className="w-3 h-3 mr-1" />
                 {variant === "list"
-                  ? task.createdAt ? new Date(task.createdAt).toLocaleDateString() : "No date"
-                  : task.createdAt ? (task.createdAt instanceof Date ? task.createdAt.toLocaleDateString() : task.createdAt) : "No date"}
+                  ? task.createdAt
+                    ? new Date(task.createdAt).toLocaleDateString()
+                    : "No date"
+                  : task.createdAt
+                  ? task.createdAt instanceof Date
+                    ? task.createdAt.toLocaleDateString()
+                    : task.createdAt
+                  : "No date"}
               </span>
             </div>
 

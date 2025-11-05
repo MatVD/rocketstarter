@@ -13,7 +13,7 @@ import {
 } from "@dnd-kit/sortable";
 import { Task, User, TaskStatus } from "../../types";
 import Card from "../UI/Card";
-import TaskCard from "../UI/TaskCard";
+import TaskCard from "../UI/TaskCard/TaskCard";
 import DroppableColumn from "./KanbanBoard/DroppableColumn";
 import KanbanColumnHeader from "./KanbanBoard/KanbanColumnHeader";
 import { useKanbanSensors } from "./KanbanBoard/useKanbanSensors";

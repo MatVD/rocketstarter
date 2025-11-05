@@ -11,7 +11,7 @@ import {
 import { Task, TaskStatus, User as UserType } from "../types";
 import { tasks as initialTasks, mockUsers, flowSteps } from "../data/mockData";
 import Toast from "../components/UI/Toast";
-import TaskCard from "../components/UI/TaskCard";
+import TaskCard from "../components/UI/TaskCard/TaskCard";
 import { getStatusColor, getStatusIcon } from "../utils/statusUtils";
 import { useProjectStore } from "../store/project.store";
 
