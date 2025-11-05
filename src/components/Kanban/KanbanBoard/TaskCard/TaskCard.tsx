@@ -2,8 +2,8 @@ import { GripVertical } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { memo } from "react";
-import { Task, User as UserType } from "../../../types";
-import Card from "../Card";
+import { Task, User as UserType } from "../../../../types";
+import Card from "../../../UI/Card";
 import TaskCardContent from "./TaskCardContent";
 
 interface TaskCardProps {

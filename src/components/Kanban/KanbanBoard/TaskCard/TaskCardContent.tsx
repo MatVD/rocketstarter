@@ -1,13 +1,13 @@
 import { Calendar, Clock, Plus, User } from "lucide-react";
 import { memo } from "react";
-import { Task, User as UserType } from "../../../types";
+import { Task, User as UserType } from "../../../../types";
 import {
   getPriorityLabel,
   getPriorityStyle,
-} from "../../../utils/priorityUtils";
-import { formatDate } from "../../../utils/dateUtils";
-import { getStatusColor, getStatusIcon } from "../../../utils/statusUtils";
-import { useTaskStore } from "../../../store";
+} from "../../../../utils/priorityUtils";
+import { formatDate } from "../../../../utils/dateUtils";
+import { getStatusColor, getStatusIcon } from "../../../../utils/statusUtils";
+import { useTaskStore } from "../../../../store";
 
 interface TaskCardContentProps {
   task: Task;
