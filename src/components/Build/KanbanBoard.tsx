@@ -113,7 +113,7 @@ export default function KanbanBoard({
             return (
               <div
                 key={column.id}
-                className="flex-1 min-w-[250px] space-y-3 md:space-y-4 relative"
+                className={`${column.color} flex-1 min-w-[250px] space-y-3 md:space-y-4 relative`}
               >
                 <KanbanColumnHeader
                   column={column}
@@ -123,7 +123,7 @@ export default function KanbanBoard({
 
                 <DroppableColumn
                   id={column.id}
-                  className={`${column.color} rounded-lg p-2 md:p-3 min-h-[300px] md:min-h-[400px]`}
+                  className="rounded-lg p-2 md:p-3 min-h-[300px] md:min-h-[400px]"
                 >
                   <SortableContext
                     items={columnTasks.map((task) => task.id)}
