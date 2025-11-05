@@ -6,7 +6,6 @@ import { flowSteps } from "../data/mockData";
 import { Task, User } from "../types";
 import { useParams } from "react-router-dom";
 import { useProjectStore, useTaskStore, useUserStore } from "../store";
-import TaskTable from "../components/Build/KanbanBoard/TaskTable/TaskTable";
 import StepNavigation from "../components/Build/StepNavigation/StepNavigation";
 import StepDetails from "../components/Build/StepDetails/StepDetails";
 import { useEffect } from "react";
@@ -158,20 +157,6 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
             <StepDetails step={currentStep} tasks={tasks} />
           </motion.div>
         )}
-
-        {/* Upper section - Task management */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <TaskTable
-            tasks={currentStepTasks}
-            user={user}
-            currentStep={currentStep}
-            currentProject={selectedProject}
-          />
-        </motion.div>
 
         {/* Lower section - Kanban board */}
         <motion.div
