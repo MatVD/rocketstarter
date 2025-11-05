@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import DataBoundary from "../components/UI/DataBoundary";
-import KanbanBoard from "../components/Build/KanbanBoard";
+import KanbanBoard from "../components/Build/KanbanBoard/KanbanBoard";
 import TaskFilterBar from "../components/UI/TaskFilterBar";
 import { filterTasks } from "../utils/taskFilterUtils";
 import { useTaskFilters } from "../hooks/useTaskFilters";

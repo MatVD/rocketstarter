@@ -11,14 +11,14 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Task, User, TaskStatus } from "../../types";
-import Card from "../UI/Card";
-import TaskCard from "../UI/TaskCard/TaskCard";
-import DroppableColumn from "./KanbanBoard/DroppableColumn";
-import KanbanColumnHeader from "./KanbanBoard/KanbanColumnHeader";
-import { useKanbanSensors } from "./KanbanBoard/useKanbanSensors";
-import { DEFAULT_COLUMNS as columns } from "./KanbanBoard/kanbanUtils";
-import { useTaskStore } from "../../store";
+import { Task, User, TaskStatus } from "../../../types";
+import Card from "../../UI/Card";
+import TaskCard from "../../UI/TaskCard/TaskCard";
+import DroppableColumn from "./DroppableColumn";
+import KanbanColumnHeader from "./KanbanColumnHeader";
+import { useKanbanSensors } from "./useKanbanSensors";
+import { DEFAULT_COLUMNS as columns } from "./kanbanUtils";
+import { useTaskStore } from "../../../store";
 
 interface KanbanBoardProps {
   tasks: Task[];

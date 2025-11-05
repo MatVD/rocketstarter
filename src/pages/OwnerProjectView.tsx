@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Hammer } from "lucide-react";
 import { useEffect } from "react";
 import TaskFilterBar from "../components/UI/TaskFilterBar";
-import KanbanBoard from "../components/Build/KanbanBoard";
+import KanbanBoard from "../components/Build/KanbanBoard/KanbanBoard";
 import DataBoundary from "../components/UI/DataBoundary";
 import { flowSteps } from "../data/mockData";
 import { User } from "../types";
