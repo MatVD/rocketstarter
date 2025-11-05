@@ -49,7 +49,6 @@ function TaskCardContentComponent({
       const task = tasks.find((t) => t.id === taskId);
       if (task) {
         await assignTaskToSelf(taskId, user.address);
-        // Don't refetch - assignTaskToSelf already updates the store
       }
     }
   };
