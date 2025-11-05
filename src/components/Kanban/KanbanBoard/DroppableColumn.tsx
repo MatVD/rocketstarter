@@ -12,7 +12,7 @@ export default function DroppableColumn({
   children,
 }: DroppableColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
-    id,
+    id: `column-${id}`, // Use string ID with prefix to distinguish from tasks
   });
 
   return (
