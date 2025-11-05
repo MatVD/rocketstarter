@@ -5,7 +5,7 @@ import {
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
-  closestCorners,
+  closestCenter,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -111,7 +111,7 @@ function KanbanBoardComponent({
 
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCorners}
+        collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
@@ -131,7 +131,7 @@ function KanbanBoardComponent({
 
                 <DroppableColumn
                   id={column.id}
-                  className="rounded-lg p-2 md:p-3 min-h-[300px] md:min-h-[400px]"
+                  className="rounded-lg p-1 md:p-3 min-h-[300px] md:min-h-full"
                 >
                   <SortableContext
                     items={columnTasks.map((task) => task.id)}
