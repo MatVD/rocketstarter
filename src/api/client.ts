@@ -1,4 +1,5 @@
 import axios from "axios";
+import { logError } from "../utils/errorHandler";
 
 // Get API base URL from environment or default to localhost
 const API_BASE_URL =
@@ -35,13 +36,16 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Handle unauthorized access
-      console.error("Unauthorized access - user address may be invalid");
+      logError(
+        "API Client",
+        "Unauthorized access - user address may be invalid"
+      );
     } else if (error.response?.status >= 500) {
       // Handle server errors
-      console.error("Server error:", error.response.data);
+      logError("API Client", `Server error: ${error.response?.data}`);
     } else if (error.code === "ECONNREFUSED") {
       // Handle connection errors
-      console.error("Backend server is not running");
+      logError("API Client", "Backend server is not running");
     }
     return Promise.reject(error);
   }

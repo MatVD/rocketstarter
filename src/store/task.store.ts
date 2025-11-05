@@ -11,6 +11,7 @@ import {
   UpdateTaskRequest,
   assignTaskToSelf,
 } from "../api/tasks";
+import { getFriendlyErrorMessage, logError } from "../utils/errorHandler";
 
 interface TaskState {
   // State
@@ -58,9 +59,9 @@ export const useTaskStore = create<TaskState>((set, get) => ({
         : await getTasks();
       set({ tasks: data, tasksLoading: false });
     } catch (err) {
+      logError("TaskStore.fetchTasks", err);
       set({
-        tasksError:
-          err instanceof Error ? err.message : "Failed to fetch tasks",
+        tasksError: getFriendlyErrorMessage(err),
         tasksLoading: false,
       });
     }
@@ -89,9 +90,9 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       }));
       return task;
     } catch (err) {
+      logError("TaskStore.createNewTask", err);
       set({
-        tasksError:
-          err instanceof Error ? err.message : "Failed to create task",
+        tasksError: getFriendlyErrorMessage(err),
         tasksLoading: false,
       });
       return null;
@@ -124,10 +125,10 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       return updatedTask;
     } catch (err) {
       // Rollback on error
+      logError("TaskStore.updateExistingTask", err);
       set({
         tasks: previousTasks,
-        tasksError:
-          err instanceof Error ? err.message : "Failed to update task",
+        tasksError: getFriendlyErrorMessage(err),
       });
       return null;
     }
@@ -143,9 +144,9 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       }));
       return true;
     } catch (err) {
+      logError("TaskStore.removeTask", err);
       set({
-        tasksError:
-          err instanceof Error ? err.message : "Failed to delete task",
+        tasksError: getFriendlyErrorMessage(err),
         tasksLoading: false,
       });
       return false;
@@ -189,10 +190,10 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       return updatedTask;
     } catch (err) {
       // Rollback on error
+      logError("TaskStore.assignTaskToSelf", err);
       set({
         tasks: previousTasks,
-        tasksError:
-          err instanceof Error ? err.message : "Failed to assign task",
+        tasksError: getFriendlyErrorMessage(err),
       });
       return null;
     }
