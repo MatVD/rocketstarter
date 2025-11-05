@@ -32,7 +32,7 @@ function KanbanBoardComponent({
   isBuilderMode = false,
 }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const { updateExistingTask } = useTaskStore();
+  const updateExistingTask = useTaskStore((state) => state.updateExistingTask);
 
   const onMoveTask = async (taskId: number, newStatus: Task["status"]) => {
     await updateExistingTask(taskId.toString(), {

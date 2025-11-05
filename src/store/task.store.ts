@@ -99,21 +99,33 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   updateExistingTask: async (id: string, data: UpdateTaskRequest) => {
-    // Don't set loading state for updates - prevents unnecessary re-renders
+    // Optimistic update - update UI immediately before API call
+    const taskId = parseInt(id);
+    let previousTasks: Task[] = [];
+
+    set((state) => {
+      previousTasks = state.tasks; // Save for rollback on error
+      return {
+        tasks: state.tasks.map((t) =>
+          t.id === taskId ? ({ ...t, ...data } as Task) : t
+        ),
+      };
+    });
+
+    // Then make the API call in the background
     try {
       const updatedTask = await updateTask(id, data);
+      // Update with the real data from server
       set((state) => ({
-        tasks: state.tasks.map((t) =>
-          t.id === parseInt(id) ? updatedTask : t
-        ),
+        tasks: state.tasks.map((t) => (t.id === taskId ? updatedTask : t)),
         selectedTask:
-          state.selectedTask?.id === parseInt(id)
-            ? updatedTask
-            : state.selectedTask,
+          state.selectedTask?.id === taskId ? updatedTask : state.selectedTask,
       }));
       return updatedTask;
     } catch (err) {
+      // Rollback on error
       set({
+        tasks: previousTasks,
         tasksError:
           err instanceof Error ? err.message : "Failed to update task",
       });
@@ -148,12 +160,27 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   assignTaskToSelf: async (taskId: number, builderAddress: string) => {
-    // Don't set loading state for assignment - prevents unnecessary re-renders
+    // Optimistic update - update UI immediately
+    let previousTasks: Task[] = [];
+
+    set((state) => {
+      previousTasks = state.tasks; // Save for rollback on error
+      return {
+        tasks: state.tasks.map((t) =>
+          t.id === taskId
+            ? ({ ...t, builder: builderAddress, status: 1 } as Task) // Auto-move to "In Progress"
+            : t
+        ),
+      };
+    });
+
+    // Then make the API call in the background
     try {
       const updatedTask = await assignTaskToSelf(
         taskId.toString(),
         builderAddress
       );
+      // Update with the real data from server
       set((state) => ({
         tasks: state.tasks.map((t) => (t.id === taskId ? updatedTask : t)),
         selectedTask:
@@ -161,7 +188,9 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       }));
       return updatedTask;
     } catch (err) {
+      // Rollback on error
       set({
+        tasks: previousTasks,
         tasksError:
           err instanceof Error ? err.message : "Failed to assign task",
       });
