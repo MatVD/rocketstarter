@@ -8,6 +8,7 @@ import {
 import { formatDate } from "../../../../utils/dateUtils";
 import { getStatusColor, getStatusIcon } from "../../../../utils/statusUtils";
 import { useTaskStore } from "../../../../store";
+import { useToast } from "../../../../contexts/ToastContext";
 
 interface TaskCardContentProps {
   task: Task;
@@ -37,6 +38,7 @@ function TaskCardContentComponent({
 }: TaskCardContentProps) {
   const assignTaskToSelf = useTaskStore((state) => state.assignTaskToSelf);
   const tasks = useTaskStore((state) => state.tasks);
+  const { showSuccess, showError } = useToast();
 
   const isBuilderMode = user?.role === "Builder";
   const isAssignedToCurrentUser = user && task.builder === user.address;
@@ -48,7 +50,12 @@ function TaskCardContentComponent({
     if (user && user.role === "Builder" && user.address) {
       const task = tasks.find((t) => t.id === taskId);
       if (task) {
-        await assignTaskToSelf(taskId, user.address);
+        const result = await assignTaskToSelf(taskId, user.address);
+        if (result) {
+          showSuccess("Task assigned to you successfully!");
+        } else {
+          showError("Failed to assign task. Please try again.");
+        }
       }
     }
   };

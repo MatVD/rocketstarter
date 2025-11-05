@@ -19,6 +19,7 @@ import KanbanColumnHeader from "./KanbanColumnHeader";
 import { useKanbanSensors } from "./useKanbanSensors";
 import { DEFAULT_COLUMNS as columns } from "./kanbanUtils";
 import { useTaskStore } from "../../../store";
+import { useToast } from "../../../contexts/ToastContext";
 
 interface KanbanBoardProps {
   tasks: Task[];
@@ -32,13 +33,19 @@ function KanbanBoardComponent({
   isBuilderMode = false,
 }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const { showError } = useToast();
   const updateExistingTask = useTaskStore((state) => state.updateExistingTask);
 
   const onMoveTask = async (taskId: number, newStatus: Task["status"]) => {
+    if (newStatus === 3 && user?.role === "Builder") {
+      // Show success notification
+      showError("Task completed successfully!");
+      return;
+    }
+
     await updateExistingTask(taskId.toString(), {
       status: newStatus,
     });
-    // Don't refetch - updateExistingTask already updates the store optimistically
   };
 
   const sensors = useKanbanSensors();

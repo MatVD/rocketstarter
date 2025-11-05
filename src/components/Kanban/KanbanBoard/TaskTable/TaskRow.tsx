@@ -2,16 +2,28 @@ import { motion } from "framer-motion";
 import { Edit, Trash2, User } from "lucide-react";
 import { Task } from "../../../../types";
 import { getStatusBadge } from "./taskStatusUtils";
+import { useTaskStore } from "../../../../store";
+import { useToast } from "../../../../contexts/ToastContext";
 
 interface TaskRowProps {
   task: Task;
   index: number;
 }
 
-export default function TaskRow({
-  task,
-  index,
-}: TaskRowProps) {
+export default function TaskRow({ task, index }: TaskRowProps) {
+  const { removeTask } = useTaskStore();
+  const { showSuccess, showError } = useToast();
+
+  const handleDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete "${task.title}"?`)) {
+      const success = await removeTask(task.id.toString());
+      if (success) {
+        showSuccess("Task deleted successfully!");
+      } else {
+        showError("Failed to delete task. Please try again.");
+      }
+    }
+  };
   return (
     <motion.tr
       initial={{ opacity: 0, y: 20 }}
@@ -48,13 +60,16 @@ export default function TaskRow({
             className="p-1 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
+            aria-label="Edit task"
           >
             <Edit className="w-4 h-4" />
           </motion.button>
           <motion.button
+            onClick={handleDelete}
             className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
+            aria-label="Delete task"
           >
             <Trash2 className="w-4 h-4" />
           </motion.button>

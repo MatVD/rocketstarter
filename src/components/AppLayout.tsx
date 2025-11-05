@@ -3,21 +3,18 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useAccount } from "wagmi";
 import Sidebar from "../components/Layout/Sidebar";
 import Header from "../components/Layout/Header";
-import Toast from "../components/UI/Toast";
 import { useAuth } from "../hooks/useAuth";
 import { updateUser } from "../api/users";
 import { useUserStore } from "../store/user.store";
-
+import { useToast } from "../contexts/ToastContext";
 
 export function AppLayout() {
   const navigate = useNavigate();
   const { address } = useAccount();
   const { user } = useAuth();
   const { setUser } = useUserStore();
+  const { showSuccess } = useToast();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: string } | null>(
-    null
-  );
 
   const handleRoleSwitch = useCallback(async () => {
     if (!user || !address) return;
@@ -26,14 +23,11 @@ export function AppLayout() {
     const updatedUser = await updateUser(address, { role: newRole });
 
     setUser(updatedUser);
-    setToast({
-      message: `Switched to ${newRole} role`,
-      type: "success",
-    });
+    showSuccess(`Switched to ${newRole} role`);
 
     // Redirection selon le rôle
     navigate(newRole === "Builder" ? "/projects" : "/dashboard");
-  }, [user, address, navigate, setUser]);
+  }, [user, address, navigate, setUser, showSuccess]);
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
@@ -70,16 +64,6 @@ export function AppLayout() {
           <Outlet />
         </main>
       </div>
-
-      {/* Toast */}
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type as "success" | "error" | "info" | "warning"}
-          isVisible={true}
-          onClose={() => setToast(null)}
-        />
-      )}
     </div>
   );
 }
