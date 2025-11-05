@@ -22,7 +22,6 @@ interface TaskCardProps {
   // User and assignment
   user?: UserType;
   users?: UserType[]; // List of users to get names for assignees
-  onTaskAssignment?: (taskId: number) => void;
 
   // Status actions
   onStatusChange?: (taskId: number, status: number) => void;
@@ -48,7 +47,6 @@ export default function TaskCard({
   isDraggable = false,
   user,
   users,
-  onTaskAssignment,
   onStatusChange,
   statusButtons,
 }: TaskCardProps) {
@@ -88,7 +86,6 @@ export default function TaskCard({
       stepName={stepName}
       user={user}
       users={users}
-      onTaskAssignment={onTaskAssignment}
       onStatusChange={onStatusChange}
       statusButtons={statusButtons}
     />

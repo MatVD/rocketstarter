@@ -18,23 +18,30 @@ import DroppableColumn from "./KanbanBoard/DroppableColumn";
 import KanbanColumnHeader from "./KanbanBoard/KanbanColumnHeader";
 import { useKanbanSensors } from "./KanbanBoard/useKanbanSensors";
 import { DEFAULT_COLUMNS as columns } from "./KanbanBoard/kanbanUtils";
+import { useTaskStore } from "../../store";
 
 interface KanbanBoardProps {
   tasks: Task[];
-  onMoveTask: (taskId: number, newStatus: TaskStatus) => void;
   user?: User;
-  onTaskAssignment?: (taskId: number) => void;
   isBuilderMode?: boolean; // New prop to indicate builder mode
 }
 
 export default function KanbanBoard({
   tasks,
-  onMoveTask,
   user,
-  onTaskAssignment,
   isBuilderMode = false,
 }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const { updateExistingTask, fetchTasks } = useTaskStore();
+
+  const onMoveTask = async (taskId: number, newStatus: Task["status"]) => {
+    const result = await updateExistingTask(taskId.toString(), {
+      status: newStatus,
+    });
+    if (result) {
+      fetchTasks();
+    }
+  };
 
   const sensors = useKanbanSensors();
 
@@ -139,7 +146,6 @@ export default function KanbanBoard({
                             variant="kanban"
                             isDraggable={!isBuilderMode} // Disable dragging for builders
                             user={user}
-                            onTaskAssignment={onTaskAssignment}
                           />
                         </motion.div>
                       ))}
@@ -158,7 +164,6 @@ export default function KanbanBoard({
               variant="kanban"
               isDragging
               user={user}
-              onTaskAssignment={onTaskAssignment}
             />
           ) : null}
         </DragOverlay>

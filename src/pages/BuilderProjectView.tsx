@@ -11,21 +11,13 @@ import { useUserStore } from "../store/user.store";
 import { useParams } from "react-router-dom";
 import { useProjectStore } from "../store/project.store";
 import { useTaskStore } from "../store";
-import { Task } from "../types";
 
 export default function BuilderProjectView() {
   const { user, userLoading, userError } = useUserStore();
   const { projectId } = useParams<{ projectId: string }>();
-  const { projectsLoading, projectsError, fetchProject, selectedProject} = useProjectStore();
-  const {
-    tasks,
-    fetchTasks,
-    tasksLoading,
-    tasksError,
-    assignTaskToSelf,
-    refetchTasks,
-    updateExistingTask,
-  } = useTaskStore();
+  const { projectsLoading, projectsError, fetchProject, selectedProject } =
+    useProjectStore();
+  const { tasks, fetchTasks, tasksLoading, tasksError } = useTaskStore();
   const [filters, setFilters] = useTaskFilters(projectId);
   const [toast, setToast] = useState<{
     message: string;
@@ -76,69 +68,6 @@ export default function BuilderProjectView() {
 
   // Apply filters to project tasks
   const filteredTasks = filterTasks(tasks, filters, user);
-
-  const handleTaskAssignment = async (taskId: number) => {
-    const task = tasks.find((t) => t.id === taskId);
-    // Only allow taking tasks that are in "todo" status and unassigned
-    if (
-      task &&
-      (!task.builder || task.builder === "") &&
-      task.status === 0 // todo status
-    ) {
-      const result = await assignTaskToSelf(taskId, user.address);
-      if (result) {
-        setToast({
-          message: "Task assigned and moved to In Progress",
-          type: "success",
-        });
-        refetchTasks();
-      } else {
-        setToast({
-          message: "Failed to assign task",
-          type: "error",
-        });
-      }
-    } else if (task && task.status !== 0) {
-      setToast({
-        message: "Only tasks in 'To Do' column can be taken",
-        type: "error",
-      });
-    }
-  };
-
-  const handleMoveTask = async (taskId: number, newStatus: Task["status"]) => {
-    if (newStatus === 3) {
-      setToast({
-        message: "Tasks cannot be moved back to 'Done' status",
-        type: "error",
-      });
-      return;
-    }
-
-    // Prevent moving tasks that are not assigned to the current user
-    const task = tasks.find((t) => t.id === taskId);
-    if (task?.builder !== user.address) {
-      setToast({
-        message: "You can only move tasks assigned to you",
-        type: "error",
-      });
-      return;
-    }
-    
-    try {
-      const result = await updateExistingTask(taskId.toString(), {
-        status: newStatus,
-      });
-      if (result) {
-        refetchTasks();
-      }
-    } catch (error: any) {
-      setToast({
-        message: "Failed to update task: " + (error.message || ""),
-        type: "error",
-      });
-    }
-  };
 
   return (
     <DataBoundary isLoading={tasksLoading} error={tasksError} dataType="tasks">
@@ -204,9 +133,7 @@ export default function BuilderProjectView() {
           {filteredTasks.length > 0 ? (
             <KanbanBoard
               tasks={filteredTasks}
-              onMoveTask={handleMoveTask}
               user={user}
-              onTaskAssignment={handleTaskAssignment}
               isBuilderMode={false} // Add this prop to indicate builder mode
             />
           ) : (

@@ -3,6 +3,7 @@ import { Task, User as UserType } from "../../../types";
 import { getPriorityLabel, getPriorityStyle } from "../../../utils/priorityUtils";
 import { formatDate } from "../../../utils/dateUtils";
 import { getStatusColor, getStatusIcon } from "../../../utils/statusUtils";
+import { useTaskStore } from "../../../store";
 
 interface TaskCardContentProps {
   task: Task;
@@ -12,7 +13,6 @@ interface TaskCardContentProps {
   stepName?: string;
   user?: UserType;
   users?: UserType[];
-  onTaskAssignment?: (taskId: number) => void;
   onStatusChange?: (taskId: number, status: number) => void;
   statusButtons?: Array<{
     label: string;
@@ -28,14 +28,27 @@ export default function TaskCardContent({
   stepName,
   user,
   users,
-  onTaskAssignment,
   onStatusChange,
   statusButtons,
 }: TaskCardContentProps) {
+  const { tasks, assignTaskToSelf, fetchTasks } = useTaskStore();
   const isBuilderMode = user?.role === "Builder";
   const isAssignedToCurrentUser = user && task.builder === user.address;
   const isUnassigned = !task.builder || task.builder === "";
   const isInTodoStatus = task.status === 0;
+  // Builder-specific task assignment logic
+  const onTaskAssignment = async (taskId: number) => {
+    if (user && user.role === "Builder" && user.address) {
+      const task = tasks.find((t) => t.id === taskId);
+      if (task) {
+        const result = await assignTaskToSelf(taskId, user.address);
+        if (result) {
+          fetchTasks();
+        }
+      }
+    }
+  };
+
   const canTakeTask =
     isBuilderMode &&
     !isAssignedToCurrentUser &&

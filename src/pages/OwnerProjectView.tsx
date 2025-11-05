@@ -3,7 +3,7 @@ import { Hammer } from "lucide-react";
 import KanbanBoard from "../components/Build/KanbanBoard";
 import DataBoundary from "../components/UI/DataBoundary";
 import { flowSteps } from "../data/mockData";
-import { Task, User } from "../types";
+import { User } from "../types";
 import { useParams } from "react-router-dom";
 import { useProjectStore, useTaskStore, useUserStore } from "../store";
 import StepNavigation from "../components/Build/StepNavigation/StepNavigation";
@@ -24,8 +24,6 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
     useProjectStore();
   const {
     tasks,
-    updateExistingTask,
-    assignTaskToSelf,
     fetchTasks,
     tasksLoading,
     tasksError,
@@ -82,28 +80,6 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
   const currentStepTasks = tasks.filter(
     (task) => task.stepId === currentStep.id
   );
-
-  const handleMoveTask = async (taskId: number, newStatus: Task["status"]) => {
-    const result = await updateExistingTask(taskId.toString(), {
-      status: newStatus,
-    });
-    if (result) {
-      fetchTasks();
-    }
-  };
-
-  // Builder-specific task assignment logic
-  const handleTaskAssignment = async (taskId: number) => {
-    if (user && user.role === "Builder" && user.address) {
-      const task = tasks.find((t) => t.id === taskId);
-      if (task) {
-        const result = await assignTaskToSelf(taskId, user.address);
-        if (result) {
-          fetchTasks();
-        }
-      }
-    }
-  };
 
   return (
     <DataBoundary isLoading={tasksLoading} error={tasksError} dataType="tasks">
@@ -166,9 +142,7 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
         >
           <KanbanBoard
             tasks={currentStepTasks}
-            onMoveTask={handleMoveTask}
             user={user}
-            onTaskAssignment={handleTaskAssignment}
           />
         </motion.div>
       </div>
