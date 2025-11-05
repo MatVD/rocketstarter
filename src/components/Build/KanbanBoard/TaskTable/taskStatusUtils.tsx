@@ -1,4 +1,4 @@
-import { Task } from "../../../types";
+import { Task } from "../../../../types";
 
 export const getStatusBadge = (status: Task["status"]) => {
   const statusString = String(status);

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Hammer } from "lucide-react";
-import TaskTable from "../components/Build/TaskTable";
 import KanbanBoard from "../components/Build/KanbanBoard";
 import StepNavigation from "../components/Build/StepNavigation";
 import StepDetails from "../components/Build/StepDetails";
@@ -11,6 +10,8 @@ import { flowSteps } from "../data/mockData";
 import { Task, User } from "../types";
 import { useTasks, useTaskMutations, useTaskWorkflow } from "../hooks/useTasks";
 import { useParams } from "react-router-dom";
+import { useTaskStore } from "../store";
+import TaskTable from "../components/Build/KanbanBoard/TaskTable/TaskTable";
 
 interface BuildProps {
   activeStepId?: number | null;
@@ -26,7 +27,8 @@ export default function Build({
 }: BuildProps) {
   const { projectId } = useParams<{ projectId: string }>();
   const { tasks, loading, error, refetch } = useTasks(projectId);
-  const { create, update, remove } = useTaskMutations();
+  const { updateExistingTask } = useTaskStore();
+  const { create, remove } = useTaskMutations();
   const { assignToSelf } = useTaskWorkflow();
   const [toast, setToast] = useState<{
     message: string;
@@ -94,7 +96,9 @@ export default function Build({
   };
 
   const handleMoveTask = async (taskId: number, newStatus: Task["status"]) => {
-    const result = await update(taskId.toString(), { status: newStatus });
+    const result = await updateExistingTask(taskId.toString(), {
+      status: newStatus,
+    });
     if (result) {
       refetch();
     } else {

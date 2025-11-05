@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
-import { Task, User } from "../../types";
-import Card from "../UI/Card";
-import TaskForm from "./TaskTable/TaskForm";
-import TaskRow from "./TaskTable/TaskRow";
+import TaskForm from "./TaskForm";
+import TaskRow from "./TaskRow";
+import { Task, User } from "../../../../types";
+import Card from "../../../UI/Card";
 
 interface TaskTableProps {
   tasks: Task[];

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Task } from "../../../types";
+import { Task } from "../../../../types";
 import {
   getValidationSchema,
   validateForm,
-} from "../../../utils/validationUtils";
-import { COLORS } from "../../../constants/colors";
+} from "../../../../utils/validationUtils";
+import { COLORS } from "../../../../constants/colors";
 
 interface TaskFormProps {
   onSubmit: (

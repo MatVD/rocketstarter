@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Edit, Trash2, User } from "lucide-react";
-import { Task } from "../../../types";
+import { Task } from "../../../../types";
 import { getStatusBadge } from "./taskStatusUtils";
 
 interface TaskRowProps {
