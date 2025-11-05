@@ -17,12 +17,10 @@ import TaskCard from "../UI/TaskCard";
 import DroppableColumn from "./KanbanBoard/DroppableColumn";
 import KanbanColumnHeader from "./KanbanBoard/KanbanColumnHeader";
 import { useKanbanSensors } from "./KanbanBoard/useKanbanSensors";
-import type { Column } from "./KanbanBoard/kanbanUtils";
+import { DEFAULT_COLUMNS as columns } from "./KanbanBoard/kanbanUtils";
 
 interface KanbanBoardProps {
   tasks: Task[];
-  columns: Column[];
-  setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
   onMoveTask: (taskId: number, newStatus: TaskStatus) => void;
   user?: User;
   onTaskAssignment?: (taskId: number) => void;
@@ -31,13 +29,11 @@ interface KanbanBoardProps {
 
 export default function KanbanBoard({
   tasks,
-  columns,
   onMoveTask,
   user,
   onTaskAssignment,
   isBuilderMode = false,
 }: KanbanBoardProps) {
-  
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const sensors = useKanbanSensors();

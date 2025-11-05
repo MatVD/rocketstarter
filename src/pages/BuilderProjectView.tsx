@@ -7,10 +7,6 @@ import TaskFilterBar from "../components/UI/TaskFilterBar";
 import { filterTasks } from "../utils/taskFilterUtils";
 import { useTaskFilters } from "../hooks/useTaskFilters";
 import Toast from "../components/UI/Toast";
-import {
-  DEFAULT_COLUMNS,
-  Column,
-} from "../components/Build/KanbanBoard/kanbanUtils";
 import { useUserStore } from "../store/user.store";
 import { useParams } from "react-router-dom";
 import { useProjectStore } from "../store/project.store";
@@ -30,7 +26,6 @@ export default function BuilderProjectView() {
     refetchTasks,
     updateExistingTask,
   } = useTaskStore();
-  const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
   const [filters, setFilters] = useTaskFilters(projectId);
   const [toast, setToast] = useState<{
     message: string;
@@ -211,8 +206,6 @@ export default function BuilderProjectView() {
           {filteredTasks.length > 0 ? (
             <KanbanBoard
               tasks={filteredTasks}
-              columns={columns}
-              setColumns={setColumns}
               onMoveTask={handleMoveTask}
               user={user}
               onTaskAssignment={handleTaskAssignment}

@@ -10,10 +10,6 @@ import DataBoundary from "../components/UI/DataBoundary";
 import { flowSteps } from "../data/mockData";
 import { Task, User } from "../types";
 import { useTasks, useTaskMutations, useTaskWorkflow } from "../hooks/useTasks";
-import {
-  DEFAULT_COLUMNS,
-  Column,
-} from "../components/Build/KanbanBoard/kanbanUtils";
 import { useParams } from "react-router-dom";
 
 interface BuildProps {
@@ -32,7 +28,6 @@ export default function Build({
   const { tasks, loading, error, refetch } = useTasks(projectId);
   const { create, update, remove } = useTaskMutations();
   const { assignToSelf } = useTaskWorkflow();
-  const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error" | "info";
@@ -195,7 +190,6 @@ export default function Build({
         >
           <TaskTable
             tasks={currentStepTasks}
-            columns={columns}
             onAddTask={handleAddTask}
             onEditTask={handleEditTask}
             onDeleteTask={handleDeleteTask}
@@ -211,8 +205,6 @@ export default function Build({
         >
           <KanbanBoard
             tasks={currentStepTasks}
-            columns={columns}
-            setColumns={setColumns}
             onMoveTask={handleMoveTask}
             user={user}
             onTaskAssignment={handleTaskAssignment}
