@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import DataBoundary from "../components/UI/DataBoundary";
 import KanbanBoard from "../components/Build/KanbanBoard";
 import TaskFilterBar from "../components/UI/TaskFilterBar";
 import { filterTasks } from "../utils/taskFilterUtils";
 import { useTaskFilters } from "../hooks/useTaskFilters";
-import Toast from "../components/UI/Toast";
 import { useUserStore } from "../store/user.store";
 import { useParams } from "react-router-dom";
 import { useProjectStore } from "../store/project.store";
@@ -19,10 +18,6 @@ export default function BuilderProjectView() {
     useProjectStore();
   const { tasks, fetchTasks, tasksLoading, tasksError } = useTaskStore();
   const [filters, setFilters] = useTaskFilters(projectId);
-  const [toast, setToast] = useState<{
-    message: string;
-    type: "success" | "error" | "info";
-  } | null>(null);
 
   useEffect(() => {
     if (projectId) {
@@ -178,16 +173,6 @@ export default function BuilderProjectView() {
             </div>
           )}
         </motion.div>
-
-        {/* Toast notification */}
-        {toast && (
-          <Toast
-            message={toast.message}
-            type={toast.type}
-            isVisible={true}
-            onClose={() => setToast(null)}
-          />
-        )}
       </div>
     </DataBoundary>
   );
