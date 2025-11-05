@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, memo } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -26,21 +26,19 @@ interface KanbanBoardProps {
   isBuilderMode?: boolean; // New prop to indicate builder mode
 }
 
-export default function KanbanBoard({
+function KanbanBoardComponent({
   tasks,
   user,
   isBuilderMode = false,
 }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const { updateExistingTask, fetchTasks } = useTaskStore();
+  const { updateExistingTask } = useTaskStore();
 
   const onMoveTask = async (taskId: number, newStatus: Task["status"]) => {
-    const result = await updateExistingTask(taskId.toString(), {
+    await updateExistingTask(taskId.toString(), {
       status: newStatus,
     });
-    if (result) {
-      fetchTasks();
-    }
+    // Don't refetch - updateExistingTask already updates the store optimistically
   };
 
   const sensors = useKanbanSensors();
@@ -171,3 +169,5 @@ export default function KanbanBoard({
     </Card>
   );
 }
+
+export default memo(KanbanBoardComponent);

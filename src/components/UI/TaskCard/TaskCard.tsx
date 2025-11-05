@@ -1,10 +1,10 @@
-import { GripVertical} from "lucide-react";
+import { GripVertical } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { memo } from "react";
 import { Task, User as UserType } from "../../../types";
 import Card from "../Card";
 import TaskCardContent from "./TaskCardContent";
-
 
 interface TaskCardProps {
   task: Task;
@@ -36,8 +36,7 @@ interface TaskCardProps {
   getStatusIcon?: (status: number) => React.ReactNode;
 }
 
-
-export default function TaskCard({
+function TaskCardComponent({
   task,
   variant = "simple",
   showProject = false,
@@ -129,3 +128,5 @@ export default function TaskCard({
     </Card>
   );
 }
+
+export default memo(TaskCardComponent);

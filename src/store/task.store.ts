@@ -24,11 +24,17 @@ interface TaskState {
   fetchTasks: (projectId?: string) => Promise<void>;
   fetchTask: (id: string) => Promise<void>;
   createNewTask: (data: CreateTaskRequest) => Promise<Task | null>;
-  updateExistingTask: (id: string, data: UpdateTaskRequest) => Promise<Task | null>;
+  updateExistingTask: (
+    id: string,
+    data: UpdateTaskRequest
+  ) => Promise<Task | null>;
   removeTask: (id: string) => Promise<boolean>;
   setSelectedTask: (task: Task | null) => void;
   refetchTasks: () => Promise<void>;
-  assignTaskToSelf: (taskId: number, builderAddress: string) => Promise<Task | null>;
+  assignTaskToSelf: (
+    taskId: number,
+    builderAddress: string
+  ) => Promise<Task | null>;
 }
 
 export const useTaskStore = create<TaskState>((set, get) => ({
@@ -47,7 +53,9 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       lastProjectId: projectId ?? null,
     });
     try {
-      const data = projectId ? await getTasksByProject(projectId) : await getTasks();
+      const data = projectId
+        ? await getTasksByProject(projectId)
+        : await getTasks();
       set({ tasks: data, tasksLoading: false });
     } catch (err) {
       set({
@@ -65,8 +73,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       set({ selectedTask: data, tasksLoading: false });
     } catch (err) {
       set({
-        tasksError:
-          err instanceof Error ? err.message : "Failed to fetch task",
+        tasksError: err instanceof Error ? err.message : "Failed to fetch task",
         tasksLoading: false,
       });
     }
@@ -92,7 +99,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   updateExistingTask: async (id: string, data: UpdateTaskRequest) => {
-    set({ tasksLoading: true, tasksError: null });
+    // Don't set loading state for updates - prevents unnecessary re-renders
     try {
       const updatedTask = await updateTask(id, data);
       set((state) => ({
@@ -103,14 +110,12 @@ export const useTaskStore = create<TaskState>((set, get) => ({
           state.selectedTask?.id === parseInt(id)
             ? updatedTask
             : state.selectedTask,
-        tasksLoading: false,
       }));
       return updatedTask;
     } catch (err) {
       set({
         tasksError:
           err instanceof Error ? err.message : "Failed to update task",
-        tasksLoading: false,
       });
       return null;
     }
@@ -143,27 +148,24 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   assignTaskToSelf: async (taskId: number, builderAddress: string) => {
-    set({ tasksLoading: true, tasksError: null });
+    // Don't set loading state for assignment - prevents unnecessary re-renders
     try {
-      const updatedTask = await assignTaskToSelf(taskId.toString(), builderAddress);
+      const updatedTask = await assignTaskToSelf(
+        taskId.toString(),
+        builderAddress
+      );
       set((state) => ({
-        tasks: state.tasks.map((t) =>
-          t.id === taskId ? updatedTask : t
-        ),
+        tasks: state.tasks.map((t) => (t.id === taskId ? updatedTask : t)),
         selectedTask:
-          state.selectedTask?.id === taskId
-            ? updatedTask
-            : state.selectedTask,
-        tasksLoading: false,
+          state.selectedTask?.id === taskId ? updatedTask : state.selectedTask,
       }));
       return updatedTask;
     } catch (err) {
       set({
         tasksError:
           err instanceof Error ? err.message : "Failed to assign task",
-        tasksLoading: false,
       });
       return null;
     }
-  }
+  },
 }));

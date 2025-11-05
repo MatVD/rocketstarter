@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Hammer } from "lucide-react";
+import { useEffect } from "react";
 import TaskFilterBar from "../components/UI/TaskFilterBar";
 import KanbanBoard from "../components/Build/KanbanBoard";
 import DataBoundary from "../components/UI/DataBoundary";
@@ -9,7 +10,6 @@ import { useParams } from "react-router-dom";
 import { useProjectStore, useTaskStore, useUserStore } from "../store";
 import StepNavigation from "../components/Build/StepNavigation/StepNavigation";
 import StepDetails from "../components/Build/StepDetails/StepDetails";
-import { useEffect } from "react";
 import { filterTasks } from "../utils/taskFilterUtils";
 import { useTaskFilters } from "../hooks/useTaskFilters";
 
@@ -24,8 +24,14 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
   const { user, userLoading, userError } = useUserStore();
   const { projectId } = useParams<{ projectId: string }>();
   const { projectsLoading, projectsError, fetchProject, selectedProject } =
-  useProjectStore();
-  const { tasks, fetchTasks, tasksLoading, tasksError } = useTaskStore();
+    useProjectStore();
+
+  // Use shallow selectors to only subscribe to tasks array, not loading states
+  const tasks = useTaskStore((state) => state.tasks);
+  const fetchTasks = useTaskStore((state) => state.fetchTasks);
+  const tasksLoading = useTaskStore((state) => state.tasksLoading);
+  const tasksError = useTaskStore((state) => state.tasksError);
+
   const [filters, setFilters] = useTaskFilters(projectId);
 
   useEffect(() => {
@@ -157,10 +163,7 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           {filteredTasks.length > 0 ? (
-            <KanbanBoard
-              tasks={filteredTasks}
-              user={user}
-            />
+            <KanbanBoard tasks={filteredTasks} user={user} />
           ) : (
             <div className="text-center py-12">
               <div className="text-gray-400 dark:text-gray-500 mb-4">

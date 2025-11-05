@@ -1,6 +1,10 @@
 import { Calendar, Clock, Plus, User } from "lucide-react";
+import { memo } from "react";
 import { Task, User as UserType } from "../../../types";
-import { getPriorityLabel, getPriorityStyle } from "../../../utils/priorityUtils";
+import {
+  getPriorityLabel,
+  getPriorityStyle,
+} from "../../../utils/priorityUtils";
 import { formatDate } from "../../../utils/dateUtils";
 import { getStatusColor, getStatusIcon } from "../../../utils/statusUtils";
 import { useTaskStore } from "../../../store";
@@ -21,7 +25,7 @@ interface TaskCardContentProps {
   }>;
 }
 
-export default function TaskCardContent({
+function TaskCardContentComponent({
   task,
   variant,
   projectName,
@@ -31,20 +35,21 @@ export default function TaskCardContent({
   onStatusChange,
   statusButtons,
 }: TaskCardContentProps) {
-  const { tasks, assignTaskToSelf, fetchTasks } = useTaskStore();
+  const assignTaskToSelf = useTaskStore((state) => state.assignTaskToSelf);
+  const tasks = useTaskStore((state) => state.tasks);
+
   const isBuilderMode = user?.role === "Builder";
   const isAssignedToCurrentUser = user && task.builder === user.address;
   const isUnassigned = !task.builder || task.builder === "";
   const isInTodoStatus = task.status === 0;
+
   // Builder-specific task assignment logic
   const onTaskAssignment = async (taskId: number) => {
     if (user && user.role === "Builder" && user.address) {
       const task = tasks.find((t) => t.id === taskId);
       if (task) {
-        const result = await assignTaskToSelf(taskId, user.address);
-        if (result) {
-          fetchTasks();
-        }
+        await assignTaskToSelf(taskId, user.address);
+        // Don't refetch - assignTaskToSelf already updates the store
       }
     }
   };
@@ -272,3 +277,5 @@ export default function TaskCardContent({
     </>
   );
 }
+
+export default memo(TaskCardContentComponent);

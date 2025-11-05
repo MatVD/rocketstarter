@@ -16,7 +16,13 @@ export default function BuilderProjectView() {
   const { projectId } = useParams<{ projectId: string }>();
   const { projectsLoading, projectsError, fetchProject, selectedProject } =
     useProjectStore();
-  const { tasks, fetchTasks, tasksLoading, tasksError } = useTaskStore();
+
+  // Use shallow selectors to only subscribe to tasks array, not loading states
+  const tasks = useTaskStore((state) => state.tasks);
+  const fetchTasks = useTaskStore((state) => state.fetchTasks);
+  const tasksLoading = useTaskStore((state) => state.tasksLoading);
+  const tasksError = useTaskStore((state) => state.tasksError);
+
   const [filters, setFilters] = useTaskFilters(projectId);
 
   useEffect(() => {
@@ -126,10 +132,7 @@ export default function BuilderProjectView() {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           {filteredTasks.length > 0 ? (
-            <KanbanBoard
-              tasks={filteredTasks}
-              user={user}
-            />
+            <KanbanBoard tasks={filteredTasks} user={user} />
           ) : (
             <div className="text-center py-12">
               <div className="text-gray-400 dark:text-gray-500 mb-4">
