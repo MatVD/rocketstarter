@@ -16,7 +16,7 @@ import { Task } from "../types";
 export default function BuilderProjectView() {
   const { user, userLoading, userError } = useUserStore();
   const { projectId } = useParams<{ projectId: string }>();
-  const { projectsLoading, projectsError, fetchProject } = useProjectStore();
+  const { projectsLoading, projectsError, fetchProject, selectedProject} = useProjectStore();
   const {
     tasks,
     fetchTasks,
@@ -43,8 +43,6 @@ export default function BuilderProjectView() {
       fetchTasks(projectId);
     }
   }, [projectId, fetchTasks]);
-
-  const { selectedProject } = useProjectStore();
 
   if (!user) {
     return (

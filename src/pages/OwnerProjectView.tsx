@@ -1,17 +1,15 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Hammer } from "lucide-react";
 import KanbanBoard from "../components/Build/KanbanBoard";
-import Toast from "../components/UI/Toast";
 import DataBoundary from "../components/UI/DataBoundary";
 import { flowSteps } from "../data/mockData";
 import { Task, User } from "../types";
-import { useTasks, useTaskMutations, useTaskWorkflow } from "../hooks/useTasks";
 import { useParams } from "react-router-dom";
-import { useTaskStore } from "../store";
+import { useProjectStore, useTaskStore, useUserStore } from "../store";
 import TaskTable from "../components/Build/KanbanBoard/TaskTable/TaskTable";
 import StepNavigation from "../components/Build/StepNavigation/StepNavigation";
 import StepDetails from "../components/Build/StepDetails/StepDetails";
+import { useEffect } from "react";
 
 interface BuildProps {
   activeStepId?: number | null;
@@ -20,20 +18,63 @@ interface BuildProps {
   user?: User;
 }
 
-export default function Build({
-  activeStepId,
-  onStepChange,
-  user,
-}: BuildProps) {
+export default function Build({ activeStepId, onStepChange }: BuildProps) {
+  const { user, userLoading, userError } = useUserStore();
   const { projectId } = useParams<{ projectId: string }>();
-  const { tasks, loading, error, refetch } = useTasks(projectId);
-  const { updateExistingTask } = useTaskStore();
-  const { create, remove } = useTaskMutations();
-  const { assignToSelf } = useTaskWorkflow();
-  const [toast, setToast] = useState<{
-    message: string;
-    type: "success" | "error" | "info";
-  } | null>(null);
+  const { projectsLoading, projectsError, fetchProject, selectedProject } =
+    useProjectStore();
+  const {
+    createNewTask,
+    tasks,
+    updateExistingTask,
+    assignTaskToSelf,
+    removeTask,
+    fetchTasks,
+    tasksLoading,
+    tasksError,
+  } = useTaskStore();
+
+  useEffect(() => {
+    if (projectId) {
+      fetchProject(projectId);
+    }
+  }, [projectId, fetchProject]);
+
+  useEffect(() => {
+    if (projectId) {
+      fetchTasks(projectId);
+    }
+  }, [projectId, fetchTasks]);
+
+  if (!user) {
+    return (
+      <DataBoundary
+        isLoading={userLoading}
+        error={userError}
+        isEmpty={!user}
+        dataType="user"
+      >
+        <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+          <p className="text-red-500">User not found.</p>
+        </div>
+      </DataBoundary>
+    );
+  }
+
+  if (!selectedProject) {
+    return (
+      <DataBoundary
+        isLoading={projectsLoading}
+        error={projectsError}
+        isEmpty={!selectedProject}
+        dataType="project"
+      >
+        <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+          <p className="text-red-500">Project not found.</p>
+        </div>
+      </DataBoundary>
+    );
+  }
 
   // Find the current step based on activeStepId, default to first step if none provided
   const currentStep = activeStepId
@@ -53,23 +94,14 @@ export default function Build({
   ) => {
     if (!projectId) return;
 
-    const result = await create({
+    const result = await createNewTask({
       ...newTask,
       projectId: parseInt(projectId),
       stepId: currentStep.id.toString(),
     });
 
     if (result) {
-      refetch();
-      setToast({
-        message: "Task created successfully",
-        type: "success",
-      });
-    } else {
-      setToast({
-        message: "Failed to create task",
-        type: "error",
-      });
+      fetchTasks();
     }
   };
 
@@ -79,18 +111,9 @@ export default function Build({
 
   const handleDeleteTask = async (taskId: number) => {
     if (confirm("Are you sure you want to delete this task?")) {
-      const success = await remove(taskId.toString());
+      const success = await removeTask(taskId.toString());
       if (success) {
-        refetch();
-        setToast({
-          message: "Task deleted successfully",
-          type: "success",
-        });
-      } else {
-        setToast({
-          message: "Failed to delete task",
-          type: "error",
-        });
+        fetchTasks();
       }
     }
   };
@@ -100,12 +123,7 @@ export default function Build({
       status: newStatus,
     });
     if (result) {
-      refetch();
-    } else {
-      setToast({
-        message: "Failed to update task",
-        type: "error",
-      });
+      fetchTasks();
     }
   };
 
@@ -114,27 +132,16 @@ export default function Build({
     if (user && user.role === "Builder" && user.address) {
       const task = tasks.find((t) => t.id === taskId);
       if (task) {
-        const result = await assignToSelf(taskId.toString(), user.address);
+        const result = await assignTaskToSelf(taskId, user.address);
         if (result) {
-          refetch();
-          setToast({
-            message: `Successfully took task: ${task.title}`,
-            type: "success",
-          });
-        } else {
-          setToast({
-            message: "Failed to assign task",
-            type: "error",
-          });
+          fetchTasks();
         }
-        // Auto-hide toast after 3 seconds
-        setTimeout(() => setToast(null), 3000);
       }
     }
   };
 
   return (
-    <DataBoundary isLoading={loading} error={error} dataType="tasks">
+    <DataBoundary isLoading={tasksLoading} error={tasksError} dataType="tasks">
       <div className="p-4 md:p-6 space-y-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -214,16 +221,6 @@ export default function Build({
             onTaskAssignment={handleTaskAssignment}
           />
         </motion.div>
-
-        {/* Toast notification */}
-        {toast && (
-          <Toast
-            message={toast.message}
-            type={toast.type}
-            isVisible={true}
-            onClose={() => setToast(null)}
-          />
-        )}
       </div>
     </DataBoundary>
   );
