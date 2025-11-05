@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Hammer } from "lucide-react";
+import TaskFilterBar from "../components/UI/TaskFilterBar";
 import KanbanBoard from "../components/Build/KanbanBoard";
 import DataBoundary from "../components/UI/DataBoundary";
 import { flowSteps } from "../data/mockData";
@@ -9,6 +10,8 @@ import { useProjectStore, useTaskStore, useUserStore } from "../store";
 import StepNavigation from "../components/Build/StepNavigation/StepNavigation";
 import StepDetails from "../components/Build/StepDetails/StepDetails";
 import { useEffect } from "react";
+import { filterTasks } from "../utils/taskFilterUtils";
+import { useTaskFilters } from "../hooks/useTaskFilters";
 
 interface BuildProps {
   activeStepId?: number | null;
@@ -21,13 +24,9 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
   const { user, userLoading, userError } = useUserStore();
   const { projectId } = useParams<{ projectId: string }>();
   const { projectsLoading, projectsError, fetchProject, selectedProject } =
-    useProjectStore();
-  const {
-    tasks,
-    fetchTasks,
-    tasksLoading,
-    tasksError,
-  } = useTaskStore();
+  useProjectStore();
+  const { tasks, fetchTasks, tasksLoading, tasksError } = useTaskStore();
+  const [filters, setFilters] = useTaskFilters(projectId);
 
   useEffect(() => {
     if (projectId) {
@@ -80,6 +79,8 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
   const currentStepTasks = tasks.filter(
     (task) => task.stepId === currentStep.id
   );
+
+  const filteredTasks = filterTasks(currentStepTasks, filters, user);
 
   return (
     <DataBoundary isLoading={tasksLoading} error={tasksError} dataType="tasks">
@@ -134,16 +135,73 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
           </motion.div>
         )}
 
-        {/* Lower section - Kanban board */}
+        {/* Task Filter Bar */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="mb-6"
         >
-          <KanbanBoard
-            tasks={currentStepTasks}
-            user={user}
+          <TaskFilterBar
+            tasks={tasks}
+            project={selectedProject}
+            filters={filters}
+            onFiltersChange={setFilters}
           />
+        </motion.div>
+
+        {/* Kanban Board */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          {filteredTasks.length > 0 ? (
+            <KanbanBoard
+              tasks={filteredTasks}
+              user={user}
+            />
+          ) : (
+            <div className="text-center py-12">
+              <div className="text-gray-400 dark:text-gray-500 mb-4">
+                <svg
+                  className="mx-auto h-12 w-12"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1}
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                No tasks found
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400 mb-4">
+                {tasks.length === 0
+                  ? "This project doesn't have any tasks yet."
+                  : "No tasks match the current filters. Try adjusting your filter criteria."}
+              </p>
+              {tasks.length > 0 && (
+                <button
+                  onClick={() =>
+                    setFilters({
+                      searchTerm: "",
+                      myTasks: false,
+                      priority: [],
+                      categories: [],
+                    })
+                  }
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  Clear all filters
+                </button>
+              )}
+            </div>
+          )}
         </motion.div>
       </div>
     </DataBoundary>

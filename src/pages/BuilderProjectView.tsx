@@ -129,7 +129,6 @@ export default function BuilderProjectView() {
             <KanbanBoard
               tasks={filteredTasks}
               user={user}
-              isBuilderMode={false} // Add this prop to indicate builder mode
             />
           ) : (
             <div className="text-center py-12">
