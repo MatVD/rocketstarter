@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Step, Task } from "../../../types";
-import { getStepGuidelines } from "../StepDetails/stepGuidelinesData";
+import { getStepGuidelines } from "./stepGuidelinesData";
 import { getStatusLabel, getStatusStyles } from "../../../utils/statusUtils";
 import GuidelineSection from "./GuidelineSection";
 

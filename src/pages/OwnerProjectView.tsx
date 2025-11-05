@@ -2,14 +2,14 @@ import { motion } from "framer-motion";
 import { Hammer } from "lucide-react";
 import { useEffect } from "react";
 import TaskFilterBar from "../components/UI/TaskFilterBar";
-import KanbanBoard from "../components/Build/KanbanBoard/KanbanBoard";
+import KanbanBoard from "../components/Kanban/KanbanBoard/KanbanBoard";
 import DataBoundary from "../components/UI/DataBoundary";
 import { flowSteps } from "../data/mockData";
 import { User } from "../types";
 import { useParams } from "react-router-dom";
 import { useProjectStore, useTaskStore, useUserStore } from "../store";
-import StepNavigation from "../components/Build/StepNavigation/StepNavigation";
-import StepDetails from "../components/Build/StepDetails/StepDetails";
+import StepNavigation from "../components/Kanban/StepNavigation/StepNavigation";
+import StepDetails from "../components/Kanban/StepDetails/StepDetails";
 import { filterTasks } from "../utils/taskFilterUtils";
 import { useTaskFilters } from "../hooks/useTaskFilters";
 
