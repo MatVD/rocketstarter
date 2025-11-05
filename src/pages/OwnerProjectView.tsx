@@ -24,11 +24,9 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
   const { projectsLoading, projectsError, fetchProject, selectedProject } =
     useProjectStore();
   const {
-    createNewTask,
     tasks,
     updateExistingTask,
     assignTaskToSelf,
-    removeTask,
     fetchTasks,
     tasksLoading,
     tasksError,
@@ -85,38 +83,6 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
   const currentStepTasks = tasks.filter(
     (task) => task.stepId === currentStep.id
   );
-
-  const handleAddTask = async (
-    newTask: Omit<
-      Task,
-      "id" | "stepId" | "createdAt" | "updatedAt" | "projectId"
-    >
-  ) => {
-    if (!projectId) return;
-
-    const result = await createNewTask({
-      ...newTask,
-      projectId: parseInt(projectId),
-      stepId: currentStep.id.toString(),
-    });
-
-    if (result) {
-      fetchTasks();
-    }
-  };
-
-  const handleEditTask = (taskId: number) => {
-    alert(`Edit task ${taskId} - Feature to implement`);
-  };
-
-  const handleDeleteTask = async (taskId: number) => {
-    if (confirm("Are you sure you want to delete this task?")) {
-      const success = await removeTask(taskId.toString());
-      if (success) {
-        fetchTasks();
-      }
-    }
-  };
 
   const handleMoveTask = async (taskId: number, newStatus: Task["status"]) => {
     const result = await updateExistingTask(taskId.toString(), {
@@ -201,10 +167,9 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
         >
           <TaskTable
             tasks={currentStepTasks}
-            onAddTask={handleAddTask}
-            onEditTask={handleEditTask}
-            onDeleteTask={handleDeleteTask}
             user={user}
+            currentStep={currentStep}
+            currentProject={selectedProject}
           />
         </motion.div>
 

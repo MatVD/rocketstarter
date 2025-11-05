@@ -6,15 +6,11 @@ import { getStatusBadge } from "./taskStatusUtils";
 interface TaskRowProps {
   task: Task;
   index: number;
-  onEdit: (taskId: number) => void;
-  onDelete: (taskId: number) => void;
 }
 
 export default function TaskRow({
   task,
   index,
-  onEdit,
-  onDelete,
 }: TaskRowProps) {
   return (
     <motion.tr
@@ -49,7 +45,6 @@ export default function TaskRow({
       <td className="py-3 px-4">
         <div className="flex space-x-2">
           <motion.button
-            onClick={() => onEdit(task.id)}
             className="p-1 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -57,7 +52,6 @@ export default function TaskRow({
             <Edit className="w-4 h-4" />
           </motion.button>
           <motion.button
-            onClick={() => onDelete(task.id)}
             className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
