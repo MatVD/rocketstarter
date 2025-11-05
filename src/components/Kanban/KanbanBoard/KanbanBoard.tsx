@@ -61,29 +61,35 @@ function KanbanBoardComponent({
     if (isBuilderMode || !over) return;
 
     const taskId = active.id as number;
-    const overId = over.id as number;
+    const overId = over.id;
     const activeTask = tasks.find((t) => t.id === taskId);
 
     // Don't process if no active task found
     if (!activeTask) return;
 
-    // If we drop on a column, move the task to that column's status
-    const isColumn = columns.some((col) => col.id === overId);
-    if (isColumn) {
-      // Verify that overId is a valid TaskStatus
+    // Check if we dropped on a column (string ID like "column-0")
+    if (typeof overId === "string" && overId.startsWith("column-")) {
+      const columnStatus = parseInt(overId.replace("column-", ""));
+
+      // Verify that columnStatus is a valid TaskStatus
       if (
-        (overId === 0 || overId === 1 || overId === 2 || overId === 3) &&
-        activeTask.status !== overId
+        (columnStatus === 0 ||
+          columnStatus === 1 ||
+          columnStatus === 2 ||
+          columnStatus === 3) &&
+        activeTask.status !== columnStatus
       ) {
-        onMoveTask(taskId, overId as TaskStatus);
+        onMoveTask(taskId, columnStatus as TaskStatus);
       }
       return;
     }
 
-    // If dropped on another task, take the status of that task
-    const overTask = tasks.find((t) => t.id === overId);
-    if (overTask && overTask.status !== activeTask.status) {
-      onMoveTask(taskId, overTask.status);
+    // If dropped on another task (numeric ID), take the status of that task
+    if (typeof overId === "number") {
+      const overTask = tasks.find((t) => t.id === overId);
+      if (overTask && overTask.status !== activeTask.status) {
+        onMoveTask(taskId, overTask.status);
+      }
     }
   };
 
