@@ -1,5 +1,5 @@
-import { Step } from "../../types";
-import ProgressIndicator from "./StepNavigation/ProgressIndicator";
+import { Step } from "../../../types";
+import ProgressIndicator from "./ProgressIndicator";
 
 interface StepNavigationProps {
   currentStep: Step | null;

@@ -2,8 +2,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Hammer } from "lucide-react";
 import KanbanBoard from "../components/Build/KanbanBoard";
-import StepNavigation from "../components/Build/StepNavigation";
-import StepDetails from "../components/Build/StepDetails";
 import Toast from "../components/UI/Toast";
 import DataBoundary from "../components/UI/DataBoundary";
 import { flowSteps } from "../data/mockData";
@@ -12,6 +10,8 @@ import { useTasks, useTaskMutations, useTaskWorkflow } from "../hooks/useTasks";
 import { useParams } from "react-router-dom";
 import { useTaskStore } from "../store";
 import TaskTable from "../components/Build/KanbanBoard/TaskTable/TaskTable";
+import StepNavigation from "../components/Build/StepNavigation/StepNavigation";
+import StepDetails from "../components/Build/StepDetails/StepDetails";
 
 interface BuildProps {
   activeStepId?: number | null;
