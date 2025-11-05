@@ -131,7 +131,7 @@ function KanbanBoardComponent({
 
                 <DroppableColumn
                   id={column.id}
-                  className="rounded-lg p-1 md:p-3 min-h-[300px] md:min-h-full"
+                  className={`rounded-lg p-1 md:p-3 min-h-[300px] md:min-h-[500px]`}
                 >
                   <SortableContext
                     items={columnTasks.map((task) => task.id)}
