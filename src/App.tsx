@@ -2,11 +2,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import ProjectList from "./pages/ProjectList";
-import Build from "./pages/Build";
+import OwnerProjectView from "./pages/OwnerProjectView";
 import BuilderProjectView from "./pages/BuilderProjectView";
-import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppLayout } from "./components/AppLayout";
 import { useAuth } from "./hooks/useAuth";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function AppRoutes() {
   const { isAuthenticated, user } = useAuth();
@@ -15,13 +15,37 @@ function AppRoutes() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-
-        <Route path="/projects" element={<ProjectList />} />
-        <Route path="/build/:projectId" element={<Build />} />
         <Route
-          path="/builder/project/:projectId"
-          element={<BuilderProjectView />}
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <ProtectedRoute>
+              <ProjectList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/owner/projects/:projectId"
+          element={
+            <ProtectedRoute>
+              <OwnerProjectView />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/builder/projects/:projectId"
+          element={
+            <ProtectedRoute>
+              <BuilderProjectView />
+            </ProtectedRoute>
+          }
         />
       </Route>
 

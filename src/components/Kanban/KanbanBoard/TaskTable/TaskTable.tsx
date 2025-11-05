@@ -1,40 +1,39 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
-import { Task, User } from "../../types";
-import Card from "../UI/Card";
-import TaskForm from "./TaskTable/TaskForm";
-import TaskRow from "./TaskTable/TaskRow";
-import type { Column } from "./KanbanBoard/kanbanUtils";
+import TaskForm from "./TaskForm";
+import TaskRow from "./TaskRow";
+import { Project, Step, Task, User } from "../../../../types";
+import Card from "../../../UI/Card";
+import { useTaskStore } from "../../../../store";
 
 interface TaskTableProps {
   tasks: Task[];
-  columns: Column[];
-  onAddTask: (
-    task: Omit<Task, "id" | "stepId" | "createdAt" | "updatedAt" | "projectId">
-  ) => void;
-  onEditTask: (taskId: number) => void;
-  onDeleteTask: (taskId: number) => void;
   user?: User;
+  currentStep: Step;
+  currentProject?: Project
 }
 
-export default function TaskTable({
-  tasks,
-  columns,
-  onAddTask,
-  onEditTask,
-  onDeleteTask,
-}: TaskTableProps) {
+export default function TaskTable({ tasks, currentStep, currentProject }: TaskTableProps) {
   const [showAddForm, setShowAddForm] = useState(false);
+  const { createNewTask, fetchTasks } = useTaskStore();
 
-  const handleAddTask = (
+  const handleAddTask = async (
     newTask: Omit<
       Task,
       "id" | "stepId" | "createdAt" | "updatedAt" | "projectId"
     >
   ) => {
-    onAddTask(newTask);
-    setShowAddForm(false);
+    const result = await createNewTask({
+      ...newTask,
+      projectId: currentProject?.id || 0,
+      stepId: currentStep.id.toString(),
+    });
+
+    if (result) {
+      setShowAddForm(false);
+      fetchTasks();
+    }
   };
 
   return (
@@ -88,9 +87,6 @@ export default function TaskTable({
                 key={task.id}
                 task={task}
                 index={index}
-                columns={columns}
-                onEdit={onEditTask}
-                onDelete={onDeleteTask}
               />
             ))}
           </tbody>

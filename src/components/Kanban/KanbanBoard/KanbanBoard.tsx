@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, memo } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -11,34 +11,35 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Task, User, TaskStatus } from "../../types";
-import Card from "../UI/Card";
-import TaskCard from "../UI/TaskCard";
-import DroppableColumn from "./KanbanBoard/DroppableColumn";
-import KanbanColumnHeader from "./KanbanBoard/KanbanColumnHeader";
-import { useKanbanSensors } from "./KanbanBoard/useKanbanSensors";
-
-import type { Column } from "./KanbanBoard/kanbanUtils";
+import { Task, User, TaskStatus } from "../../../types";
+import Card from "../../UI/Card";
+import TaskCard from "./TaskCard/TaskCard";
+import DroppableColumn from "./DroppableColumn";
+import KanbanColumnHeader from "./KanbanColumnHeader";
+import { useKanbanSensors } from "./useKanbanSensors";
+import { DEFAULT_COLUMNS as columns } from "./kanbanUtils";
+import { useTaskStore } from "../../../store";
 
 interface KanbanBoardProps {
   tasks: Task[];
-  columns: Column[];
-  setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
-  onMoveTask: (taskId: number, newStatus: TaskStatus) => void;
   user?: User;
-  onTaskAssignment?: (taskId: number) => void;
   isBuilderMode?: boolean; // New prop to indicate builder mode
 }
 
-export default function KanbanBoard({
+function KanbanBoardComponent({
   tasks,
-  columns,
-  onMoveTask,
   user,
-  onTaskAssignment,
   isBuilderMode = false,
 }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const updateExistingTask = useTaskStore((state) => state.updateExistingTask);
+
+  const onMoveTask = async (taskId: number, newStatus: Task["status"]) => {
+    await updateExistingTask(taskId.toString(), {
+      status: newStatus,
+    });
+    // Don't refetch - updateExistingTask already updates the store optimistically
+  };
 
   const sensors = useKanbanSensors();
 
@@ -61,12 +62,19 @@ export default function KanbanBoard({
 
     const taskId = active.id as number;
     const overId = over.id as number;
+    const activeTask = tasks.find((t) => t.id === taskId);
+
+    // Don't process if no active task found
+    if (!activeTask) return;
 
     // If we drop on a column, move the task to that column's status
     const isColumn = columns.some((col) => col.id === overId);
     if (isColumn) {
       // Verify that overId is a valid TaskStatus
-      if (overId === 0 || overId === 1 || overId === 2 || overId === 3) {
+      if (
+        (overId === 0 || overId === 1 || overId === 2 || overId === 3) &&
+        activeTask.status !== overId
+      ) {
         onMoveTask(taskId, overId as TaskStatus);
       }
       return;
@@ -74,7 +82,7 @@ export default function KanbanBoard({
 
     // If dropped on another task, take the status of that task
     const overTask = tasks.find((t) => t.id === overId);
-    if (overTask && overTask.status !== active.data.current?.task.status) {
+    if (overTask && overTask.status !== activeTask.status) {
       onMoveTask(taskId, overTask.status);
     }
   };
@@ -107,7 +115,7 @@ export default function KanbanBoard({
             return (
               <div
                 key={column.id}
-                className="flex-1 min-w-[250px] space-y-3 md:space-y-4 relative"
+                className={`${column.color} flex-1 min-w-[250px] space-y-3 md:space-y-4 relative`}
               >
                 <KanbanColumnHeader
                   column={column}
@@ -117,7 +125,7 @@ export default function KanbanBoard({
 
                 <DroppableColumn
                   id={column.id}
-                  className={`${column.color} rounded-lg p-2 md:p-3 min-h-[300px] md:min-h-[400px]`}
+                  className="rounded-lg p-2 md:p-3 min-h-[300px] md:min-h-[400px]"
                 >
                   <SortableContext
                     items={columnTasks.map((task) => task.id)}
@@ -136,7 +144,6 @@ export default function KanbanBoard({
                             variant="kanban"
                             isDraggable={!isBuilderMode} // Disable dragging for builders
                             user={user}
-                            onTaskAssignment={onTaskAssignment}
                           />
                         </motion.div>
                       ))}
@@ -155,7 +162,6 @@ export default function KanbanBoard({
               variant="kanban"
               isDragging
               user={user}
-              onTaskAssignment={onTaskAssignment}
             />
           ) : null}
         </DragOverlay>
@@ -163,3 +169,5 @@ export default function KanbanBoard({
     </Card>
   );
 }
+
+export default memo(KanbanBoardComponent);

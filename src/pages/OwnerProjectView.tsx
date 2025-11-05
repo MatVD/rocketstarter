@@ -1,17 +1,26 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect } from "react";
 import { motion } from "framer-motion";
-import DataBoundary from "../components/UI/DataBoundary";
-import KanbanBoard from "../components/Kanban/KanbanBoard/KanbanBoard";
+import { Hammer } from "lucide-react";
+import { useEffect } from "react";
 import TaskFilterBar from "../components/UI/TaskFilterBar";
+import KanbanBoard from "../components/Kanban/KanbanBoard/KanbanBoard";
+import DataBoundary from "../components/UI/DataBoundary";
+import { flowSteps } from "../data/mockData";
+import { User } from "../types";
+import { useParams } from "react-router-dom";
+import { useProjectStore, useTaskStore, useUserStore } from "../store";
+import StepNavigation from "../components/Kanban/StepNavigation/StepNavigation";
+import StepDetails from "../components/Kanban/StepDetails/StepDetails";
 import { filterTasks } from "../utils/taskFilterUtils";
 import { useTaskFilters } from "../hooks/useTaskFilters";
-import { useUserStore } from "../store/user.store";
-import { useParams } from "react-router-dom";
-import { useProjectStore } from "../store/project.store";
-import { useTaskStore } from "../store";
 
-export default function BuilderProjectView() {
+interface BuildProps {
+  activeStepId?: number | null;
+  onStepChange?: (stepId: number) => void;
+  onBackToProjects?: () => void;
+  user?: User;
+}
+
+export default function Build({ activeStepId, onStepChange }: BuildProps) {
   const { user, userLoading, userError } = useUserStore();
   const { projectId } = useParams<{ projectId: string }>();
   const { projectsLoading, projectsError, fetchProject, selectedProject } =
@@ -67,48 +76,70 @@ export default function BuilderProjectView() {
     );
   }
 
-  // Apply filters to project tasks
-  const filteredTasks = filterTasks(tasks, filters, user);
+  // Find the current step based on activeStepId, default to first step if none provided
+  const currentStep = activeStepId
+    ? flowSteps.find((step) => step.id === activeStepId) || flowSteps[0]
+    : flowSteps[0];
+
+  // Filter tasks for the current step
+  const currentStepTasks = tasks.filter(
+    (task) => task.stepId === currentStep.id
+  );
+
+  const filteredTasks = filterTasks(currentStepTasks, filters, user);
 
   return (
     <DataBoundary isLoading={tasksLoading} error={tasksError} dataType="tasks">
-      <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-6"
-        >
-          <div className="flex items-center space-x-4 mb-4">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                {selectedProject.name}
-              </h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-1">
-                Project tasks organized by status ({filteredTasks.length} of{" "}
-                {tasks.length} tasks)
-              </p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Project Info Bar */}
+      <div className="p-4 md:p-6 space-y-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg"
+          transition={{ duration: 0.5 }}
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-600 dark:text-gray-400">
-                <span className="font-medium">Progress:</span>{" "}
-                {selectedProject.progress}%
+          <div className="w-full flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
+                <Hammer className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                  Build
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {user && user.role === "Builder"
+                    ? "Choose and manage your tasks"
+                    : "Manage tasks for the current step"}
+                </p>
               </div>
             </div>
           </div>
         </motion.div>
+
+        {/* Step Navigation */}
+        {onStepChange && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <StepNavigation
+              currentStep={currentStep}
+              allSteps={flowSteps}
+              onStepChange={onStepChange}
+            />
+          </motion.div>
+        )}
+
+        {/* Current Step Context */}
+        {currentStep && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <StepDetails step={currentStep} tasks={tasks} />
+          </motion.div>
+        )}
 
         {/* Task Filter Bar */}
         <motion.div

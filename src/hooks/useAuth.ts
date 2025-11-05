@@ -1,27 +1,31 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useAccount } from "wagmi";
 import { getUserByAddress } from "../api/users";
 import { useUserStore } from "../store/user.store";
 
 /**
- * Hook centralisé pour gérer l'authentification et la vérification de l'utilisateur
+ * Central authentication hook to manage user state based on wallet connection and onboarding status.
  */
 export function useAuth() {
   const { address, isConnected } = useAccount();
-  const { user, setUser, onboardingComplete, setOnboardingComplete } =
-    useUserStore();
-  const checkInProgress = useRef(false);
+  const {
+    user,
+    setUser,
+    onboardingComplete,
+    setOnboardingComplete,
+    setOnboardingStep,
+  } = useUserStore();
 
   useEffect(() => {
     let mounted = true;
 
     const checkUser = async () => {
-      // Éviter les vérifications multiples
-      if (checkInProgress.current || (user && user.address === address)) {
+      // Avoid multiple checks
+      if (user && user.address === address) {
         return;
       }
 
-      // Déconnexion
+      // Logout
       if (!address) {
         if (mounted) {
           setUser(undefined);
@@ -30,21 +34,18 @@ export function useAuth() {
         return;
       }
 
-      checkInProgress.current = true;
-
       try {
         const fetchedUser = await getUserByAddress(address);
         if (mounted) {
           setUser({ ...fetchedUser, address });
           setOnboardingComplete(true);
+          setOnboardingStep(3);
         }
       } catch {
         if (mounted) {
           setUser(undefined);
           setOnboardingComplete(false);
         }
-      } finally {
-        checkInProgress.current = false;
       }
     };
 
@@ -58,7 +59,14 @@ export function useAuth() {
     return () => {
       mounted = false;
     };
-  }, [isConnected, address, setUser, setOnboardingComplete, user]);
+  }, [
+    isConnected,
+    address,
+    setUser,
+    setOnboardingComplete,
+    user,
+    setOnboardingStep,
+  ]);
 
   return {
     user,

@@ -1,23 +1,16 @@
 import { motion } from "framer-motion";
 import { Edit, Trash2, User } from "lucide-react";
-import { Task } from "../../../types";
+import { Task } from "../../../../types";
 import { getStatusBadge } from "./taskStatusUtils";
-import type { Column } from "../KanbanBoard/kanbanUtils";
 
 interface TaskRowProps {
   task: Task;
   index: number;
-  columns: Column[];
-  onEdit: (taskId: number) => void;
-  onDelete: (taskId: number) => void;
 }
 
 export default function TaskRow({
   task,
   index,
-  columns,
-  onEdit,
-  onDelete,
 }: TaskRowProps) {
   return (
     <motion.tr
@@ -37,7 +30,7 @@ export default function TaskRow({
         </div>
       </td>
       <td className="py-3 px-4 whitespace-nowrap">
-        {getStatusBadge(task.status, columns)}
+        {getStatusBadge(task.status)}
       </td>
       <td className="py-3 px-4">
         <div className="flex items-center space-x-2">
@@ -52,7 +45,6 @@ export default function TaskRow({
       <td className="py-3 px-4">
         <div className="flex space-x-2">
           <motion.button
-            onClick={() => onEdit(task.id)}
             className="p-1 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -60,7 +52,6 @@ export default function TaskRow({
             <Edit className="w-4 h-4" />
           </motion.button>
           <motion.button
-            onClick={() => onDelete(task.id)}
             className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
