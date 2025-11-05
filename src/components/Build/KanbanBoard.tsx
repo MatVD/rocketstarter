@@ -60,12 +60,19 @@ export default function KanbanBoard({
 
     const taskId = active.id as number;
     const overId = over.id as number;
+    const activeTask = tasks.find((t) => t.id === taskId);
+
+    // Don't process if no active task found
+    if (!activeTask) return;
 
     // If we drop on a column, move the task to that column's status
     const isColumn = columns.some((col) => col.id === overId);
     if (isColumn) {
       // Verify that overId is a valid TaskStatus
-      if (overId === 0 || overId === 1 || overId === 2 || overId === 3) {
+      if (
+        (overId === 0 || overId === 1 || overId === 2 || overId === 3) &&
+        activeTask.status !== overId
+      ) {
         onMoveTask(taskId, overId as TaskStatus);
       }
       return;
@@ -73,7 +80,7 @@ export default function KanbanBoard({
 
     // If dropped on another task, take the status of that task
     const overTask = tasks.find((t) => t.id === overId);
-    if (overTask && overTask.status !== active.data.current?.task.status) {
+    if (overTask && overTask.status !== activeTask.status) {
       onMoveTask(taskId, overTask.status);
     }
   };
