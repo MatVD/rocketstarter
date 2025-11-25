@@ -1,12 +1,22 @@
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import DataBoundary from "../components/UI/DataBoundary";
 import ProjectProgress from "../components/Dashboard/ProjectProgress";
 import StepByStep from "../components/Dashboard/StepByStep";
+import ProjectMetrics from "../components/Dashboard/ProjectMetrics";
 import { useProjectStore } from "../store/project.store";
+import { useTaskStore } from "../store/task.store";
 
 export default function Dashboard() {
   const { projects, projectsLoading, projectsError } = useProjectStore();
+  const { tasks, fetchTasks, tasksLoading } = useTaskStore();
   const project = projects[0]; // First project for demo
+
+  useEffect(() => {
+    if (project) {
+      fetchTasks(project.id.toString());
+    }
+  }, [project, fetchTasks]);
 
   return (
     <div className="p-4 md:p-6 space-y-4 md:space-y-6">
@@ -30,6 +40,13 @@ export default function Dashboard() {
         dataType="projects"
       >
         <div className="flex flex-col gap-4">
+          {/* Project Metrics */}
+          <ProjectMetrics
+            project={project}
+            tasks={tasks}
+            loading={tasksLoading}
+          />
+
           {/* Project progress */}
           <ProjectProgress project={project} />
 
