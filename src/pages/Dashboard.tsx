@@ -94,15 +94,15 @@ export default function Dashboard() {
       >
         {selectedProject && (
           <div className="flex flex-col gap-4">
+            {/* Project progress */}
+            <ProjectProgress project={selectedProject} />
+            
             {/* Project Metrics */}
             <ProjectMetrics
               project={selectedProject}
               tasks={tasks}
               loading={tasksLoading}
             />
-
-            {/* Project progress */}
-            <ProjectProgress project={selectedProject} />
 
             {/* Step by step journey */}
             <StepByStep />

@@ -1,7 +1,15 @@
 import { Project, Task } from "../../types";
 import Card from "../UI/Card";
 import { Wallet, Trophy } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 interface ProjectMetricsProps {
   project: Project;
@@ -34,34 +42,85 @@ export default function ProjectMetrics({
   }
 
   const totalTasks = tasks.length;
-  const completedTasks = tasks.filter((t) => t.status === 3).length;
-  const remainingTasks = tasks.filter((t) => t.status !== 3).length;
 
   // Calculate unique builders who have completed tasks
   const buildersToReward = new Set(
     tasks.filter((t) => t.status === 3 && t.builder).map((t) => t.builder)
   ).size;
 
-  const data = [
-    { name: "Completed", value: completedTasks, color: "#22c55e" }, // green-500
-    { name: "Remaining", value: remainingTasks, color: "#f97316" }, // orange-500
-  ];
+  // Process data for LineChart
+  const processChartData = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const normalizeDate = (date: Date | string) => {
+      const d = new Date(date);
+      return d.toISOString().split("T")[0];
+    };
+
+    const data = [];
+    for (let i = 1; i <= daysInMonth; i++) {
+      const currentDate = new Date(year, month, i);
+      const dateStr = normalizeDate(currentDate);
+
+      const createdCount = tasks.filter(
+        (t) => t.createdAt && normalizeDate(t.createdAt) <= dateStr
+      ).length;
+
+      const completedCount = tasks.filter(
+        (t) =>
+          t.status === 3 && t.updatedAt && normalizeDate(t.updatedAt) <= dateStr
+      ).length;
+
+      data.push({
+        date: dateStr,
+        day: i,
+        remaining: createdCount - completedCount,
+        completed: completedCount,
+      });
+    }
+    return data;
+  };
+
+  const chartData = processChartData();
 
   interface CustomTooltipProps {
     active?: boolean;
     payload?: {
       name: string;
       value: number;
+      color: string;
+      payload: { date: string };
     }[];
+    label?: string;
   }
 
   const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
+      const date = new Date(payload[0].payload.date);
+      const formattedDate = date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+
       return (
-        <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-700 rounded shadow-sm text-xs">
-          <p className="font-medium text-gray-900 dark:text-white">
-            {payload[0].name}: {payload[0].value}
+        <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg text-xs">
+          <p className="font-medium text-gray-900 dark:text-white mb-2">
+            {formattedDate}
           </p>
+          {payload.map((entry, index) => (
+            <div key={index} className="flex items-center gap-2 mb-1">
+              <div
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: entry.color }}
+              />
+              <span className="text-gray-600 dark:text-gray-300 capitalize">
+                {entry.name}: {entry.value}
+              </span>
+            </div>
+          ))}
         </div>
       );
     }
@@ -71,11 +130,8 @@ export default function ProjectMetrics({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {/* Task Overview with Chart */}
-      <Card
-        className="p-4 md:col-span-2 flex flex-row items-center justify-between"
-        hover
-      >
-        <div className="flex flex-col justify-between h-full space-y-4">
+      <Card className="p-6 md:col-span-2 flex flex-col justify-between" hover>
+        <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
               Task Overview
@@ -88,47 +144,64 @@ export default function ProjectMetrics({
             </h3>
           </div>
 
-          <div className="space-y-2">
+          <div className="flex space-x-4">
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full bg-green-500" />
+              <div className="w-3 h-3 rounded-full bg-blue-500" />
               <span className="text-sm text-gray-600 dark:text-gray-300">
-                {completedTasks} Completed
+                Remaining
               </span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full bg-orange-500" />
+              <div className="w-3 h-3 rounded-full bg-green-500" />
               <span className="text-sm text-gray-600 dark:text-gray-300">
-                {remainingTasks} Remaining
+                Completed
               </span>
             </div>
           </div>
         </div>
 
-        <div className="h-32 w-32 md:h-40 md:w-40">
+        <div className="h-48 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={50}
-                outerRadius={58}
-                paddingAngle={8}
-                dataKey="value"
-                stroke="none"
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
+            <LineChart data={chartData}>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="#E5E7EB"
+              />
+              <XAxis
+                dataKey="day"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                interval={2}
+              />
+              <YAxis domain={[0, totalTasks + 10]} />
               <Tooltip content={<CustomTooltip />} />
-            </PieChart>
+              <Line
+                type="monotone"
+                dataKey="remaining"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                dot={{ r: 3, fill: "#3b82f6", strokeWidth: 0 }}
+                activeDot={{ r: 5 }}
+                name="Remaining"
+              />
+              <Line
+                type="monotone"
+                dataKey="completed"
+                stroke="#22c55e"
+                strokeWidth={2}
+                dot={{ r: 3, fill: "#22c55e", strokeWidth: 0 }}
+                activeDot={{ r: 5 }}
+                name="Completed"
+              />
+            </LineChart>
           </ResponsiveContainer>
         </div>
       </Card>
 
       {/* Bank */}
-      <Card className="p-4 flex flex-col justify-center space-y-2" hover>
+      <Card className="p-6 flex flex-col justify-center space-y-2" hover>
         <div className="flex items-center space-x-3">
           <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/20">
             <Wallet className="w-6 h-6 text-purple-500" />
@@ -148,7 +221,7 @@ export default function ProjectMetrics({
       </Card>
 
       {/* Rewards */}
-      <Card className="p-4 flex flex-col justify-center space-y-2" hover>
+      <Card className="p-6 flex flex-col justify-center space-y-2" hover>
         <div className="flex items-center space-x-3">
           <div className="p-2 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
             <Trophy className="w-6 h-6 text-yellow-500" />
