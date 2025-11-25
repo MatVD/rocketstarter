@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Task } from "../types";
+import { CreateTaskRequest, Task, UpdateTaskRequest } from "../types";
 import {
   getTasks,
   getTasksByProject,
@@ -7,8 +7,6 @@ import {
   createTask,
   updateTask,
   deleteTask,
-  CreateTaskRequest,
-  UpdateTaskRequest,
   assignTaskToSelf,
 } from "../api/tasks";
 import { getFriendlyErrorMessage, logError } from "../utils/errorHandler";
@@ -81,17 +79,29 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   createNewTask: async (data: CreateTaskRequest) => {
-    set({ tasksLoading: true, tasksError: null });
+    let previousTasks: Task[] = [];
+    let tempId = 0;
+
+    // Optimistic update - add to UI immediately
+    set((state) => {
+      previousTasks = state.tasks; // Save for rollback on error
+
+      tempId = Math.max(0, ...state.tasks.map((t) => t.id)) + 1;
+      const newTask: Task = { id: tempId, ...data };
+      return { tasks: [...state.tasks, newTask] };
+    });
+
     try {
-      const task = await createTask(data);
+      const createdTask = await createTask(data);
       set((state) => ({
-        tasks: [...state.tasks, task],
+        tasks: state.tasks.map((t) => (t.id === tempId ? createdTask : t)),
         tasksLoading: false,
       }));
-      return task;
+      return createdTask;
     } catch (err) {
       logError("TaskStore.createNewTask", err);
       set({
+        tasks: previousTasks,
         tasksError: getFriendlyErrorMessage(err),
         tasksLoading: false,
       });

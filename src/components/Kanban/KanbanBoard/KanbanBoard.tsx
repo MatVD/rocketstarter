@@ -37,9 +37,9 @@ function KanbanBoardComponent({
   const updateExistingTask = useTaskStore((state) => state.updateExistingTask);
 
   const onMoveTask = async (taskId: number, newStatus: Task["status"]) => {
-    if (newStatus === 3 && user?.role === "Builder") {
+    if (newStatus === 3 && user?.role !== "Owner") {
       // Show success notification
-      showError("Task completed successfully!");
+      showError("You cannot move tasks to Completed unless you are an Owner.");
       return;
     }
 

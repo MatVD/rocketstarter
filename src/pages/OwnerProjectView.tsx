@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { Hammer } from "lucide-react";
-import { useEffect } from "react";
+import { Hammer, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import TaskFilterBar from "../components/UI/TaskFilterBar";
 import KanbanBoard from "../components/Kanban/KanbanBoard/KanbanBoard";
 import DataBoundary from "../components/UI/DataBoundary";
@@ -12,6 +12,8 @@ import StepNavigation from "../components/Kanban/StepNavigation/StepNavigation";
 import StepDetails from "../components/Kanban/StepDetails/StepDetails";
 import { filterTasks } from "../utils/taskFilterUtils";
 import { useTaskFilters } from "../hooks/useTaskFilters";
+import AddTaskModal from "../components/Kanban/KanbanBoard/AddTaskModal";
+import { COLORS } from "../constants/colors";
 
 interface BuildProps {
   activeStepId?: number | null;
@@ -33,6 +35,7 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
   const tasksError = useTaskStore((state) => state.tasksError);
 
   const [filters, setFilters] = useTaskFilters(projectId);
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
 
   useEffect(() => {
     if (projectId) {
@@ -90,7 +93,7 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
 
   return (
     <DataBoundary isLoading={tasksLoading} error={tasksError} dataType="tasks">
-      <div className="p-4 md:p-6 space-y-6">
+      <div className="p-4 md:p-10 lg:p-12 space-y-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -106,12 +109,19 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
                   Build
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
-                  {user && user.role === "Builder"
-                    ? "Choose and manage your tasks"
-                    : "Manage tasks for the current step"}
+                  Manage tasks for the current step
                 </p>
               </div>
             </div>
+            {user && user.role === "Owner" && (
+              <button
+                onClick={() => setIsAddTaskModalOpen(true)}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${COLORS.button.primary}`}
+              >
+                <Plus className="w-5 h-5" />
+                <span>Add Task</span>
+              </button>
+            )}
           </div>
         </motion.div>
 
@@ -162,51 +172,18 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          {filteredTasks.length > 0 ? (
-            <KanbanBoard tasks={filteredTasks} user={user} />
-          ) : (
-            <div className="text-center py-12">
-              <div className="text-gray-400 dark:text-gray-500 mb-4">
-                <svg
-                  className="mx-auto h-12 w-12"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                  />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                No tasks found
-              </h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-4">
-                {tasks.length === 0
-                  ? "This project doesn't have any tasks yet."
-                  : "No tasks match the current filters. Try adjusting your filter criteria."}
-              </p>
-              {tasks.length > 0 && (
-                <button
-                  onClick={() =>
-                    setFilters({
-                      searchTerm: "",
-                      myTasks: false,
-                      priority: [],
-                      categories: [],
-                    })
-                  }
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  Clear all filters
-                </button>
-              )}
-            </div>
-          )}
+          <KanbanBoard tasks={filteredTasks} user={user} />
         </motion.div>
       </div>
+
+      {selectedProject && (
+        <AddTaskModal
+          isOpen={isAddTaskModalOpen}
+          onClose={() => setIsAddTaskModalOpen(false)}
+          projectId={selectedProject.id}
+          stepId={currentStep?.id}
+        />
+      )}
     </DataBoundary>
   );
 }
