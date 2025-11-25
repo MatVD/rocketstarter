@@ -24,7 +24,7 @@ export default function ProjectList() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="p-6 max-w-7xl mx-auto"
+      className="p-4 md:p-10 lg:p-12 space-y-6"
     >
       {/* Header */}
       <div className="mb-8">
