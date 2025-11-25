@@ -1,24 +1,5 @@
 import api from "./client";
-import { Task } from "../types";
-
-// Task API endpoints
-export interface CreateTaskRequest {
-  title: string;
-  description?: string;
-  projectId: number;
-  priority?: 0 | 1 | 2 | 3; // 0=low, 1=medium, 2=high, 3=urgent
-  status?: 0 | 1 | 2 | 3; // 0=todo, 1=inprogress, 2=inreview, 3=done
-  stepId?: string;
-}
-
-export interface UpdateTaskRequest {
-  title?: string;
-  description?: string;
-  priority?: 0 | 1 | 2 | 3;
-  status?: 0 | 1 | 2 | 3;
-  builderAddress?: string;
-  stepId?: string;
-}
+import { Task, CreateTaskRequest, UpdateTaskRequest } from "../types";
 
 // Get all tasks
 export const getTasks = async (): Promise<Task[]> => {
@@ -65,14 +46,14 @@ export const assignTaskToSelf = async (
 ): Promise<Task> => {
   return updateTask(taskId, {
     status: 1, // Move to "in progress"
-    builderAddress,
+    builder: builderAddress,
   });
 };
 
 export const releaseTask = async (taskId: string): Promise<Task> => {
   return updateTask(taskId, {
     status: 0, // Move to "todo"
-    builderAddress: undefined,
+    builder: undefined,
   });
 };
 
