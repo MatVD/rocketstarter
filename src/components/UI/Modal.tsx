@@ -46,8 +46,8 @@ export default function Modal({
       };
 
   const containerClasses = isSide
-    ? "fixed inset-0 z-50 flex justify-end pointer-events-none"
-    : "fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none";
+    ? "fixed inset-0 z-[100] flex justify-end pointer-events-none"
+    : "fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-none";
 
   const modalClasses = isSide
     ? "bg-white dark:bg-gray-800 shadow-2xl w-full max-w-2xl pointer-events-auto flex flex-col h-full border-l border-gray-200 dark:border-gray-700"
@@ -62,7 +62,9 @@ export default function Modal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-50 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/50 z-[100] backdrop-blur-sm"
+            onPointerDown={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
           />
           <div className={containerClasses}>
             <motion.div
@@ -71,6 +73,8 @@ export default function Modal({
               exit={modalVariants.exit}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className={modalClasses}
+              onPointerDown={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
