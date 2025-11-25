@@ -1,9 +1,9 @@
 import { useState } from "react";
-import Modal from "../UI/Modal";
-import { useTaskStore } from "../../store/task.store";
-import { useToast } from "../../contexts/ToastContext";
-import { COLORS } from "../../constants/colors";
-import { TaskPriority } from "../../types";
+import Modal from "../../UI/Modal";
+import { useTaskStore } from "../../../store/task.store";
+import { useToast } from "../../../contexts/ToastContext";
+import { COLORS } from "../../../constants/colors";
+import { TaskPriority } from "../../../types";
 
 interface AddTaskModalProps {
   isOpen: boolean;

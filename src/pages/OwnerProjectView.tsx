@@ -12,7 +12,7 @@ import StepNavigation from "../components/Kanban/StepNavigation/StepNavigation";
 import StepDetails from "../components/Kanban/StepDetails/StepDetails";
 import { filterTasks } from "../utils/taskFilterUtils";
 import { useTaskFilters } from "../hooks/useTaskFilters";
-import AddTaskModal from "../components/Kanban/AddTaskModal";
+import AddTaskModal from "../components/Kanban/KanbanBoard/AddTaskModal";
 import { COLORS } from "../constants/colors";
 
 interface BuildProps {
