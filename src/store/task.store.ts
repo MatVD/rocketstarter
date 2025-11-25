@@ -80,12 +80,13 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 
   createNewTask: async (data: CreateTaskRequest) => {
     let previousTasks: Task[] = [];
+    let tempId = 0;
 
     // Optimistic update - add to UI immediately
     set((state) => {
       previousTasks = state.tasks; // Save for rollback on error
 
-      const tempId = Math.max(0, ...state.tasks.map((t) => t.id)) + 1;
+      tempId = Math.max(0, ...state.tasks.map((t) => t.id)) + 1;
       const newTask: Task = { id: tempId, ...data };
       return { tasks: [...state.tasks, newTask] };
     });
@@ -93,7 +94,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
     try {
       const createdTask = await createTask(data);
       set((state) => ({
-        tasks: [...state.tasks, createdTask],
+        tasks: state.tasks.map((t) => (t.id === tempId ? createdTask : t)),
         tasksLoading: false,
       }));
       return createdTask;
