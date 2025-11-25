@@ -33,10 +33,8 @@ function ProjectProgress({ project }: ProjectProgressProps) {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {project?.progress || 0}%
-                  </span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    3/5 steps
+                    {/* Pas de virgule pourcentages entiers */}
+                    {Math.round(project?.progress || 0)} %
                   </span>
                 </div>
                 <ProgressBar progress={project?.progress || 0} />
