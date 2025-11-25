@@ -65,7 +65,7 @@ function ProjectCard({ project, index }: ProjectCardProps) {
               Progress
             </span>
             <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
-              {project.progress}%
+              {Math.round(project.progress)} %
             </span>
           </div>
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
