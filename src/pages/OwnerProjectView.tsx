@@ -109,9 +109,7 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
                   Build
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
-                  {user && user.role === "Builder"
-                    ? "Choose and manage your tasks"
-                    : "Manage tasks for the current step"}
+                  Manage tasks for the current step
                 </p>
               </div>
             </div>

@@ -72,7 +72,7 @@ export default function BuilderProjectView() {
 
   return (
     <DataBoundary isLoading={tasksLoading} error={tasksError} dataType="tasks">
-      <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+      <div className="p-4 md:p-6 space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
