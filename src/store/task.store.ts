@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Task } from "../types";
+import { CreateTaskRequest, Task, UpdateTaskRequest } from "../types";
 import {
   getTasks,
   getTasksByProject,
@@ -7,8 +7,6 @@ import {
   createTask,
   updateTask,
   deleteTask,
-  CreateTaskRequest,
-  UpdateTaskRequest,
   assignTaskToSelf,
 } from "../api/tasks";
 import { getFriendlyErrorMessage, logError } from "../utils/errorHandler";
