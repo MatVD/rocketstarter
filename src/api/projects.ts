@@ -19,6 +19,11 @@ export const getProjects = async (): Promise<Project[]> => {
   return response.data.data || response.data;
 };
 
+export const getProjectsByOwner = async (ownerId: string): Promise<Project[]> => {
+  const response = await api.get(`/projects/owner/${ownerId}`);
+  return response.data.data || response.data;
+};
+
 // Get project by ID
 export const getProject = async (id: string): Promise<Project> => {
   const response = await api.get(`/projects/${id}`);

@@ -3,14 +3,21 @@ import { useProjectStore } from "../store/project.store";
 import DataBoundary from "../components/UI/DataBoundary";
 import { useEffect } from "react";
 import ProjectCard from "../components/Project/ProjectCard";
+import { useUserStore } from "../store";
 
 export default function ProjectList() {
-  const { projects, projectsLoading, projectsError, fetchProjects } =
+  const { user } = useUserStore();
+  const { projects, projectsLoading, projectsError, fetchProjects, fetchProjectsByOwner } =
     useProjectStore();
 
   useEffect(() => {
+    if (user?.role === "Owner") {
+      fetchProjectsByOwner(user.address);
+      return;
+    }
+
     fetchProjects();
-  }, [fetchProjects]);
+  }, [fetchProjects, fetchProjectsByOwner, user?.role, user?.address]);
 
   return (
     <motion.div
@@ -35,9 +42,9 @@ export default function ProjectList() {
 
       {/* Projects Grid */}
       <DataBoundary
+        isEmpty={projects.length === 0}
         isLoading={projectsLoading}
         error={projectsError}
-        isEmpty={projects.length === 0}
         dataType="projects"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

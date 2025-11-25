@@ -52,6 +52,29 @@ export default function DataBoundary({
     );
   }
 
+  // Empty state
+  if (isEmpty) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col items-center justify-center p-8 space-y-4"
+      >
+        <Card className="p-8 text-center max-w-md border-gray-200 dark:border-gray-700">
+          <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-full mx-auto mb-4 w-fit">
+            <Database className="w-8 h-8 text-gray-600 dark:text-gray-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            No {dataType} Found
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400">
+            {emptyMessage || `No ${dataType} are available at the moment.`}
+          </p>
+        </Card>
+      </motion.div>
+    );
+  }
+
   // Error state
   if (error) {
     return (
@@ -82,28 +105,7 @@ export default function DataBoundary({
     );
   }
 
-  // Empty state
-  if (isEmpty) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center justify-center p-8 space-y-4"
-      >
-        <Card className="p-8 text-center max-w-md border-gray-200 dark:border-gray-700">
-          <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-full mx-auto mb-4 w-fit">
-            <Database className="w-8 h-8 text-gray-600 dark:text-gray-400" />
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            No {dataType} Found
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400">
-            {emptyMessage || `No ${dataType} are available at the moment.`}
-          </p>
-        </Card>
-      </motion.div>
-    );
-  }
+  
 
   // Success state - render children
   return <>{children}</>;
