@@ -1,3 +1,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* React Quill Dark Mode Overrides */
+.dark .ql-toolbar {
+  background-color: #1f2937; /* gray-800 */
+  border-color: #374151 !important;
+}
+
+.dark .ql-container {
+  border-color: #374151 !important;
+  background-color: #111827; /* gray-900 */
+}
+
+.dark .ql-editor {
+  color: #f3f4f6;
+}
+
+.dark .ql-editor.ql-blank::before {
+  color: #6b7280; /* gray-500 */
+}
+
+.dark .ql-stroke {
+  stroke: #9ca3af !important; /* gray-400 */
+}
+
+.dark .ql-fill {
+  fill: #9ca3af !important;
+}
+
+.dark .ql-picker {
+  color: #9ca3af !important;
+}
+
+.dark .ql-picker-options {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+/* General Quill Tweaks */
+.ql-toolbar {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.ql-container {
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+.ql-editor {
+  min-height: 150px;
+}

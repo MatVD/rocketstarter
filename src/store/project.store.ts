@@ -9,6 +9,7 @@ import {
   deleteProject,
   CreateProjectRequest,
   UpdateProjectRequest,
+  getProjectsByOwner,
 } from "../api";
 
 interface ProjectState {
@@ -21,6 +22,7 @@ interface ProjectState {
   // Projects actions
   fetchProjects: () => Promise<void>;
   fetchProject: (id: string) => Promise<void>;
+  fetchProjectsByOwner: (ownerId: string) => Promise<void>;
   createNewProject: (data: CreateProjectRequest) => Promise<Project | null>;
   updateExistingProject: (
     id: string,
@@ -37,6 +39,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   selectedProject: null,
   projectsLoading: false,
   projectsError: null,
+  projectsByOwner: [],
 
   // Projects actions
   fetchProjects: async () => {
@@ -127,6 +130,20 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         projectsLoading: false,
       });
       return false;
+    }
+  },
+
+  fetchProjectsByOwner: async (ownerId: string) => {
+    set({ projectsLoading: true, projectsError: null });
+    try {
+      const data = await getProjectsByOwner(ownerId);
+      set({ projects: data, projectsLoading: false });
+    } catch (err) {
+      set({
+        projectsError:
+          err instanceof Error ? err.message : "Failed to fetch projects by owner",
+        projectsLoading: false,
+      });
     }
   },
 

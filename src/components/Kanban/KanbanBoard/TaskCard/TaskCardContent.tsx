@@ -1,5 +1,5 @@
-import { Calendar, Clock, Plus, User } from "lucide-react";
-import { memo } from "react";
+import { Calendar, Clock, Plus, User, PanelRight } from "lucide-react";
+import { memo, useState } from "react";
 import { Task, User as UserType } from "../../../../types";
 import {
   getPriorityLabel,
@@ -7,7 +7,10 @@ import {
 } from "../../../../utils/priorityUtils";
 import { formatDate } from "../../../../utils/dateUtils";
 import { getStatusColor, getStatusIcon } from "../../../../utils/statusUtils";
+import { stripHtml } from "../../../../utils/stringUtils";
 import { useTaskStore } from "../../../../store";
+import { useToast } from "../../../../contexts/ToastContext";
+import TaskDetailsModal from "../TaskDetailsModal";
 
 interface TaskCardContentProps {
   task: Task;
@@ -37,6 +40,8 @@ function TaskCardContentComponent({
 }: TaskCardContentProps) {
   const assignTaskToSelf = useTaskStore((state) => state.assignTaskToSelf);
   const tasks = useTaskStore((state) => state.tasks);
+  const { showSuccess, showError } = useToast();
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   const isBuilderMode = user?.role === "Builder";
   const isAssignedToCurrentUser = user && task.builder === user.address;
@@ -48,8 +53,12 @@ function TaskCardContentComponent({
     if (user && user.role === "Builder" && user.address) {
       const task = tasks.find((t) => t.id === taskId);
       if (task) {
-        await assignTaskToSelf(taskId, user.address);
-        // Don't refetch - assignTaskToSelf already updates the store
+        const result = await assignTaskToSelf(taskId, user.address);
+        if (result) {
+          showSuccess("Task assigned to you successfully!");
+        } else {
+          showError("Failed to assign task. Please try again.");
+        }
       }
     }
   };
@@ -80,14 +89,13 @@ function TaskCardContentComponent({
 
   return (
     <>
-      <div className="flex items-start justify-between">
-        {/* Priority badge (always visible) */}
-        {typeof task.priority !== "undefined" &&
-          getPriorityLabel(task.priority) !== "" && (
-            <div className="flex items-center">
-              <span className="text-sm text-white mr-2">Priority:</span>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          {/* Priority badge */}
+          {typeof task.priority !== "undefined" &&
+            getPriorityLabel(task.priority) !== "" && (
               <span
-                className={`flex items-center gap-1 px-2 py-0.5 rounded-md border text-xs font-medium select-none ${
+                className={`flex items-center gap-1 px-2 py-0.5 rounded-md border text-xs select-none ${
                   getPriorityStyle(task.priority).bg
                 } ${getPriorityStyle(task.priority).text} ${
                   getPriorityStyle(task.priority).border
@@ -96,53 +104,85 @@ function TaskCardContentComponent({
                   getPriorityLabel(task.priority).charAt(0).toUpperCase() +
                   getPriorityLabel(task.priority).slice(1)
                 }`}
-                style={{ minWidth: 60, justifyContent: "center" }}
               >
                 {getPriorityLabel(task.priority)}
               </span>
+            )}
+
+          {/* Project and Step info for Builder mode */}
+          {variant === "simple" && (projectName || stepName) && (
+            <span className="text-xs py-1 text-blue-700 dark:text-blue-300 rounded-md font-medium truncate">
+              {projectName}
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-1">
+          {/* Builder Task Assignment Section (Kanban only) */}
+          {variant === "kanban" &&
+            canTakeTask &&
+            (isUnassigned ||
+              (!isAssignedToCurrentUser && task.builder !== user.address)) && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onTaskAssignment(task.id);
+                }}
+                className="flex items-center justify-center gap-1 px-2 py-0.5 text-xs bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded border border-blue-200 dark:border-blue-800 transition-colors whitespace-nowrap"
+              >
+                <Plus className="w-3 h-3" />
+                Take
+              </button>
+            )}
+
+          {/* Assignee section - Top Right (Simple variant) */}
+          {variant === "simple" && user && (
+            <div className="flex items-center space-x-2 flex-shrink-0">
+              {task.builder === user.address ? (
+                <div className="flex items-center space-x-2 text-sm text-blue-600 dark:text-blue-400">
+                  <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                    <User className="w-3 h-3 text-white" />
+                  </div>
+                  <span className="font-medium hidden sm:inline">You</span>
+                </div>
+              ) : task.builder ? (
+                <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
+                  <div className="w-6 h-6 rounded-full bg-gray-500 flex items-center justify-center flex-shrink-0">
+                    <User className="w-3 h-3 text-white" />
+                  </div>
+                  <span className="font-medium hidden sm:inline">
+                    {users?.find((u) => u.address === task.builder)?.username ||
+                      task.builder.slice(0, 6)}
+                  </span>
+                </div>
+              ) : onTaskAssignment ? (
+                <button
+                  onClick={() => onTaskAssignment(task.id)}
+                  className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors duration-200"
+                >
+                  Take
+                </button>
+              ) : (
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  Unassigned
+                </span>
+              )}
             </div>
           )}
-        {/* Project and Step info for Builder mode */}
-        {variant === "simple" && (projectName || stepName) && (
-          <span className="text-xs py-1 text-blue-700 dark:text-blue-300 rounded-md font-medium ml-2">
-            {projectName}
-          </span>
-        )}
-        {/* Assignee section - Top Right */}
-        {variant === "simple" && user && (
-          <div className="flex items-center space-x-2 ml-3 flex-shrink-0">
-            {task.builder === user.address ? (
-              <div className="flex items-center space-x-2 text-sm text-blue-600 dark:text-blue-400">
-                <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                  <User className="w-3 h-3 text-white" />
-                </div>
-                <span className="font-medium">You</span>
-              </div>
-            ) : task.builder ? (
-              <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
-                <div className="w-6 h-6 rounded-full bg-gray-500 flex items-center justify-center flex-shrink-0">
-                  <User className="w-3 h-3 text-white" />
-                </div>
-                <span className="font-medium">
-                  {users?.find((u) => u.address === task.builder)?.username ||
-                    task.builder}
-                </span>
-              </div>
-            ) : onTaskAssignment ? (
-              <button
-                onClick={() => onTaskAssignment(task.id)}
-                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors duration-200"
-              >
-                Take Task
-              </button>
-            ) : (
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                Unassigned
-              </span>
-            )}
-          </div>
-        )}
+        </div>
+        {/* Expand Button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsDetailsOpen(true);
+          }}
+          className="p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+          title="View Details"
+        >
+          <PanelRight className="w-5 h-5 text-blue-600" />
+        </button>
       </div>
+
       <hr className="my-2 border-gray-200 dark:border-gray-700" />
       {/* Header with Title and Assignee */}
       <div className={variant === "kanban" ? "mb-1" : "mb-2"}>
@@ -165,39 +205,16 @@ function TaskCardContentComponent({
         <p
           className={`text-xs ${
             variant === "kanban" ? "md:text-sm" : "text-sm"
-          } text-gray-600 dark:text-gray-300 ${
+          } text-gray-600 dark:text-gray-300 mb-3 ${
             variant === "kanban" ? "line-clamp-2" : ""
           }`}
         >
-          {task.description}
+          {stripHtml(task.description)}
         </p>
       </div>
 
-      {/* Builder Task Assignment Section (Kanban only) */}
-      {variant === "kanban" &&
-        canTakeTask &&
-        (isUnassigned ||
-          (!isAssignedToCurrentUser && task.builder !== user.address)) && (
-          <div className="mb-1">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onTaskAssignment(task.id);
-              }}
-              className="w-full flex items-center justify-center gap-1 px-2 py-1 text-xs bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded border border-blue-200 dark:border-blue-800 transition-colors"
-            >
-              <Plus className="w-3 h-3" />
-              Take Task
-            </button>
-          </div>
-        )}
-
       {/* Status and Meta Information */}
-      <div
-        className={`flex items-center ${
-          variant === "list" ? "justify-between" : ""
-        } text-xs space-x-4`}
-      >
+      <div className={`flex items-center justify-between text-xs space-x-4`}>
         {variant === "kanban" ? (
           // Kanban variant - Assignment and date
           <>
@@ -274,6 +291,13 @@ function TaskCardContentComponent({
           </>
         )}
       </div>
+
+      <TaskDetailsModal
+        isOpen={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        task={task}
+        user={user}
+      />
     </>
   );
 }

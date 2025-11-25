@@ -5,7 +5,7 @@ import {
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
-  closestCorners,
+  closestCenter,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -19,6 +19,7 @@ import KanbanColumnHeader from "./KanbanColumnHeader";
 import { useKanbanSensors } from "./useKanbanSensors";
 import { DEFAULT_COLUMNS as columns } from "./kanbanUtils";
 import { useTaskStore } from "../../../store";
+import { useToast } from "../../../contexts/ToastContext";
 
 interface KanbanBoardProps {
   tasks: Task[];
@@ -32,13 +33,19 @@ function KanbanBoardComponent({
   isBuilderMode = false,
 }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const { showError } = useToast();
   const updateExistingTask = useTaskStore((state) => state.updateExistingTask);
 
   const onMoveTask = async (taskId: number, newStatus: Task["status"]) => {
+    if (newStatus === 3 && user?.role !== "Owner") {
+      // Show success notification
+      showError("You cannot move tasks to Completed unless you are an Owner.");
+      return;
+    }
+
     await updateExistingTask(taskId.toString(), {
       status: newStatus,
     });
-    // Don't refetch - updateExistingTask already updates the store optimistically
   };
 
   const sensors = useKanbanSensors();
@@ -61,29 +68,35 @@ function KanbanBoardComponent({
     if (isBuilderMode || !over) return;
 
     const taskId = active.id as number;
-    const overId = over.id as number;
+    const overId = over.id;
     const activeTask = tasks.find((t) => t.id === taskId);
 
     // Don't process if no active task found
     if (!activeTask) return;
 
-    // If we drop on a column, move the task to that column's status
-    const isColumn = columns.some((col) => col.id === overId);
-    if (isColumn) {
-      // Verify that overId is a valid TaskStatus
+    // Check if we dropped on a column (string ID like "column-0")
+    if (typeof overId === "string" && overId.startsWith("column-")) {
+      const columnStatus = parseInt(overId.replace("column-", ""));
+
+      // Verify that columnStatus is a valid TaskStatus
       if (
-        (overId === 0 || overId === 1 || overId === 2 || overId === 3) &&
-        activeTask.status !== overId
+        (columnStatus === 0 ||
+          columnStatus === 1 ||
+          columnStatus === 2 ||
+          columnStatus === 3) &&
+        activeTask.status !== columnStatus
       ) {
-        onMoveTask(taskId, overId as TaskStatus);
+        onMoveTask(taskId, columnStatus as TaskStatus);
       }
       return;
     }
 
-    // If dropped on another task, take the status of that task
-    const overTask = tasks.find((t) => t.id === overId);
-    if (overTask && overTask.status !== activeTask.status) {
-      onMoveTask(taskId, overTask.status);
+    // If dropped on another task (numeric ID), take the status of that task
+    if (typeof overId === "number") {
+      const overTask = tasks.find((t) => t.id === overId);
+      if (overTask && overTask.status !== activeTask.status) {
+        onMoveTask(taskId, overTask.status);
+      }
     }
   };
 
@@ -105,7 +118,7 @@ function KanbanBoardComponent({
 
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCorners}
+        collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
@@ -125,7 +138,7 @@ function KanbanBoardComponent({
 
                 <DroppableColumn
                   id={column.id}
-                  className="rounded-lg p-2 md:p-3 min-h-[300px] md:min-h-[400px]"
+                  className={`rounded-lg p-1 md:p-3 min-h-[300px] md:min-h-[500px]`}
                 >
                   <SortableContext
                     items={columnTasks.map((task) => task.id)}

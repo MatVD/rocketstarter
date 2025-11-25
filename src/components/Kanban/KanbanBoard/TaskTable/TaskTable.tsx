@@ -6,17 +6,23 @@ import TaskRow from "./TaskRow";
 import { Project, Step, Task, User } from "../../../../types";
 import Card from "../../../UI/Card";
 import { useTaskStore } from "../../../../store";
+import { useToast } from "../../../../contexts/ToastContext";
 
 interface TaskTableProps {
   tasks: Task[];
   user?: User;
   currentStep: Step;
-  currentProject?: Project
+  currentProject?: Project;
 }
 
-export default function TaskTable({ tasks, currentStep, currentProject }: TaskTableProps) {
+export default function TaskTable({
+  tasks,
+  currentStep,
+  currentProject,
+}: TaskTableProps) {
   const [showAddForm, setShowAddForm] = useState(false);
   const { createNewTask, fetchTasks } = useTaskStore();
+  const { showSuccess, showError } = useToast();
 
   const handleAddTask = async (
     newTask: Omit<
@@ -31,8 +37,11 @@ export default function TaskTable({ tasks, currentStep, currentProject }: TaskTa
     });
 
     if (result) {
+      showSuccess("Task created successfully!");
       setShowAddForm(false);
       fetchTasks();
+    } else {
+      showError("Failed to create task. Please try again.");
     }
   };
 
@@ -83,11 +92,7 @@ export default function TaskTable({ tasks, currentStep, currentProject }: TaskTa
           </thead>
           <tbody>
             {tasks.map((task, index) => (
-              <TaskRow
-                key={task.id}
-                task={task}
-                index={index}
-              />
+              <TaskRow key={task.id} task={task} index={index} />
             ))}
           </tbody>
         </table>

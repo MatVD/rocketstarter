@@ -3,6 +3,7 @@ import App from "./App.tsx";
 import "./index.css";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { BackendProvider } from "./contexts/BackendContext";
+import { ToastProvider } from "./contexts/ToastContext";
 
 // wagmi / viem / rainbowkit
 import {
@@ -31,7 +32,9 @@ createRoot(document.getElementById("root")!).render(
       <RainbowKitProvider theme={rainbowDarkTheme()}>
         <ThemeProvider>
           <BackendProvider>
-            <App />
+            <ToastProvider>
+              <App />
+            </ToastProvider>
           </BackendProvider>
         </ThemeProvider>
       </RainbowKitProvider>
