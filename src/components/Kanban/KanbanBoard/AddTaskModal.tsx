@@ -46,6 +46,7 @@ export default function AddTaskModal({
         title: formData.title,
         description: formData.description,
         priority: formData.priority,
+        createdAt: new Date(),
         effort: formData.effort,
         link: formData.link,
         image: formData.image,

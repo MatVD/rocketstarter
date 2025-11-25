@@ -98,7 +98,7 @@ export interface Task {
   taskOwner?: string;
   builder?: string; // User address
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt?: Date;
   effort?: number; // Fibonacci integer
   priority?: TaskPriority;
   status: TaskStatus;
@@ -117,9 +117,11 @@ export interface CreateTaskRequest {
   link?: string;
   taskOwner?: string;
   builder?: string;
+  createdAt: Date;
+  updatedAt?: Date;
   effort?: number;
   priority?: TaskPriority;
-  status?: TaskStatus;
+  status: TaskStatus;
   duration?: number;
   dueDate?: Date;
   dueDateStatus?: number;

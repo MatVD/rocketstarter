@@ -79,17 +79,28 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   createNewTask: async (data: CreateTaskRequest) => {
-    set({ tasksLoading: true, tasksError: null });
+    let previousTasks: Task[] = [];
+
+    // Optimistic update - add to UI immediately
+    set((state) => {
+      previousTasks = state.tasks; // Save for rollback on error
+
+      const tempId = Math.max(0, ...state.tasks.map((t) => t.id)) + 1;
+      const newTask: Task = { id: tempId, ...data };
+      return { tasks: [...state.tasks, newTask] };
+    });
+
     try {
-      const task = await createTask(data);
+      const createdTask = await createTask(data);
       set((state) => ({
-        tasks: [...state.tasks, task],
+        tasks: [...state.tasks, createdTask],
         tasksLoading: false,
       }));
-      return task;
+      return createdTask;
     } catch (err) {
       logError("TaskStore.createNewTask", err);
       set({
+        tasks: previousTasks,
         tasksError: getFriendlyErrorMessage(err),
         tasksLoading: false,
       });
