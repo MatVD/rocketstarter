@@ -8,6 +8,7 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  type?: "center" | "side";
 }
 
 export default function Modal({
@@ -15,6 +16,7 @@ export default function Modal({
   onClose,
   title,
   children,
+  type = "center",
 }: ModalProps) {
   useEffect(() => {
     if (isOpen) {
@@ -29,6 +31,28 @@ export default function Modal({
 
   if (!isOpen) return null;
 
+  const isSide = type === "side";
+
+  const modalVariants = isSide
+    ? {
+        initial: { opacity: 0, x: "100%" },
+        animate: { opacity: 1, x: 0 },
+        exit: { opacity: 0, x: "100%" },
+      }
+    : {
+        initial: { opacity: 0, scale: 0.95, y: 20 },
+        animate: { opacity: 1, scale: 1, y: 0 },
+        exit: { opacity: 0, scale: 0.95, y: 20 },
+      };
+
+  const containerClasses = isSide
+    ? "fixed inset-0 z-50 flex justify-end pointer-events-none"
+    : "fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none";
+
+  const modalClasses = isSide
+    ? "bg-white dark:bg-gray-800 shadow-2xl w-full max-w-2xl pointer-events-auto flex flex-col h-full border-l border-gray-200 dark:border-gray-700"
+    : "bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-lg pointer-events-auto flex flex-col max-h-[90vh]";
+
   return createPortal(
     <AnimatePresence>
       {isOpen && (
@@ -40,12 +64,13 @@ export default function Modal({
             onClick={onClose}
             className="fixed inset-0 bg-black/50 z-50 backdrop-blur-sm"
           />
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+          <div className={containerClasses}>
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-lg pointer-events-auto flex flex-col max-h-[90vh]"
+              initial={modalVariants.initial}
+              animate={modalVariants.animate}
+              exit={modalVariants.exit}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className={modalClasses}
             >
               <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -58,7 +83,7 @@ export default function Modal({
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <div className="p-6 overflow-y-auto">{children}</div>
+              <div className="p-6 overflow-y-auto flex-1">{children}</div>
             </motion.div>
           </div>
         </>

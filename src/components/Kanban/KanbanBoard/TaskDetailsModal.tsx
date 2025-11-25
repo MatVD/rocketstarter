@@ -1,40 +1,56 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Modal from "../../UI/Modal";
 import { useTaskStore } from "../../../store/task.store";
 import { useToast } from "../../../contexts/ToastContext";
 import { COLORS } from "../../../constants/colors";
-import { TaskPriority } from "../../../types";
+import { Task, TaskPriority, User } from "../../../types";
 
-interface AddTaskModalProps {
+interface TaskDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  projectId: number;
-  stepId?: number;
+  task: Task;
+  user?: User;
 }
 
-export default function AddTaskModal({
+export default function TaskDetailsModal({
   isOpen,
   onClose,
-  projectId,
-  stepId,
-}: AddTaskModalProps) {
-  const { createNewTask } = useTaskStore();
+  task,
+  user,
+}: TaskDetailsModalProps) {
+  const { updateExistingTask } = useTaskStore();
   const { showSuccess, showError } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isOwner = user?.role === "Owner";
 
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    priority: 1 as TaskPriority, // Medium default
-    effort: 1,
-    link: "",
-    image: "",
+    title: task.title,
+    description: task.description || "",
+    priority: task.priority ?? 1,
+    effort: task.effort ?? 1,
+    link: task.link || "",
+    image: task.image || "",
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      setFormData({
+        title: task.title,
+        description: task.description || "",
+        priority: task.priority ?? 1,
+        effort: task.effort ?? 1,
+        link: task.link || "",
+        image: task.image || "",
+      });
+    }
+  }, [isOpen, task]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isOwner) return;
+
     if (!formData.title.trim()) {
       showError("Title is required");
       return;
@@ -42,34 +58,22 @@ export default function AddTaskModal({
 
     setIsSubmitting(true);
     try {
-      const result = await createNewTask({
-        projectId,
-        stepId,
+      const result = await updateExistingTask(task.id.toString(), {
         title: formData.title,
         description: formData.description,
-        priority: formData.priority,
-        createdAt: new Date(),
+        priority: formData.priority as TaskPriority,
         effort: formData.effort,
         link: formData.link,
         image: formData.image,
-        status: 0, // Todo
       });
 
       if (result) {
-        showSuccess("Task created successfully");
-        setFormData({
-          title: "",
-          description: "",
-          priority: 1,
-          effort: 1,
-          link: "",
-          image: "",
-        });
+        showSuccess("Task updated successfully");
         onClose();
       }
     } catch (error) {
       showError(
-        "Failed to create task" +
+        "Failed to update task" +
           (error instanceof Error ? `: ${error.message}` : "")
       );
     } finally {
@@ -77,8 +81,102 @@ export default function AddTaskModal({
     }
   };
 
+  const readOnlyContent = (
+    <div className="space-y-6 h-full flex flex-col">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Title
+        </label>
+        <div className="text-lg font-semibold text-gray-900 dark:text-white">
+          {task.title}
+        </div>
+      </div>
+
+      <div className="flex-1 flex flex-col min-h-[200px]">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Description
+        </label>
+        <div
+          className="flex-1 bg-gray-50 dark:bg-gray-900 dark:text-gray-400 rounded-lg p-4 prose dark:prose-invert max-w-none overflow-y-auto"
+          dangerouslySetInnerHTML={{
+            __html: task.description || "No description provided.",
+          }}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Priority
+          </label>
+          <div className="text-gray-900 dark:text-white">
+            {task.priority === 0
+              ? "Low"
+              : task.priority === 2
+              ? "High"
+              : "Medium"}
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Effort
+          </label>
+          <div className="text-gray-900 dark:text-white">{task.effort}</div>
+        </div>
+      </div>
+
+      {task.link && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Link
+          </label>
+          <a
+            href={task.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline break-all"
+          >
+            {task.link}
+          </a>
+        </div>
+      )}
+
+      {task.image && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Image
+          </label>
+          <img
+            src={task.image}
+            alt="Task attachment"
+            className="max-w-full h-auto rounded-lg"
+          />
+        </div>
+      )}
+
+      <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700 mt-auto">
+        <button
+          type="button"
+          onClick={onClose}
+          className={`px-4 py-2 rounded-lg ${COLORS.button.secondary}`}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+
+  if (!isOwner) {
+    return (
+      <Modal isOpen={isOpen} onClose={onClose} title="Task Details" type="side">
+        {readOnlyContent}
+      </Modal>
+    );
+  }
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add New Task" type="side">
+    <Modal isOpen={isOpen} onClose={onClose} title="Edit Task" type="side">
       <form onSubmit={handleSubmit} className="space-y-6 h-full flex flex-col">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -209,7 +307,7 @@ export default function AddTaskModal({
             className={`px-4 py-2 rounded-lg ${COLORS.button.primary} text-white`}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Creating..." : "Create Task"}
+            {isSubmitting ? "Save Changes" : "Save Changes"}
           </button>
         </div>
       </form>
