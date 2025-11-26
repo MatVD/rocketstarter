@@ -4,6 +4,8 @@ import { Wallet, Trophy } from "lucide-react";
 import {
   LineChart,
   Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -85,6 +87,63 @@ export default function ProjectMetrics({
   };
 
   const chartData = processChartData();
+
+  // Generate mock data for bank history (simulated transaction history)
+  const generateBankChartData = () => {
+    const data = [];
+    const currentBank = project.bank;
+    const now = new Date();
+
+    // Generate last 7 days of bank balance (simulated)
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(now);
+      date.setDate(date.getDate() - i);
+      const variation = Math.random() * 0.15 - 0.05; // -5% to +10% variation
+      const historicalBalance = currentBank * (1 + variation * (i / 6));
+
+      data.push({
+        day: date.toLocaleDateString("en-US", { weekday: "short" }),
+        balance: Math.round(historicalBalance),
+        date: date.toISOString().split("T")[0],
+      });
+    }
+    // Ensure last point is exact current balance
+    data[data.length - 1].balance = Math.round(currentBank);
+    return data;
+  };
+
+  // Generate rewards history data based on completed tasks over time
+  const generateRewardsChartData = () => {
+    const data = [];
+    const now = new Date();
+
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(now);
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split("T")[0];
+
+      // Count unique builders with completed tasks up to this date
+      const buildersUpToDate = new Set(
+        tasks
+          .filter((t) => {
+            if (t.status !== 3 || !t.builder || !t.updatedAt) return false;
+            const taskDate = new Date(t.updatedAt).toISOString().split("T")[0];
+            return taskDate <= dateStr;
+          })
+          .map((t) => t.builder)
+      ).size;
+
+      data.push({
+        day: date.toLocaleDateString("en-US", { weekday: "short" }),
+        builders: buildersUpToDate,
+        date: dateStr,
+      });
+    }
+    return data;
+  };
+
+  const bankChartData = generateBankChartData();
+  const rewardsChartData = generateRewardsChartData();
 
   interface CustomTooltipProps {
     active?: boolean;
@@ -201,42 +260,124 @@ export default function ProjectMetrics({
       </Card>
 
       {/* Bank */}
-      <Card className="p-6 flex flex-col justify-center space-y-2" hover>
-        <div className="flex items-center space-x-3">
-          <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/20">
-            <Wallet className="w-6 h-6 text-purple-500" />
+      <Card className="p-6 flex flex-col justify-between" hover>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/20">
+              <Wallet className="w-5 h-5 text-purple-500" />
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+              Project Bank
+            </p>
           </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-            Project Bank
-          </p>
         </div>
-        <div>
+        <div className="mb-2">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
             ${Math.round(project.bank).toLocaleString()}
           </h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             Available funds
           </p>
+        </div>
+        <div className="h-20 w-full -mx-2">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={bankChartData}>
+              <defs>
+                <linearGradient id="bankGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg text-xs">
+                        <p className="font-medium text-gray-900 dark:text-white">
+                          ${payload[0].value?.toLocaleString()}
+                        </p>
+                        <p className="text-gray-500 text-[10px]">
+                          {payload[0].payload.day}
+                        </p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="balance"
+                stroke="#a855f7"
+                strokeWidth={2}
+                fill="url(#bankGradient)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </Card>
 
       {/* Rewards */}
-      <Card className="p-6 flex flex-col justify-center space-y-2" hover>
-        <div className="flex items-center space-x-3">
-          <div className="p-2 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
-            <Trophy className="w-6 h-6 text-yellow-500" />
+      <Card className="p-6 flex flex-col justify-between" hover>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
+              <Trophy className="w-5 h-5 text-yellow-500" />
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+              Pending Rewards
+            </p>
           </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-            Pending Rewards
-          </p>
         </div>
-        <div>
+        <div className="mb-2">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
             {buildersToReward}
           </h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             Builders to reward
           </p>
+        </div>
+        <div className="h-20 w-full -mx-2">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={rewardsChartData}>
+              <defs>
+                <linearGradient
+                  id="rewardsGradient"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop offset="5%" stopColor="#eab308" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#eab308" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg text-xs">
+                        <p className="font-medium text-gray-900 dark:text-white">
+                          {payload[0].value} builders
+                        </p>
+                        <p className="text-gray-500 text-[10px]">
+                          {payload[0].payload.day}
+                        </p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="builders"
+                stroke="#eab308"
+                strokeWidth={2}
+                fill="url(#rewardsGradient)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </Card>
     </div>

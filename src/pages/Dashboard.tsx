@@ -41,7 +41,7 @@ export default function Dashboard() {
   }, [selectedProject, fetchTasks]);
 
   return (
-    <div className="p-4 md:p-6 space-y-4 md:space-y-6">
+    <div className="p-4 md:p-10 lg:p-12 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
