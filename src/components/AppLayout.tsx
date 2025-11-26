@@ -60,7 +60,7 @@ export function AppLayout() {
           onRoleSwitch={handleRoleSwitch}
         />
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto scrollbar-hide">
           <Outlet />
         </main>
       </div>
