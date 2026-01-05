@@ -13,6 +13,7 @@ interface UserState {
   isAuthenticated: boolean; // True when user has valid JWT cookie
   onboardingComplete: boolean;
   onboardingStep: 1 | 2 | 3;
+  isAuthenticating: boolean; // Flag to prevent multiple simultaneous auth attempts
 
   setUser: (user: User | undefined) => void;
   setUsers: (users: User[]) => void;
@@ -21,6 +22,7 @@ interface UserState {
   setIsAuthenticated: (isAuth: boolean) => void;
   setOnboardingComplete: (complete: boolean) => void;
   setOnboardingStep: (step: 1 | 2 | 3) => void;
+  setIsAuthenticating: (isAuth: boolean) => void;
   logout: () => Promise<void>;
 
   fetchUsers: () => Promise<void>;
@@ -37,6 +39,7 @@ export const useUserStore = create<UserState>((set) => ({
   userError: null,
   isAuthenticated: false, // Initially not authenticated
   onboardingComplete: false,
+  isAuthenticating: false, // Initially not authenticating
 
   setUser: (user) => set({ user }),
   setOnboardingStep: (step) => set({ onboardingStep: step }),
@@ -45,6 +48,7 @@ export const useUserStore = create<UserState>((set) => ({
   setUserError: (error) => set({ userError: error }),
   setIsAuthenticated: (isAuth) => set({ isAuthenticated: isAuth }),
   setOnboardingComplete: (complete) => set({ onboardingComplete: complete }),
+  setIsAuthenticating: (isAuth) => set({ isAuthenticating: isAuth }),
   
   logout: async () => {
     try {

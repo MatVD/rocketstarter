@@ -32,13 +32,21 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access - JWT cookie invalid or expired
-      logError(
-        "API Client",
-        "Unauthorized access - JWT token invalid or expired"
-      );
-      // Trigger logout event to clear user state
-      window.dispatchEvent(new Event("auth:logout"));
+      // Don't trigger logout for auth endpoints (challenge/verify/logout)
+      // or for checkAuthStatus (/users/me during initial check)
+      // These have their own error handling
+      const isAuthEndpoint = error.config?.url?.includes('/auth/');
+      const isCheckingAuth = error.config?.url?.includes('/users/me');
+      
+      if (!isAuthEndpoint && !isCheckingAuth) {
+        // Handle unauthorized access - JWT cookie invalid or expired
+        logError(
+          "API Client",
+          "Unauthorized access - JWT token invalid or expired"
+        );
+        // Trigger logout event to clear user state
+        window.dispatchEvent(new Event("auth:logout"));
+      }
     } else if (error.response?.status >= 500) {
       // Handle server errors
       logError("API Client", `Server error: ${error.response?.data}`);
@@ -57,7 +65,8 @@ export const checkAuthStatus = async (): Promise<boolean> => {
     // Try to fetch current user - if cookie is valid, it will succeed
     await api.get("/users/me");
     return true;
-  } catch {
+  } catch (error) {
+    // Silently fail - this is expected when no cookie exists yet
     return false;
   }
 };

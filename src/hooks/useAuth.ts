@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAccount, useSignMessage } from "wagmi";
+import { useNavigate } from "react-router-dom";
 import { getUserByAddress } from "../api/users";
 import { requestChallenge, verifySignature } from "../api/auth";
 import { checkAuthStatus } from "../api/client";
@@ -12,6 +13,8 @@ import { useUserStore } from "../store/user.store";
 export function useAuth() {
   const { address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
+  const navigate = useNavigate();
+  
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
@@ -20,9 +23,10 @@ export function useAuth() {
     setUser,
     isAuthenticated,
     setIsAuthenticated,
-    onboardingComplete,
     setOnboardingComplete,
     setOnboardingStep,
+    isAuthenticating,
+    setIsAuthenticating,
     logout,
   } = useUserStore();
 
@@ -31,6 +35,12 @@ export function useAuth() {
     let mounted = true;
 
     const authenticateUser = async () => {
+      // Guard: Prevent multiple simultaneous authentication attempts
+      if (isAuthenticating) {
+        console.log('🔒 Authentication already in progress, skipping...');
+        return;
+      }
+
       // Skip if already authenticated with same address
       if (user && user.address === address && isAuthenticated) {
         return;
@@ -40,10 +50,13 @@ export function useAuth() {
       if (!address || !isConnected) {
         if (mounted && (user || isAuthenticated)) {
           await logout();
+          navigate('/'); // Redirect to onboarding/login page
         }
         return;
       }
 
+      // Set guard flag
+      setIsAuthenticating(true);
       setAuthLoading(true);
       setAuthError(null);
 
@@ -64,7 +77,6 @@ export function useAuth() {
             return;
           } catch (error) {
             // User not found in DB, need to onboard
-            console.log("User not found, needs onboarding");
             if (mounted) {
               setIsAuthenticated(false);
               setOnboardingComplete(false);
@@ -75,11 +87,10 @@ export function useAuth() {
         }
 
         // Step 2: No valid cookie, start JWT authentication flow
-        // Request challenge from backend
-        const { message } = await requestChallenge(address);
+        const challengeData = await requestChallenge(address);
 
         // Step 3: Sign the challenge message with wallet
-        const signature = await signMessageAsync({ message });
+        const signature = await signMessageAsync({ message: challengeData.message });
 
         // Step 4: Verify signature and get JWT cookie
         await verifySignature(address, signature);
@@ -95,7 +106,6 @@ export function useAuth() {
           }
         } catch (error) {
           // User authenticated but not in DB, needs onboarding
-          console.log("User authenticated but not found, needs onboarding");
           if (mounted) {
             setIsAuthenticated(true); // Has valid JWT
             setOnboardingComplete(false); // But needs to complete profile
@@ -104,10 +114,10 @@ export function useAuth() {
         }
       } catch (error) {
         console.error("Authentication error:", error);
+        
         if (mounted) {
-          setAuthError(
-            error instanceof Error ? error.message : "Authentication failed"
-          );
+          const errorMessage = error instanceof Error ? error.message : "Authentication failed";
+          setAuthError(errorMessage);
           setIsAuthenticated(false);
           setOnboardingComplete(false);
           setUser(undefined);
@@ -116,6 +126,8 @@ export function useAuth() {
         if (mounted) {
           setAuthLoading(false);
         }
+        // Release guard flag to allow future authentication attempts
+        setIsAuthenticating(false);
       }
     };
 
@@ -129,14 +141,6 @@ export function useAuth() {
   }, [
     isConnected,
     address,
-    user,
-    isAuthenticated,
-    setUser,
-    setIsAuthenticated,
-    setOnboardingComplete,
-    setOnboardingStep,
-    signMessageAsync,
-    logout,
   ]);
 
   // Listen for logout events (from 401 errors)
