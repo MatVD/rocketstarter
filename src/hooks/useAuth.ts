@@ -43,6 +43,7 @@ export function useAuth() {
 
       // Skip if already authenticated with same address
       if (user && user.address === address && isAuthenticated) {
+        console.log('[useAuth] Déjà authentifié avec cette adresse:', address);
         return;
       }
 
@@ -62,42 +63,52 @@ export function useAuth() {
 
       try {
         // Step 1: Check if already authenticated (valid cookie)
+        console.log('[useAuth] Vérification du cookie JWT...');
         const hasValidCookie = await checkAuthStatus();
+        console.log('[useAuth] Résultat checkAuthStatus:', hasValidCookie);
         
         if (hasValidCookie) {
           // Cookie is valid, just fetch user data
           try {
             const fetchedUser = await getUserByAddress(address);
+            console.log('[useAuth] Utilisateur trouvé:', fetchedUser);
             if (mounted) {
               setUser({ ...fetchedUser, address });
               setIsAuthenticated(true);
               setOnboardingComplete(true);
               setOnboardingStep(3);
+              console.log('[useAuth] Authentification réussie, isAuthenticated TRUE');
             }
             return;
           } catch (error) {
-            // User not found in DB, need to onboard
+            console.warn('[useAuth] Utilisateur non trouvé en DB, onboarding nécessaire');
             if (mounted) {
               setIsAuthenticated(false);
               setOnboardingComplete(false);
               setOnboardingStep(2);
+              console.log('[useAuth] Utilisateur non trouvé, isAuthenticated FALSE');
             }
             return;
           }
         }
 
         // Step 2: No valid cookie, start JWT authentication flow
+        console.log('[useAuth] Pas de cookie valide, démarrage du flow JWT...');
         const challengeData = await requestChallenge(address);
+        console.log('[useAuth] Challenge reçu:', challengeData);
 
         // Step 3: Sign the challenge message with wallet
         const signature = await signMessageAsync({ message: challengeData.message });
+        console.log('[useAuth] Signature obtenue:', signature);
 
         // Step 4: Verify signature and get JWT cookie
         await verifySignature(address, signature);
+        console.log('[useAuth] Signature vérifiée, cookie JWT devrait être posé');
 
         // Step 5: Fetch user data (now authenticated with cookie)
         try {
           const fetchedUser = await getUserByAddress(address);
+          console.log('[useAuth] Utilisateur après vérification:', fetchedUser);
           if (mounted) {
             setUser({ ...fetchedUser, address });
             setIsAuthenticated(true);
@@ -105,7 +116,7 @@ export function useAuth() {
             setOnboardingStep(3);
           }
         } catch (error) {
-          // User authenticated but not in DB, needs onboarding
+          console.warn('[useAuth] Utilisateur authentifié mais non présent en DB, onboarding nécessaire');
           if (mounted) {
             setIsAuthenticated(true); // Has valid JWT
             setOnboardingComplete(false); // But needs to complete profile
@@ -113,7 +124,7 @@ export function useAuth() {
           }
         }
       } catch (error) {
-        console.error("Authentication error:", error);
+        console.error('[useAuth] Erreur d’authentification:', error);
         
         if (mounted) {
           const errorMessage = error instanceof Error ? error.message : "Authentication failed";
@@ -128,6 +139,7 @@ export function useAuth() {
         }
         // Release guard flag to allow future authentication attempts
         setIsAuthenticating(false);
+        console.log('[useAuth] Fin du flow, isAuthenticated:', isAuthenticated);
       }
     };
 

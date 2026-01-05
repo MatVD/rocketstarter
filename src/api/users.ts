@@ -18,6 +18,18 @@ export const getUser = async (id: string): Promise<User> => {
 // Get user by wallet address
 export const getUserByAddress = async (address: string): Promise<User> => {
   const response = await api.get(`/users/${address}`);
+  try {
+    const response = await api.get(`/users/${address}`);
+    console.log('[API] getUserByAddress response:', response);
+    return response.data;
+  } catch (err: any) {
+    if (err.response) {
+      console.error('[API] getUserByAddress error:', err.response.status, err.response.data);
+    } else {
+      console.error('[API] getUserByAddress error:', err);
+    }
+    return undefined;
+  }
   return response.data.data;
 };
 

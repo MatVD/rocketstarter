@@ -11,7 +11,6 @@ import {
   UpdateProjectRequest,
   getProjectsByOwner,
 } from "../api";
-
 interface ProjectState {
   // Projects
   projects: Project[];
@@ -39,20 +38,18 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   selectedProject: null,
   projectsLoading: false,
   projectsError: null,
-  projectsByOwner: [],
 
   // Projects actions
   fetchProjects: async () => {
     set({ projectsLoading: true, projectsError: null });
     try {
       const data = await getProjects();
+      console.log('[ProjectStore] fetchProjects response:', data);
       set({ projects: data, projectsLoading: false });
     } catch (err) {
-      set({
-        projectsError:
-          err instanceof Error ? err.message : "Failed to fetch projects",
-        projectsLoading: false,
-      });
+      console.error('[ProjectStore] fetchProjects error:', err);
+      const errorMessage = err instanceof Error ? err.message : "Failed to fetch projects";
+      set({ projectsError: errorMessage, projectsLoading: false });
     }
   },
 
@@ -63,8 +60,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       set({ selectedProject: data, projectsLoading: false });
     } catch (err) {
       set({
-        projectsError:
-          err instanceof Error ? err.message : "Failed to fetch project",
+        projectsError: err instanceof Error ? err.message : "Failed to fetch project",
         projectsLoading: false,
       });
     }
@@ -81,8 +77,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       return project;
     } catch (err) {
       set({
-        projectsError:
-          err instanceof Error ? err.message : "Failed to create project",
+        projectsError: err instanceof Error ? err.message : "Failed to create project",
         projectsLoading: false,
       });
       return null;
@@ -106,8 +101,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       return updatedProject;
     } catch (err) {
       set({
-        projectsError:
-          err instanceof Error ? err.message : "Failed to update project",
+        projectsError: err instanceof Error ? err.message : "Failed to update project",
         projectsLoading: false,
       });
       return null;
@@ -125,8 +119,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       return true;
     } catch (err) {
       set({
-        projectsError:
-          err instanceof Error ? err.message : "Failed to delete project",
+        projectsError: err instanceof Error ? err.message : "Failed to delete project",
         projectsLoading: false,
       });
       return false;
@@ -137,13 +130,12 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     set({ projectsLoading: true, projectsError: null });
     try {
       const data = await getProjectsByOwner(ownerId);
+      console.log('[ProjectStore] fetchProjectsByOwner response:', data);
       set({ projects: data, projectsLoading: false });
     } catch (err) {
-      set({
-        projectsError:
-          err instanceof Error ? err.message : "Failed to fetch projects by owner",
-        projectsLoading: false,
-      });
+      console.error('[ProjectStore] fetchProjectsByOwner error:', err);
+      const errorMessage = err instanceof Error ? err.message : "Failed to fetch projects by owner";
+      set({ projectsError: errorMessage, projectsLoading: false });
     }
   },
 
