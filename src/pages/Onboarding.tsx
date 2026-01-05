@@ -6,6 +6,7 @@ import { CreateUserRequest } from "../types";
 import { COLORS, COMMON_CLASSES } from "../constants/colors";
 import { useAccount } from "wagmi";
 import { useUserStore } from "../store/user.store";
+import { useAuth } from "../hooks/useAuth";
 
 function Onboarding() {
   const [userInfo, setUserInfo] = useState<CreateUserRequest>({
@@ -19,12 +20,14 @@ function Onboarding() {
   const {
     user,
     setUser,
+    isAuthenticated,
     onboardingComplete,
     setOnboardingComplete,
     onboardingStep,
     setOnboardingStep,
   } = useUserStore();
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
+  const { authLoading, authError } = useAuth();
 
   useEffect(() => {
     if (isConnected && onboardingStep === 1) {
@@ -44,7 +47,6 @@ function Onboarding() {
     }
   };
 
-  // Handle input changes for form fields
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -52,32 +54,36 @@ function Onboarding() {
     setUserInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submission: send user info to backend
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    
     try {
-      // Get wallet address from localStorage (set by RainbowKit or your logic)
-      const walletAddress = localStorage.getItem("userAddress");
-      if (!walletAddress) {
+      if (!address) {
         setError("Wallet address not found. Please reconnect your wallet.");
         setLoading(false);
         return;
       }
+
+      if (!isAuthenticated) {
+        setError("You must complete authentication before creating your profile.");
+        setLoading(false);
+        return;
+      }
+
       const userCreated = await createUser({
         username: userInfo.username,
         email: userInfo.email,
-        address: walletAddress,
+        address: address,
         role: userInfo.role,
       });
+      
       setUser(userCreated);
       setOnboardingComplete(true);
       setOnboardingStep(3);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err?.message || "Failed to create user.");
-      setLoading(false);
     } finally {
       setLoading(false);
     }
@@ -91,6 +97,16 @@ function Onboarding() {
       <div onClick={handleWalletConnect}>
         <ConnectButtonCustom />
       </div>
+      {authLoading && (
+        <p className="text-sm text-gray-600 dark:text-gray-400 animate-pulse">
+          Authenticating...
+        </p>
+      )}
+      {authError && (
+        <div className={`${COLORS.form.error} text-sm text-center`}>
+          {authError}
+        </div>
+      )}
     </div>
   );
 
@@ -99,11 +115,18 @@ function Onboarding() {
       <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white text-center">
         Create your account
       </h2>
+      {authLoading && (
+        <div className="text-center text-sm text-gray-600 dark:text-gray-400 animate-pulse">
+          Completing authentication...
+        </div>
+      )}
+      {!isAuthenticated && !authLoading && (
+        <div className="text-center text-sm text-amber-600 dark:text-amber-400">
+          Please sign the message in your wallet to continue
+        </div>
+      )}
       <div className="flex flex-col gap-4">
-        <label
-          htmlFor="role"
-          className={`${COLORS.form.label} block mb-1 font-medium`}
-        >
+        <label htmlFor="role" className={`${COLORS.form.label} block mb-1 font-medium`}>
           Role
         </label>
         <select
@@ -118,10 +141,7 @@ function Onboarding() {
         </select>
       </div>
       <div className="flex flex-col gap-4">
-        <label
-          htmlFor="username"
-          className={`${COLORS.form.label} block mb-1 font-medium`}
-        >
+        <label htmlFor="username" className={`${COLORS.form.label} block mb-1 font-medium`}>
           Username
         </label>
         <input
@@ -136,10 +156,7 @@ function Onboarding() {
         />
       </div>
       <div className="flex flex-col gap-4">
-        <label
-          htmlFor="email"
-          className={`${COLORS.form.label} block mb-1 font-medium`}
-        >
+        <label htmlFor="email" className={`${COLORS.form.label} block mb-1 font-medium`}>
           Email
         </label>
         <input
@@ -161,9 +178,9 @@ function Onboarding() {
       <button
         type="submit"
         className={`${COMMON_CLASSES.button.primary} w-full font-semibold mt-2`}
-        disabled={loading}
+        disabled={loading || authLoading || !isAuthenticated}
       >
-        {loading ? "Submitting..." : "Continue"}
+        {loading ? "Creating account..." : authLoading ? "Authenticating..." : "Continue"}
       </button>
     </form>
   );
@@ -172,13 +189,11 @@ function Onboarding() {
     <div className="mt-4 text-center">
       {user?.role === "Owner" ? (
         <p className="text-gray-700 dark:text-gray-200">
-          On the left sidebar, you can now build your projects from the
-          dashboard.
+          On the left sidebar, you can now build your projects from the dashboard.
         </p>
       ) : (
         <p className="text-gray-700 dark:text-gray-200">
-          On the left sidebar, you can now contribute to projects and their
-          success.
+          On the left sidebar, you can now contribute to projects and their success.
         </p>
       )}
     </div>
@@ -194,14 +209,8 @@ function Onboarding() {
           Your gateway to innovative projects
         </h2>
         {onboardingStep === 1 && !isConnected && onboardingStepOne()}
-        {onboardingStep === 2 &&
-          isConnected &&
-          !onboardingComplete &&
-          onboardingStepTwo()}
-        {onboardingStep === 3 &&
-          isConnected &&
-          onboardingComplete &&
-          onboardingStepThree()}
+        {onboardingStep === 2 && isConnected && !onboardingComplete && onboardingStepTwo()}
+        {onboardingStep === 3 && isConnected && onboardingComplete && onboardingStepThree()}
       </Card>
     </div>
   );
