@@ -3,12 +3,14 @@
 import { create } from "zustand";
 import { UpdateUserRequest, User } from "../types";
 import { getUsers, getUser, getUserByAddress, updateUser } from "../api/users";
+import { logout as logoutAPI } from "../api/auth";
 
 interface UserState {
   user: User | undefined;
   users: User[];
   userLoading: boolean;
   userError: string | null;
+  isAuthenticated: boolean; // True when user has valid JWT cookie
   onboardingComplete: boolean;
   onboardingStep: 1 | 2 | 3;
 
@@ -16,9 +18,10 @@ interface UserState {
   setUsers: (users: User[]) => void;
   setUserLoading: (loading: boolean) => void;
   setUserError: (error: string | null) => void;
+  setIsAuthenticated: (isAuth: boolean) => void;
   setOnboardingComplete: (complete: boolean) => void;
   setOnboardingStep: (step: 1 | 2 | 3) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 
   fetchUsers: () => Promise<void>;
   fetchUser: (id: string) => Promise<void>;
@@ -32,6 +35,7 @@ export const useUserStore = create<UserState>((set) => ({
   onboardingStep: 1,
   userLoading: true,
   userError: null,
+  isAuthenticated: false, // Initially not authenticated
   onboardingComplete: false,
 
   setUser: (user) => set({ user }),
@@ -39,8 +43,25 @@ export const useUserStore = create<UserState>((set) => ({
   setUsers: (users) => set({ users }),
   setUserLoading: (loading) => set({ userLoading: loading }),
   setUserError: (error) => set({ userError: error }),
+  setIsAuthenticated: (isAuth) => set({ isAuthenticated: isAuth }),
   setOnboardingComplete: (complete) => set({ onboardingComplete: complete }),
-  logout: () => set({ user: undefined, onboardingComplete: false }),
+  
+  logout: async () => {
+    try {
+      // Call backend to clear httpOnly cookie
+      await logoutAPI();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      // Clear local state regardless of API call result
+      set({ 
+        user: undefined, 
+        isAuthenticated: false,
+        onboardingComplete: false,
+        onboardingStep: 1
+      });
+    }
+  },
 
   fetchUsers: async () => {
     set({ userLoading: true, userError: null });
