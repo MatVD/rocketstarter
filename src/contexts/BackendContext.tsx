@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useState, useCallback, ReactNode } from "react";
 import { useAccount } from "wagmi";
-import { setUserAddress } from "../api";
 
 export interface BackendContextType {
   isBackendConnected: boolean;
@@ -49,12 +48,8 @@ export const BackendProvider: React.FC<BackendProviderProps> = ({
     refetchHealth();
   }, [refetchHealth]);
 
-  // Sync wallet address with API client
-  useEffect(() => {
-    if (isConnected && address) {
-      setUserAddress(address);
-    } 
-  }, [isConnected, address]);
+  // Note: With httpOnly cookies, we don't need to manually sync the wallet address
+  // The JWT cookie is automatically sent with every request
 
   const value: BackendContextType = {
     isBackendConnected,

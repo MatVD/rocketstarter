@@ -8,21 +8,18 @@ const API_BASE_URL =
 // Create axios instance with base configuration
 const api = axios.create({
   baseURL: `${API_BASE_URL}`,
-  withCredentials: true,
+  withCredentials: true, // CRITICAL: Enables sending/receiving httpOnly cookies
   headers: {
     "Content-Type": "application/json",
   },
   timeout: 10000, // 10 seconds timeout
 });
 
-// Add request interceptor to include user address in headers
+// Request interceptor - no need to manually add Authorization header
+// The httpOnly cookie is automatically sent by the browser with credentials: 'include'
 api.interceptors.request.use(
   (config) => {
-    // Get user address from localStorage or context if available
-    const userAddress = localStorage.getItem("userAddress");
-    if (userAddress) {
-      config.headers["x-user-address"] = userAddress;
-    }
+    // Cookie is sent automatically - no manual header needed
     return config;
   },
   (error) => {
@@ -35,11 +32,13 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access
+      // Handle unauthorized access - JWT cookie invalid or expired
       logError(
         "API Client",
-        "Unauthorized access - user address may be invalid"
+        "Unauthorized access - JWT token invalid or expired"
       );
+      // Trigger logout event to clear user state
+      window.dispatchEvent(new Event("auth:logout"));
     } else if (error.response?.status >= 500) {
       // Handle server errors
       logError("API Client", `Server error: ${error.response?.data}`);
@@ -51,14 +50,15 @@ api.interceptors.response.use(
   }
 );
 
-// Function to set user address for authentication
-export const setUserAddress = (address: string | null) => {
-  if (address) {
-    localStorage.setItem("userAddress", address);
-    api.defaults.headers["x-user-address"] = address;
-  } else {
-    localStorage.removeItem("userAddress");
-    delete api.defaults.headers["x-user-address"];
+// Auth state check - since JWT is in httpOnly cookie, we can't read it
+// We'll verify auth status by calling a protected endpoint
+export const checkAuthStatus = async (): Promise<boolean> => {
+  try {
+    // Try to fetch current user - if cookie is valid, it will succeed
+    await api.get("/users/me");
+    return true;
+  } catch {
+    return false;
   }
 };
 
