@@ -1,9 +1,87 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/stores/useUserStoreStore.ts
+
 import { create } from "zustand";
 import { UpdateUserRequest, User } from "../types";
 import { getUsers, getUser, getUserByAddress, updateUser } from "../api/users";
 import { logout as logoutAPI } from "../api/auth";
+
+// --- Setters extraits pour stabilité des références ---
+const setUser = (set: any) => (user: User | undefined) => set({ user });
+const setUsers = (set: any) => (users: User[]) => set({ users });
+const setUserLoading = (set: any) => (loading: boolean) => set({ userLoading: loading });
+const setUserError = (set: any) => (error: string | null) => set({ userError: error });
+const setIsAuthenticated = (set: any) => (isAuth: boolean) => set({ isAuthenticated: isAuth });
+const setOnboardingComplete = (set: any) => (complete: boolean) => set({ onboardingComplete: complete });
+const setOnboardingStep = (set: any) => (step: 1 | 2 | 3) => set({ onboardingStep: step });
+const setIsAuthenticating = (set: any) => (isAuth: boolean) => set({ isAuthenticating: isAuth });
+
+// --- Fonctions asynchrones extraites pour stabilité et testabilité ---
+const logout = (set: any) => async () => {
+  try {
+    await logoutAPI();
+  } catch (error) {
+    console.error("Logout error:", error);
+  } finally {
+    set({
+      user: undefined,
+      isAuthenticated: false,
+      onboardingComplete: false,
+      onboardingStep: 1
+    });
+  }
+};
+
+const fetchUsers = (set: any) => async () => {
+  set({ userLoading: true, userError: null });
+  try {
+    const users = await getUsers();
+    set({ users });
+    set({ userLoading: false, userError: null });
+  } catch (error: any) {
+    console.error("Failed to fetch users:", error);
+    set({ userLoading: false, userError: error.message });
+  }
+};
+
+const fetchUser = (set: any) => async (id: string) => {
+  set({ userLoading: true, userError: null });
+  try {
+    const user = await getUser(id);
+    set({ user });
+    set({ userLoading: false, userError: null });
+  } catch (error: any) {
+    console.error("Failed to fetch user:", error);
+    set({ userLoading: false, userError: error.message });
+  }
+};
+
+const getUserByAddressFn = (set: any) => async (address: string) => {
+  set({ userLoading: true, userError: null });
+  try {
+    const user = await getUserByAddress(address);
+    set({ userLoading: false, userError: null });
+    return user;
+  } catch (error: any) {
+    console.error("Failed to get user by address:", error);
+    set({ userLoading: false, userError: error.message });
+    return null;
+  }
+};
+
+const updateUserFn = (set: any) => async (address: string, data: UpdateUserRequest) => {
+  set({ userLoading: true, userError: null });
+  try {
+    const updatedUser = await updateUser(address, data);
+    set({ user: updatedUser });
+    set({ userLoading: false, userError: null });
+    return updatedUser;
+  } catch (error: any) {
+    console.error("Failed to update user:", error);
+    set({ userLoading: false, userError: error.message });
+    return null;
+  }
+};
 
 interface UserState {
   user: User | undefined;
@@ -31,6 +109,7 @@ interface UserState {
   updateUser: (address: string, data: UpdateUserRequest) => Promise<User | null>;
 }
 
+
 export const useUserStore = create<UserState>((set) => ({
   user: undefined,
   users: [],
@@ -41,82 +120,20 @@ export const useUserStore = create<UserState>((set) => ({
   onboardingComplete: false,
   isAuthenticating: false, // Initially not authenticating
 
-  setUser: (user) => set({ user }),
-  setOnboardingStep: (step) => set({ onboardingStep: step }),
-  setUsers: (users) => set({ users }),
-  setUserLoading: (loading) => set({ userLoading: loading }),
-  setUserError: (error) => set({ userError: error }),
-  setIsAuthenticated: (isAuth) => set({ isAuthenticated: isAuth }),
-  setOnboardingComplete: (complete) => set({ onboardingComplete: complete }),
-  setIsAuthenticating: (isAuth) => set({ isAuthenticating: isAuth }),
-  
-  logout: async () => {
-    try {
-      // Call backend to clear httpOnly cookie
-      await logoutAPI();
-    } catch (error) {
-      console.error("Logout error:", error);
-    } finally {
-      // Clear local state regardless of API call result
-      set({ 
-        user: undefined, 
-        isAuthenticated: false,
-        onboardingComplete: false,
-        onboardingStep: 1
-      });
-    }
-  },
 
-  fetchUsers: async () => {
-    set({ userLoading: true, userError: null });
-    try {
-      const users = await getUsers();
-      set({ users });
-      set({ userLoading: false, userError: null });
-    } catch (error: any) {
-      console.error("Failed to fetch users:", error);
-      set({ userLoading: false, userError: error.message });
-    }
-  },
+  setUser: setUser(set),
+  setUsers: setUsers(set),
+  setUserLoading: setUserLoading(set),
+  setUserError: setUserError(set),
+  setIsAuthenticated: setIsAuthenticated(set),
+  setOnboardingComplete: setOnboardingComplete(set),
+  setOnboardingStep: setOnboardingStep(set),
+  setIsAuthenticating: setIsAuthenticating(set),
 
-  fetchUser: async (id: string) => {
-    set({ userLoading: true, userError: null });
-    try {
-      const user = await getUser(id);
-      set({ user });
-      set({ userLoading: false, userError: null });
-    } catch (error: any) {
-      console.error("Failed to fetch user:", error);
-      set({ userLoading: false, userError: error.message });
-    }
-  },
-
-  getUserByAddress: async (address: string) => {
-    set({ userLoading: true, userError: null });
-    try {
-      const user = await getUserByAddress(address);
-      set({ userLoading: false, userError: null });
-      return user;
-    } catch (error: any) {
-      console.error("Failed to get user by address:", error);
-      set({ userLoading: false, userError: error.message });
-      return null;
-    }
-  },
-
-  updateUser: async (address: string, data: UpdateUserRequest) => {
-    set({ userLoading: true, userError: null });
-    try {
-      // Assuming there's an API function to update the user
-      const updatedUser = await updateUser(address, data);
-      set({ user: updatedUser });
-      set({ userLoading: false, userError: null });
-      return updatedUser;
-    } catch (error: any) {
-      console.error("Failed to update user:", error);
-      set({ userLoading: false, userError: error.message });
-      return null;
-    }
-  },
+  logout: logout(set),
+  fetchUsers: fetchUsers(set),
+  fetchUser: fetchUser(set),
+  getUserByAddress: getUserByAddressFn(set),
+  updateUser: updateUserFn(set),
 
 }));

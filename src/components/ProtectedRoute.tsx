@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+// import { useAuth } from "../hooks/useAuth";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
  * Composant guard pour protéger les routes authentifiées
  */
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, authLoading } = useAuth();
+  const { isAuthenticated, userLoading: authLoading } = useUserStore();
 
   // If auth is still initializing (checking cookie / verifying), don't
   // redirect immediately — render nothing (or a loader) so the auth

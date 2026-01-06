@@ -6,7 +6,7 @@ import { CreateUserRequest } from "../types";
 import { COLORS, COMMON_CLASSES } from "../constants/colors";
 import { useAccount } from "wagmi";
 import { useUserStore } from "../store/user.store";
-import { useAuth } from "../hooks/useAuth";
+// import { useAuth } from "../hooks/useAuth";
 
 function Onboarding() {
   const [userInfo, setUserInfo] = useState<CreateUserRequest>({
@@ -27,7 +27,8 @@ function Onboarding() {
     setOnboardingStep,
   } = useUserStore();
   const { address, isConnected } = useAccount();
-  const { authLoading, authError } = useAuth();
+  const authLoading = false;
+  const authError = null;
 
   useEffect(() => {
     if (isConnected && onboardingStep === 1) {
