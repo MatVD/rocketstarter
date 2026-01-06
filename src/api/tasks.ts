@@ -30,7 +30,7 @@ export const updateTask = async (
   id: string,
   data: UpdateTaskRequest
 ): Promise<Task> => {
-  const response = await api.put(`/tasks/${id}`, data);
+  const response = await api.patch(`/tasks/${id}`, data);
   return response.data.data || response.data;
 };
 

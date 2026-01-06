@@ -44,7 +44,7 @@ export const updateUser = async (
   address: string,
   data: UpdateUserRequest
 ): Promise<User> => {
-  const response = await api.put(`/users/${address}`, data);
+  const response = await api.patch(`/users/${address}`, data);
   return response.data;
 };
 
