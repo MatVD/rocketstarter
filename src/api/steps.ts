@@ -36,7 +36,7 @@ export const updateStep = async (
   id: string,
   data: UpdateStepRequest
 ): Promise<Step> => {
-  const response = await api.put(`/steps/${id}`, data);
+  const response = await api.patch(`/steps/${id}`, data);
   return response.data;
 };
 

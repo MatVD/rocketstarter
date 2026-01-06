@@ -58,7 +58,7 @@ const newUser = await createUser({
   walletAddress: "0x123...",
 });
 
-// PUT /api/v1/users/:address
+// patch /api/v1/users/:address
 const updatedUser = await updateUser("0x123...", {
   name: "Jane Doe",
 });
@@ -91,7 +91,7 @@ const newProject = await createProject({
   ownerAddress: "0x123...",
 });
 
-// PUT /api/v1/projects/:id
+// PATCH /api/v1/projects/:id
 const updatedProject = await updateProject("1", {
   name: "Updated Name",
 });
@@ -129,7 +129,7 @@ const newTask = await createTask({
   status: 0,
 });
 
-// PUT /api/v1/tasks/:id
+// PATCH /api/v1/tasks/:id
 const updatedTask = await updateTask("1", {
   status: 1,
 });
@@ -179,7 +179,7 @@ const newStep = await createStep({
   status: 0,
 });
 
-// PUT /api/v1/steps/:id
+// PATCH /api/v1/steps/:id
 const updatedStep = await updateStep("1", {
   status: 1,
 });

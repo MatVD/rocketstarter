@@ -43,7 +43,7 @@ export const updateProject = async (
   id: string,
   data: UpdateProjectRequest
 ): Promise<Project> => {
-  const response = await api.put(`/projects/${id}`, data);
+  const response = await api.patch(`/projects/${id}`, data);
   return response.data.data || response.data;
 };
 
