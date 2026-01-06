@@ -11,13 +11,8 @@ export default function ProjectList() {
     useProjectStore();
 
   useEffect(() => {
-    if (user?.role === "Owner") {
-      fetchProjectsByOwner(user.address);
-      return;
-    }
-
     fetchProjects();
-  }, [fetchProjects, fetchProjectsByOwner, user?.role, user?.address]);
+  }, [fetchProjects]);
 
   return (
     <motion.div
