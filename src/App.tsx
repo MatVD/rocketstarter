@@ -6,10 +6,18 @@ import OwnerProjectView from "./pages/OwnerProjectView";
 import BuilderProjectView from "./pages/BuilderProjectView";
 import { AppLayout } from "./components/AppLayout";
 import { useAuth } from "./hooks/useAuth";
+import { useUserStore } from "./store/user.store";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
+
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const { userLoading } = useUserStore();
+  if (userLoading) return null; // Ou un loader si tu veux
+  return <>{children}</>;
+}
+
 function AppRoutes() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user } = useUserStore();
 
   return (
     <Routes>
@@ -68,10 +76,21 @@ function AppRoutes() {
   );
 }
 
+
+
+// Ce composant déclenche le flow d'authentification une seule fois
+function AuthEffect() {
+  useAuth();
+  return null;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
-      <AppRoutes />
+      <AuthEffect />
+      <AuthGate>
+        <AppRoutes />
+      </AuthGate>
     </BrowserRouter>
   );
 }

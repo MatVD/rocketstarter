@@ -114,7 +114,7 @@ export const useUserStore = create<UserState>((set) => ({
   user: undefined,
   users: [],
   onboardingStep: 1,
-  userLoading: true,
+  userLoading: false,
   userError: null,
   isAuthenticated: false, // Initially not authenticated
   onboardingComplete: false,

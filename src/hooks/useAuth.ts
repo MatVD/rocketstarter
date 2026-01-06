@@ -33,16 +33,19 @@ export function useAuth() {
   // Handle authentication flow when wallet connects
   useEffect(() => {
     let mounted = true;
+    const { setUserLoading } = useUserStore.getState();
 
     const authenticateUser = async () => {
       // Guard: Prevent multiple simultaneous authentication attempts
       if (isAuthenticating) {
+        setUserLoading(false);
         console.log('🔒 Authentication already in progress, skipping...');
         return;
       }
 
       // Skip if already authenticated with same address
       if (user && user.address === address && isAuthenticated) {
+        setUserLoading(false);
         console.log('[useAuth] Déjà authentifié avec cette adresse:', address);
         return;
       }
@@ -53,6 +56,7 @@ export function useAuth() {
           await logout();
           navigate('/'); // Redirect to onboarding/login page
         }
+        setUserLoading(false);
         return;
       }
 
@@ -60,6 +64,7 @@ export function useAuth() {
       setIsAuthenticating(true);
       setAuthLoading(true);
       setAuthError(null);
+      setUserLoading(true);
 
       try {
         // Step 1: Check if already authenticated (valid cookie)
@@ -79,6 +84,7 @@ export function useAuth() {
               setOnboardingStep(3);
               console.log('[useAuth] Authentification réussie, isAuthenticated TRUE');
             }
+            setUserLoading(false);
             return;
           } catch (error) {
             console.warn('[useAuth] Utilisateur non trouvé en DB, onboarding nécessaire');
@@ -88,6 +94,7 @@ export function useAuth() {
               setOnboardingStep(2);
               console.log('[useAuth] Utilisateur non trouvé, isAuthenticated FALSE');
             }
+            setUserLoading(false);
             return;
           }
         }
@@ -115,6 +122,7 @@ export function useAuth() {
             setOnboardingComplete(true);
             setOnboardingStep(3);
           }
+          setUserLoading(false);
         } catch (error) {
           console.warn('[useAuth] Utilisateur authentifié mais non présent en DB, onboarding nécessaire');
           if (mounted) {
@@ -122,6 +130,7 @@ export function useAuth() {
             setOnboardingComplete(false); // But needs to complete profile
             setOnboardingStep(2);
           }
+          setUserLoading(false);
         }
       } catch (error) {
         console.error('[useAuth] Erreur d’authentification:', error);
@@ -133,6 +142,7 @@ export function useAuth() {
           setOnboardingComplete(false);
           setUser(undefined);
         }
+        setUserLoading(false);
       } finally {
         if (mounted) {
           setAuthLoading(false);
@@ -145,6 +155,8 @@ export function useAuth() {
 
     if (isConnected && address) {
       authenticateUser();
+    } else {
+      setUserLoading(false);
     }
 
     return () => {
