@@ -2,6 +2,7 @@ import { User, Menu, Sun, Moon, RefreshCw, Rocket } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { User as UserType } from "../../types";
 import ConnectButtonCustom from "../UI/ConnectButtonCustom";
 import { useProjectStore } from "../../store/project.store";
@@ -18,6 +19,7 @@ export default function Header({
   onRoleSwitch,
 }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const { selectedProject } = useProjectStore();
 
@@ -117,6 +119,20 @@ export default function Header({
                   )}
                 </div>
               )}
+
+              {/* Profile Link */}
+              <button
+                className="w-full text-left px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors mb-2"
+                onClick={() => {
+                  setShowProfileDropdown(false);
+                  navigate("/profile");
+                }}
+              >
+                <span className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  My Profile
+                </span>
+              </button>
 
               {/* Connect Button - Always show */}
               <ConnectButtonCustom />

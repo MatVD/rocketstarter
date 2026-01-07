@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import ProjectList from "./pages/ProjectList";
 import OwnerProjectView from "./pages/OwnerProjectView";
 import BuilderProjectView from "./pages/BuilderProjectView";
+import Profile from "./pages/Profile";
 import { AppLayout } from "./components/AppLayout";
 import { useAuth } from "./hooks/useAuth";
 import { useUserStore } from "./store/user.store";
@@ -52,6 +53,14 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <BuilderProjectView />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           }
         />
