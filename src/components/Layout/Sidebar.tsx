@@ -20,17 +20,17 @@ interface SidebarProps {
 // Centralized menu items definition
 const MENU_ITEMS = [
   {
+    id: "projects",
+    label: "Projects",
+    icon: FolderOpen,
+    path: "/owner/projects",
+    roles: ["Owner"],
+  },
+  {
     id: "dashboard",
     label: "Dashboard",
     icon: LayoutDashboard,
     path: "/dashboard",
-    roles: ["Owner"],
-  },
-  {
-    id: "build",
-    label: "Build",
-    icon: Hammer,
-    path: "/projects",
     roles: ["Owner"],
   },
   {
@@ -47,16 +47,16 @@ export default function Sidebar({ onClose, user }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Filter menu items based on user role
-  const menuItems = MENU_ITEMS.filter((item) =>
+  // Filter menu items based on user role only
+  const menuItems = MENU_ITEMS.filter((item) => 
     user?.role ? item.roles.includes(user.role) : false
   );
 
   // Determine active tab based on current route
   const getActiveTab = () => {
     const path = location.pathname;
-    if (user?.role === "Owner" && path.startsWith("/projects")) return "build";
     if (path.startsWith("/dashboard")) return "dashboard";
+    if (path.startsWith("/owner/projects")) return "projects";
     if (path.startsWith("/projects")) return "projects";
     return "projects";
   };

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAccount } from "wagmi";
 import Sidebar from "../components/Layout/Sidebar";
@@ -6,6 +6,7 @@ import Header from "../components/Layout/Header";
 // import { useAuth } from "../hooks/useAuth";
 import { updateUser } from "../api/users";
 import { useUserStore } from "../store/user.store";
+import { useProjectStore } from "../store/project.store";
 import { useToast } from "../contexts/ToastContext";
 
 export function AppLayout() {
@@ -14,7 +15,15 @@ export function AppLayout() {
   const { user } = useUserStore();
   const { setUser } = useUserStore();
   const { showSuccess } = useToast();
+  const { fetchProjectsByOwner } = useProjectStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Load projects for Owner on mount and when role changes
+  useEffect(() => {
+    if (user?.role === "Owner" && user?.address) {
+      fetchProjectsByOwner(user.address);
+    }
+  }, [user?.role, user?.address, fetchProjectsByOwner]);
 
   const handleRoleSwitch = useCallback(async () => {
     if (!user || !address) return;
@@ -26,7 +35,7 @@ export function AppLayout() {
     showSuccess(`Switched to ${newRole} role`);
 
     // Redirection selon le rôle
-    navigate(newRole === "Builder" ? "/projects" : "/dashboard");
+    navigate(newRole === "Builder" ? "/projects" : "/owner/projects");
   }, [user, address, navigate, setUser, showSuccess]);
 
   return (

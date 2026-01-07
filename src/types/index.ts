@@ -31,44 +31,43 @@ export interface Project {
   providerId?: string;
   createdAt: Date;
   updatedAt: Date;
-  bank: number;
+  bank: string; // DECIMAL stored as string to preserve precision
   whitelist: string[];
-  logo?: string;
+  logoUrl?: string;
   slug?: string;
+  categoryIds?: number[];
 }
 
 export interface CreateProjectRequest {
   name: string;
   description?: string;
-  owner: string;
-  bank: number;
-  whitelist: string[];
-  providerId?: string;
-  projectStatus?: 0 | 1 | 2 | 3;
-  logo?: string;
-  slug?: string;
+  logoUrl?: string;
+  bank?: string; // DECIMAL as string, optional (default 0 on backend)
+  whitelist?: string[]; // Array of Ethereum addresses
+  status?: 0 | 1 | 2 | 3; // ProjectStatus enum
+  categoryIds?: number[]; // IDs of categories to associate
 }
 
 export interface UpdateProjectRequest {
   name?: string;
-  progress?: number;
   description?: string;
-  bank?: number;
-  whitelist?: string[];
-  providerId?: string;
-  projectStatus?: 0 | 1 | 2 | 3;
-  logo?: string;
-  slug?: string;
+  logoUrl?: string;
+  whitelist?: string[]; // Array of Ethereum addresses
+  status?: 0 | 1 | 2 | 3; // ProjectStatus enum
+  categoryIds?: number[]; // IDs of categories to associate
+  // Note: bank is NOT modifiable here - synced from blockchain only
+  // Note: progress is auto-calculated on backend
 }
 
 export interface Step {
   id: number;
-  projectId?: number;
-  title: string;
-  description: string;
-  status: 0 | 1 | 2; // 0=todo, 1=in-progress, 2=done
-  completed?: boolean;
-  order?: number;
+  projectId: number;
+  name: string; // Backend uses 'name', not 'title'
+  description?: string;
+  progress: number; // Auto-calculated based on tasks (0-100)
+  createdAt: Date;
+  updatedAt: Date;
+  // Note: status/completed/order removed - progress replaces them
 }
 
 // ---------- Task types ---------- //
@@ -152,17 +151,14 @@ export interface Category {
 }
 
 export interface CreateStepRequest {
-  title: string;
+  name: string; // Backend uses 'name'
   description?: string;
   projectId: number;
-  order: number;
-  status?: 0 | 1 | 2;
 }
 export interface UpdateStepRequest {
-  title?: string;
+  name?: string; // Backend uses 'name'
   description?: string;
-  order?: number;
-  status?: 0 | 1 | 2;
+  // Note: progress is auto-calculated on backend based on tasks
 }
 
 // ----------- Column types ----------- //

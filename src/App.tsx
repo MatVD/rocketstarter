@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import ProjectList from "./pages/ProjectList";
+import OwnerProjectsList from "./pages/OwnerProjectsList";
+import CreateProject from "./pages/CreateProject";
 import OwnerProjectView from "./pages/OwnerProjectView";
 import BuilderProjectView from "./pages/BuilderProjectView";
 import Profile from "./pages/Profile";
@@ -41,6 +43,22 @@ function AppRoutes() {
           }
         />
         <Route
+          path="/owner/projects"
+          element={
+            <ProtectedRoute>
+              <OwnerProjectsList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/owner/projects/new"
+          element={
+            <ProtectedRoute>
+              <CreateProject />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/owner/projects/:projectId"
           element={
             <ProtectedRoute>
@@ -71,7 +89,7 @@ function AppRoutes() {
         element={
           isAuthenticated ? (
             <Navigate
-              to={user?.role === "Builder" ? "/projects" : "/dashboard"}
+              to={user?.role === "Builder" ? "/projects" : "/owner/projects"}
               replace
             />
           ) : (

@@ -1,14 +1,12 @@
 // src/stores/useProjectStore.ts
 import { create } from "zustand";
-import { Project } from "../types";
+import { Project, CreateProjectRequest, UpdateProjectRequest } from "../types";
 import {
   getProjects,
   getProject,
   createProject,
   updateProject,
   deleteProject,
-  CreateProjectRequest,
-  UpdateProjectRequest,
   getProjectsByOwner,
 } from "../api";
 interface ProjectState {

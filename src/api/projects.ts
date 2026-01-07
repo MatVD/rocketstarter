@@ -1,17 +1,5 @@
 import api from "./client";
-import { Project } from "../types";
-
-// Project API endpoints
-export interface CreateProjectRequest {
-  name: string;
-  description?: string;
-  ownerAddress: string;
-}
-
-export interface UpdateProjectRequest {
-  name?: string;
-  description?: string;
-}
+import { Project, CreateProjectRequest, UpdateProjectRequest } from "../types";
 
 // Get all projects
 export const getProjects = async (): Promise<Project[]> => {
