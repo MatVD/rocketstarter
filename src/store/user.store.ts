@@ -70,15 +70,14 @@ const getUserByAddressFn = (set: any) => async (address: string) => {
 };
 
 const updateUserFn = (set: any) => async (address: string, data: UpdateUserRequest) => {
-  set({ userLoading: true, userError: null });
+  // Don't set userLoading to avoid unmounting protected routes
   try {
     const updatedUser = await updateUser(address, data);
-    set({ user: updatedUser });
-    set({ userLoading: false, userError: null });
+    set({ user: updatedUser, userError: null });
     return updatedUser;
   } catch (error: any) {
     console.error("Failed to update user:", error);
-    set({ userLoading: false, userError: error.message });
+    set({ userError: error.message });
     return null;
   }
 };

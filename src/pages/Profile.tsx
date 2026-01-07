@@ -1,7 +1,7 @@
 import { useUserStore } from "../store/user.store";
 import { useProjectStore } from "../store/project.store";
 import { useTaskStore } from "../store/task.store";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "../components/UI/Card";
 import { motion } from "framer-motion";
@@ -45,18 +45,22 @@ export default function ProfilePage() {
   useEffect(() => {
     fetchProjects();
     fetchTasks();
-  }, [fetchProjects, fetchTasks]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Calculate user statistics
-  const userProjects = projects.filter(
-    (p) => p.ownerAddress === user?.address
+  // Calculate user statistics (memoized to avoid unnecessary recalculations)
+  const userProjects = useMemo(
+    () => projects.filter((p) => p.ownerAddress === user?.address),
+    [projects, user?.address]
   );
-  const userTasks =
-    user?.role === "Builder"
-      ? tasks.filter((t) => t.builder === user?.address)
-      : tasks.filter((t) =>
-          userProjects.some((p) => p.id === t.projectId)
-        );
+
+  const userTasks = useMemo(
+    () =>
+      user?.role === "Builder"
+        ? tasks.filter((t) => t.builder === user?.address)
+        : tasks.filter((t) => userProjects.some((p) => p.id === t.projectId)),
+    [tasks, user?.role, user?.address, userProjects]
+  );
 
   const handleSave = async () => {
     if (!username.trim()) {
