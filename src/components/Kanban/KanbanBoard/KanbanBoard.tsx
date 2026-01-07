@@ -24,12 +24,14 @@ import { useToast } from "../../../contexts/ToastContext";
 interface KanbanBoardProps {
   tasks: Task[];
   user?: User;
+  users?: User[]; // List of users to display usernames
   isBuilderMode?: boolean; // New prop to indicate builder mode
 }
 
 function KanbanBoardComponent({
   tasks,
   user,
+  users,
   isBuilderMode = false,
 }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -157,6 +159,7 @@ function KanbanBoardComponent({
                             variant="kanban"
                             isDraggable={!isBuilderMode} // Disable dragging for builders
                             user={user}
+                            users={users}
                           />
                         </motion.div>
                       ))}
@@ -175,6 +178,7 @@ function KanbanBoardComponent({
               variant="kanban"
               isDragging
               user={user}
+              users={users}
             />
           ) : null}
         </DragOverlay>

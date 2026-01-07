@@ -33,14 +33,13 @@ const logout = (set: any) => async () => {
 };
 
 const fetchUsers = (set: any) => async () => {
-  set({ userLoading: true, userError: null });
+  // Don't set userLoading to avoid re-renders and infinite loops
   try {
     const users = await getUsers();
-    set({ users });
-    set({ userLoading: false, userError: null });
+    set({ users, userError: null });
   } catch (error: any) {
     console.error("Failed to fetch users:", error);
-    set({ userLoading: false, userError: error.message });
+    set({ userError: error.message });
   }
 };
 

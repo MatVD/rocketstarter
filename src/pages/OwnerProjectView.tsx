@@ -23,14 +23,20 @@ interface BuildProps {
 }
 
 export default function Build({ activeStepId, onStepChange }: BuildProps) {
-  const { user, userLoading, userError } = useUserStore();
+  // Use individual selectors to avoid re-renders
+  const user = useUserStore((state) => state.user);
+  const users = useUserStore((state) => state.users);
+  const userLoading = useUserStore((state) => state.userLoading);
+  const userError = useUserStore((state) => state.userError);
+  
   const { projectId } = useParams<{ projectId: string }>();
-  const { projectsLoading, projectsError, fetchProject, selectedProject } =
-    useProjectStore();
+  
+  const projectsLoading = useProjectStore((state) => state.projectsLoading);
+  const projectsError = useProjectStore((state) => state.projectsError);
+  const selectedProject = useProjectStore((state) => state.selectedProject);
 
   // Use shallow selectors to only subscribe to tasks array, not loading states
   const tasks = useTaskStore((state) => state.tasks);
-  const fetchTasks = useTaskStore((state) => state.fetchTasks);
   const tasksLoading = useTaskStore((state) => state.tasksLoading);
   const tasksError = useTaskStore((state) => state.tasksError);
 
@@ -39,20 +45,27 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
 
   useEffect(() => {
     if (projectId) {
+      const fetchProject = useProjectStore.getState().fetchProject;
       fetchProject(projectId);
     }
-  }, [projectId, fetchProject]);
+  }, [projectId]);
 
   useEffect(() => {
     if (projectId) {
+      const fetchTasks = useTaskStore.getState().fetchTasks;
       fetchTasks(projectId);
     }
-  }, [projectId, fetchTasks]);
+  }, [projectId]);
+
+  useEffect(() => {
+    const fetchUsers = useUserStore.getState().fetchUsers;
+    fetchUsers();
+  }, []);
 
   if (!user) {
     return (
       <DataBoundary
-        isLoading={userLoading}
+        isLoading={false}
         error={userError}
         isEmpty={!user}
         dataType="user"
@@ -69,7 +82,7 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
       <DataBoundary
         isLoading={projectsLoading}
         error={projectsError}
-        isEmpty={!selectedProject}
+        isEmpty={!selectedProject && !projectsLoading}
         dataType="project"
       >
         <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
@@ -172,7 +185,7 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <KanbanBoard tasks={filteredTasks} user={user} />
+          <KanbanBoard tasks={filteredTasks} user={user} users={users} />
         </motion.div>
       </div>
 

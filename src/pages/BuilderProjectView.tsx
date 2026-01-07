@@ -12,14 +12,20 @@ import { useProjectStore } from "../store/project.store";
 import { useTaskStore } from "../store";
 
 export default function BuilderProjectView() {
-  const { user, userLoading, userError } = useUserStore();
+  // Use individual selectors to avoid re-renders
+  const user = useUserStore((state) => state.user);
+  const users = useUserStore((state) => state.users);
+  const userLoading = useUserStore((state) => state.userLoading);
+  const userError = useUserStore((state) => state.userError);
+  
   const { projectId } = useParams<{ projectId: string }>();
-  const { projectsLoading, projectsError, fetchProject, selectedProject } =
-    useProjectStore();
+  
+  const projectsLoading = useProjectStore((state) => state.projectsLoading);
+  const projectsError = useProjectStore((state) => state.projectsError);
+  const selectedProject = useProjectStore((state) => state.selectedProject);
 
   // Use shallow selectors to only subscribe to tasks array, not loading states
   const tasks = useTaskStore((state) => state.tasks);
-  const fetchTasks = useTaskStore((state) => state.fetchTasks);
   const tasksLoading = useTaskStore((state) => state.tasksLoading);
   const tasksError = useTaskStore((state) => state.tasksError);
 
@@ -27,20 +33,27 @@ export default function BuilderProjectView() {
 
   useEffect(() => {
     if (projectId) {
+      const fetchProject = useProjectStore.getState().fetchProject;
       fetchProject(projectId);
     }
-  }, [projectId, fetchProject]);
+  }, [projectId]);
 
   useEffect(() => {
     if (projectId) {
+      const fetchTasks = useTaskStore.getState().fetchTasks;
       fetchTasks(projectId);
     }
-  }, [projectId, fetchTasks]);
+  }, [projectId]);
+
+  useEffect(() => {
+    const fetchUsers = useUserStore.getState().fetchUsers;
+    fetchUsers();
+  }, []);
 
   if (!user) {
     return (
       <DataBoundary
-        isLoading={userLoading}
+        isLoading={false}
         error={userError}
         isEmpty={!user}
         dataType="user"
@@ -57,7 +70,7 @@ export default function BuilderProjectView() {
       <DataBoundary
         isLoading={projectsLoading}
         error={projectsError}
-        isEmpty={!selectedProject}
+        isEmpty={!selectedProject && !projectsLoading}
         dataType="project"
       >
         <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
@@ -132,7 +145,7 @@ export default function BuilderProjectView() {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           {filteredTasks.length > 0 ? (
-            <KanbanBoard tasks={filteredTasks} user={user} />
+            <KanbanBoard tasks={filteredTasks} user={user} users={users} />
           ) : (
             <div className="text-center py-12">
               <div className="text-gray-400 dark:text-gray-500 mb-4">

@@ -22,10 +22,17 @@ import { useToast } from "../contexts/ToastContext";
 import DataBoundary from "../components/UI/DataBoundary";
 
 export default function ProfilePage() {
-  const { user, userLoading, userError, updateUser, deleteUser } =
-    useUserStore();
-  const { projects, fetchProjects } = useProjectStore();
-  const { tasks, fetchTasks } = useTaskStore();
+  // Utiliser des selectors spécifiques pour éviter les re-renders inutiles
+  const user = useUserStore((state) => state.user);
+  const userLoading = useUserStore((state) => state.userLoading);
+  const userError = useUserStore((state) => state.userError);
+  const updateUser = useUserStore((state) => state.updateUser);
+  const deleteUser = useUserStore((state) => state.deleteUser);
+  
+  // Utiliser des selectors avec shallow comparison pour éviter les re-renders
+  const projects = useProjectStore((state) => state.projects);
+  const tasks = useTaskStore((state) => state.tasks);
+  
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [editMode, setEditMode] = useState(false);
@@ -42,25 +49,33 @@ export default function ProfilePage() {
     }
   }, [user]);
 
-  useEffect(() => {
-    fetchProjects();
-    fetchTasks();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // Calculate user statistics (memoized to avoid unnecessary recalculations)
-  const userProjects = useMemo(
-    () => projects.filter((p) => p.ownerAddress === user?.address),
-    [projects, user?.address]
-  );
+  // Pour la vue builder : projets où l'utilisateur a au moins une tâche assignée
+  const assignedTasks = useMemo(() => {
+    if (!user) return [];
+    // On considère builder comme l'adresse du user
+    return tasks.filter(
+      (t) => t.builder === user.address
+    );
+  }, [tasks, user]);
 
-  const userTasks = useMemo(
-    () =>
-      user?.role === "Builder"
-        ? tasks.filter((t) => t.builder === user?.address)
-        : tasks.filter((t) => userProjects.some((p) => p.id === t.projectId)),
-    [tasks, user?.role, user?.address, userProjects]
-  );
+  const userProjects = useMemo(() => {
+    if (user?.role === "Builder") {
+      if (assignedTasks.length === 0) return [];
+      const uniqueProjectIds = Array.from(new Set(assignedTasks.map((t) => t.projectId)));
+      return projects.filter((p) => uniqueProjectIds.includes(p.id));
+    } else {
+      return projects.filter((p) => p.owner === user?.address);
+    }
+  }, [projects, assignedTasks, user]);
+
+  const userTasks = useMemo(() => {
+    if (user?.role === "Builder") {
+      return assignedTasks;
+    } else {
+      return tasks.filter((t) => userProjects.some((p) => p.id === t.projectId));
+    }
+  }, [tasks, user, userProjects, assignedTasks]);
 
   const handleSave = async () => {
     if (!username.trim()) {
