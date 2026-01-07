@@ -44,7 +44,8 @@ function TaskCardContentComponent({
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   const isBuilderMode = user?.role === "Builder";
-  const isAssignedToCurrentUser = user && task.builder === user.address;
+  // Affiche 'You' pour tout utilisateur connecté qui s'est attribué la tâche (peu importe le rôle)
+  const isAssignedToCurrentUser = !!user && task.builder === user.address;
   const isUnassigned = !task.builder || task.builder === "";
   const isInTodoStatus = task.status === 0;
 
@@ -235,7 +236,7 @@ function TaskCardContentComponent({
                   ? "You"
                   : isUnassigned
                   ? "Unassigned"
-                  : task.builder}
+                  : users?.find((u) => u.address === task.builder)?.username || task.builder?.slice(0, 6) || task.builder}
               </span>
             </div>
             <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 flex-shrink-0">
