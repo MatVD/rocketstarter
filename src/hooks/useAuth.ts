@@ -11,7 +11,7 @@ import { useUserStore } from "../store/user.store";
  * Flow: wallet connect → challenge → sign → verify → JWT cookie → fetch user
  */
 export function useAuth() {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, connector } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const navigate = useNavigate();
   
@@ -95,7 +95,9 @@ export function useAuth() {
         const challengeData = await requestChallenge(address);
 
         // Step 3: Sign the challenge message with wallet
-        const signature = await signMessageAsync({ message: challengeData.message });
+        const signature = await signMessageAsync({ 
+          message: challengeData.message,
+        });
 
         // Step 4: Verify signature and get JWT cookie
         await verifySignature(address, signature);

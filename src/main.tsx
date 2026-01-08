@@ -9,19 +9,27 @@ import { ToastProvider } from "./contexts/ToastContext";
 import {
   RainbowKitProvider,
   darkTheme as rainbowDarkTheme,
-  getDefaultConfig,
 } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
-import { WagmiProvider } from "wagmi";
+import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { mainnet, sepolia } from "wagmi/chains";
+import { injected, walletConnect } from "wagmi/connectors";
 
-// Use RainbowKit helper to build a wagmi config compatible with the installed versions.
-// projectId is required for WalletConnect v2; for local dev you can provide your own.
-const wagmiConfig = getDefaultConfig({
-  appName: "Rocket Launch",
-  projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || "YOUR_PROJECT_ID",
+// Manual wagmi config for better stability and control
+const wagmiConfig = createConfig({
   chains: [mainnet, sepolia],
+  connectors: [
+    injected(),
+    walletConnect({ 
+      projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || "YOUR_PROJECT_ID",
+      showQrModal: true,
+    }),
+  ],
+  transports: {
+    [mainnet.id]: http(),
+    [sepolia.id]: http(),
+  },
 });
 
 const queryClient = new QueryClient();
