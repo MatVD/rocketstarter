@@ -1,11 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
-import ProjectList from "./pages/ProjectList";
-import OwnerProjectsList from "./pages/OwnerProjectsList";
+import AllProjects from "./pages/AllProjects";
+import MyProjects from "./pages/MyProjects";
 import CreateProject from "./pages/CreateProject";
 import OwnerProjectView from "./pages/OwnerProjectView";
-import BuilderProjectView from "./pages/BuilderProjectView";
 import Profile from "./pages/Profile";
 import { AppLayout } from "./components/AppLayout";
 import { useAuth } from "./hooks/useAuth";
@@ -38,20 +37,20 @@ function AppRoutes() {
           path="/projects"
           element={
             <ProtectedRoute>
-              <ProjectList />
+              <AllProjects />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/owner/projects"
+          path="/my-projects"
           element={
             <ProtectedRoute>
-              <OwnerProjectsList />
+              <MyProjects />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/owner/projects/new"
+          path="/projects/new"
           element={
             <ProtectedRoute>
               <CreateProject />
@@ -59,18 +58,10 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/owner/projects/:projectId"
+          path="/projects/:projectId"
           element={
             <ProtectedRoute>
               <OwnerProjectView />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/builder/projects/:projectId"
-          element={
-            <ProtectedRoute>
-              <BuilderProjectView />
             </ProtectedRoute>
           }
         />
@@ -88,10 +79,7 @@ function AppRoutes() {
         path="/"
         element={
           isAuthenticated ? (
-            <Navigate
-              to={user?.role === "Builder" ? "/projects" : "/owner/projects"}
-              replace
-            />
+            <Navigate to="/projects" replace />
           ) : (
             <Navigate to="/onboarding" replace />
           )

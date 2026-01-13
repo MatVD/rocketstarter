@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import DataBoundary from "../components/UI/DataBoundary";
@@ -12,7 +11,7 @@ import { useProjectStore } from "../store/project.store";
 import { useTaskStore } from "../store";
 
 export default function BuilderProjectView() {
-  // Use individual selectors to avoid re-renders
+  // Use data from store - globally loaded in AppLayout
   const user = useUserStore((state) => state.user);
   const users = useUserStore((state) => state.users);
   const userLoading = useUserStore((state) => state.userLoading);
@@ -23,39 +22,30 @@ export default function BuilderProjectView() {
   const projectsLoading = useProjectStore((state) => state.projectsLoading);
   const projectsError = useProjectStore((state) => state.projectsError);
   const selectedProject = useProjectStore((state) => state.selectedProject);
+  const fetchProject = useProjectStore((state) => state.fetchProject);
 
-  // Use shallow selectors to only subscribe to tasks array, not loading states
   const tasks = useTaskStore((state) => state.tasks);
   const tasksLoading = useTaskStore((state) => state.tasksLoading);
   const tasksError = useTaskStore((state) => state.tasksError);
+  const fetchTasks = useTaskStore((state) => state.fetchTasks);
 
   const [filters, setFilters] = useTaskFilters(projectId);
 
+  // Only fetch project-specific data
   useEffect(() => {
     if (projectId) {
-      const fetchProject = useProjectStore.getState().fetchProject;
       fetchProject(projectId);
-    }
-  }, [projectId]);
-
-  useEffect(() => {
-    if (projectId) {
-      const fetchTasks = useTaskStore.getState().fetchTasks;
       fetchTasks(projectId);
     }
-  }, [projectId]);
+  }, [projectId, fetchProject, fetchTasks]);
 
-  useEffect(() => {
-    const fetchUsers = useUserStore.getState().fetchUsers;
-    fetchUsers();
-  }, []);
-
-  if (!user) {
+  // Wait for user to be loaded before rendering content
+  if (userLoading || !user) {
     return (
       <DataBoundary
-        isLoading={false}
+        isLoading={userLoading}
         error={userError}
-        isEmpty={!user}
+        isEmpty={!user && !userLoading}
         dataType="user"
       >
         <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">

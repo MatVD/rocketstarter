@@ -17,13 +17,8 @@ function ProjectCard({ project, index }: ProjectCardProps) {
   const { user } = useUserStore();
 
   const onProjectClick = () => {
-    // Navigate to project details page
-    if (user?.role === "Owner") {
-      navigate(`/owner/projects/${project.id}`);
-      return;
-    }
-    
-    navigate(`/builder/projects/${project.id}`);
+    // Navigate to unified project details page
+    navigate(`/projects/${project.id}`);
   };
 
   return (

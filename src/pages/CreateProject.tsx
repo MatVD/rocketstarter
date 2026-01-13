@@ -108,14 +108,14 @@ export default function CreateProject() {
 
     if (result) {
       showSuccess("Project created successfully!");
-      navigate("/owner/projects");
+      navigate("/my-projects");
     } else {
       showError("Failed to create project. Please try again.");
     }
   };
 
   const handleCancel = () => {
-    navigate("/owner/projects");
+    navigate("/my-projects");
   };
 
   return (

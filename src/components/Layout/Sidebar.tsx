@@ -7,6 +7,8 @@ import {
   FolderOpen,
   ChevronLeft,
   Rocket,
+  Briefcase,
+  Plus,
 } from "lucide-react";
 import { User } from "../../types";
 import { useState } from "react";
@@ -20,10 +22,24 @@ interface SidebarProps {
 // Centralized menu items definition
 const MENU_ITEMS = [
   {
-    id: "projects",
-    label: "Projects",
+    id: "all-projects",
+    label: "All Projects",
     icon: FolderOpen,
-    path: "/owner/projects",
+    path: "/projects",
+    roles: ["Owner", "Builder"],
+  },
+  {
+    id: "my-projects",
+    label: "My Projects",
+    icon: Briefcase,
+    path: "/my-projects",
+    roles: ["Owner", "Builder"],
+  },
+  {
+    id: "create-project",
+    label: "Create Project",
+    icon: Plus,
+    path: "/projects/new",
     roles: ["Owner"],
   },
   {
@@ -32,13 +48,6 @@ const MENU_ITEMS = [
     icon: LayoutDashboard,
     path: "/dashboard",
     roles: ["Owner"],
-  },
-  {
-    id: "projects",
-    label: "Projects",
-    icon: FolderOpen,
-    path: "/projects",
-    roles: ["Builder"],
   },
 ];
 
@@ -56,9 +65,10 @@ export default function Sidebar({ onClose, user }: SidebarProps) {
   const getActiveTab = () => {
     const path = location.pathname;
     if (path.startsWith("/dashboard")) return "dashboard";
-    if (path.startsWith("/owner/projects")) return "projects";
-    if (path.startsWith("/projects")) return "projects";
-    return "projects";
+    if (path === "/projects" || path.startsWith("/projects/")) return "all-projects";
+    if (path === "/my-projects") return "my-projects";
+    if (path === "/projects/new") return "create-project";
+    return "all-projects";
   };
 
   const activeTab = getActiveTab();

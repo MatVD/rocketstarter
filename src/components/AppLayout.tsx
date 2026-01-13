@@ -3,27 +3,35 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useAccount } from "wagmi";
 import Sidebar from "../components/Layout/Sidebar";
 import Header from "../components/Layout/Header";
-// import { useAuth } from "../hooks/useAuth";
 import { updateUser } from "../api/users";
 import { useUserStore } from "../store/user.store";
 import { useProjectStore } from "../store/project.store";
+import { useTaskStore } from "../store/task.store";
 import { useToast } from "../contexts/ToastContext";
 
 export function AppLayout() {
-  const navigate = useNavigate();
   const { address } = useAccount();
-  const { user } = useUserStore();
+  const { user, fetchUsers } = useUserStore();
   const { setUser } = useUserStore();
   const { showSuccess } = useToast();
-  const { fetchProjectsByOwner } = useProjectStore();
+  const { fetchProjects } = useProjectStore();
+  const { fetchTasks } = useTaskStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Load projects for Owner on mount and when role changes
+  // 🚀 GLOBAL DATA LOADING: Load all data once when user is authenticated
+  // This ensures data is available across all pages without repeated fetches
   useEffect(() => {
-    if (user?.role === "Owner" && user?.address) {
-      fetchProjectsByOwner(user.address);
+    if (user?.address) {
+      // Load all projects (not filtered by owner)
+      fetchProjects();
+      
+      // Load all tasks (not filtered by project)
+      fetchTasks();
+      
+      // Load all users for task assignment display
+      fetchUsers();
     }
-  }, [user?.role, user?.address, fetchProjectsByOwner]);
+  }, [user?.address, fetchProjects, fetchTasks, fetchUsers]);
 
   const handleRoleSwitch = useCallback(async () => {
     if (!user || !address) return;
@@ -34,9 +42,8 @@ export function AppLayout() {
     setUser(updatedUser);
     showSuccess(`Switched to ${newRole} role`);
 
-    // Redirection selon le rôle
-    navigate(newRole === "Builder" ? "/projects" : "/owner/projects");
-  }, [user, address, navigate, setUser, showSuccess]);
+    // No navigation needed - pages will automatically update based on new role
+  }, [user, address, setUser, showSuccess]);
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
