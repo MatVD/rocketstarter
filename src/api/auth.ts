@@ -49,3 +49,17 @@ export const verifySignature = async (
 export const logout = async (): Promise<void> => {
   await api.post("/auth/logout");
 };
+
+/**
+ * Logout using sendBeacon (guaranteed to send even if page closes)
+ * Use this when navigating away immediately after logout
+ */
+export const logoutBeacon = (): void => {
+  const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api/v1";
+  const url = `${baseURL}/auth/logout`;
+  
+  // sendBeacon sends POST with credentials
+  navigator.sendBeacon(url);
+  
+  console.log('[Auth API] Logout beacon sent to:', url);
+};

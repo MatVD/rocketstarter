@@ -19,7 +19,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 }
 
 function AppRoutes() {
-  const { isAuthenticated, user } = useUserStore();
+  const { isAuthenticated } = useUserStore();
 
   return (
     <Routes>

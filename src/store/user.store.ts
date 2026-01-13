@@ -4,7 +4,7 @@
 import { create } from "zustand";
 import { UpdateUserRequest, User } from "../types";
 import { getUsers, getUser, getUserByAddress, updateUser } from "../api/users";
-import { logout as logoutAPI } from "../api/auth";
+import { logout as logoutAPI, logoutBeacon } from "../api/auth";
 
 // --- Setters extraits pour stabilité des références ---
 const setUser = (set: any) => (user: User | undefined) => set({ user });
@@ -18,18 +18,40 @@ const setIsAuthenticating = (set: any) => (isAuth: boolean) => set({ isAuthentic
 
 // --- Fonctions asynchrones extraites pour stabilité et testabilité ---
 const logout = (set: any) => async () => {
+  console.log('[UserStore] Starting async logout...');
   try {
     await logoutAPI();
+    console.log('[UserStore] Logout API call successful');
   } catch (error) {
-    console.error("Logout error:", error);
+    console.error("[UserStore] Logout error:", error);
   } finally {
+    console.log('[UserStore] Clearing user state');
     set({
       user: undefined,
       isAuthenticated: false,
       onboardingComplete: false,
       onboardingStep: 1
     });
+    console.log('[UserStore] Async logout complete');
   }
+};
+
+// Synchronous logout with beacon for immediate navigation
+const logoutSync = (set: any) => () => {
+  console.log('[UserStore] Starting sync logout with beacon...');
+  
+  // Send logout beacon (guaranteed to reach server even during page unload)
+  logoutBeacon();
+  
+  // Clear state immediately
+  set({
+    user: undefined,
+    isAuthenticated: false,
+    onboardingComplete: false,
+    onboardingStep: 1
+  });
+  
+  console.log('[UserStore] Sync logout complete, beacon sent');
 };
 
 const fetchUsers = (set: any) => async () => {
@@ -100,6 +122,7 @@ interface UserState {
   setOnboardingStep: (step: 1 | 2 | 3) => void;
   setIsAuthenticating: (isAuth: boolean) => void;
   logout: () => Promise<void>;
+  logoutSync: () => void; // Synchronous logout with beacon
 
   fetchUsers: () => Promise<void>;
   fetchUser: (id: string) => Promise<void>;
@@ -129,6 +152,7 @@ export const useUserStore = create<UserState>((set) => ({
   setIsAuthenticating: setIsAuthenticating(set),
 
   logout: logout(set),
+  logoutSync: logoutSync(set),
   fetchUsers: fetchUsers(set),
   fetchUser: fetchUser(set),
   getUserByAddress: getUserByAddressFn(set),
