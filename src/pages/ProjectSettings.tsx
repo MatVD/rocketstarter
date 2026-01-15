@@ -74,7 +74,7 @@ export default function ProjectSettings() {
       const updated = await updateExistingProject(id, {
         name: formData.name.trim(),
         description: formData.description?.trim() || undefined,
-        logo: formData.logo?.trim() || undefined,
+        logoUrl: formData.logo?.trim() || undefined,
         status: formData.status as 0 | 1 | 2 | 3,
       });
 

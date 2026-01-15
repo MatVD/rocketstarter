@@ -13,6 +13,7 @@ import {
 import { User } from "../../types";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import TasksToValidate from "./TasksToValidate";
 
 interface SidebarProps {
   onClose?: () => void;
@@ -119,7 +120,10 @@ export default function Sidebar({ onClose, user }: SidebarProps) {
         )}
       </div>
 
-      <nav className="flex-1 p-4">
+      <nav className="flex-1 p-4 overflow-y-auto">
+        {/* Tasks to Validate - Only show if expanded */}
+        {isExpanded && <TasksToValidate />}
+        
         <ul className="space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;

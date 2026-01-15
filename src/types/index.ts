@@ -41,7 +41,7 @@ export interface Project {
 export interface CreateProjectRequest {
   name: string;
   description?: string;
-  logo?: string; // Changed from logoUrl to match backend
+  logoUrl?: string; // URL for project logo (backend maps to 'logo' field)
   bank?: string; // DECIMAL as string, optional (default 0 on backend)
   whitelist?: string[]; // Array of Ethereum addresses
   status?: 0 | 1 | 2 | 3; // ProjectStatus enum
@@ -51,7 +51,7 @@ export interface CreateProjectRequest {
 export interface UpdateProjectRequest {
   name?: string;
   description?: string;
-  logo?: string; // Changed from logoUrl to match backend
+  logoUrl?: string; // URL for project logo (backend maps to 'logo' field)
   whitelist?: string[]; // Array of Ethereum addresses
   status?: 0 | 1 | 2 | 3; // ProjectStatus enum
   categoryIds?: number[]; // IDs of categories to associate
@@ -86,6 +86,26 @@ export const TaskStatusLabel: Record<TaskStatus, string> = {
   3: "done",
 };
 
+// ----------- Reward types ----------- //
+export interface Reward {
+  id: number;
+  type: 'token' | 'nft' | 'reputation' | 'custom';
+  value: string; // DECIMAL as string to preserve precision
+  contractAddress?: string; // Ethereum contract address
+  details?: string;
+  taskId: number;
+  createdAt: Date;
+}
+
+export interface CreateRewardRequest {
+  type: 'token' | 'nft' | 'reputation' | 'custom';
+  value: string;
+  contractAddress?: string;
+  details?: string;
+  taskId: number;
+}
+
+// ----------- Task types ----------- //
 export interface Task {
   id: number;
   projectId: number;
@@ -96,6 +116,7 @@ export interface Task {
   link?: string;
   taskOwner?: string;
   builder?: string; // User address
+  rewards?: Reward[]; // One-to-Many relation
   createdAt: Date;
   updatedAt?: Date;
   effort?: number; // Fibonacci integer
@@ -111,19 +132,16 @@ export interface CreateTaskRequest {
   projectId: number;
   stepId?: number;
   title: string;
-  image?: string;
   description?: string;
-  link?: string;
+  image?: string; // Must be valid URL
+  link?: string; // Must be valid URL
   taskOwner?: string;
   builder?: string;
-  createdAt: Date;
-  updatedAt?: Date;
-  effort?: number;
-  priority?: TaskPriority;
-  status: TaskStatus;
-  duration?: number;
-  dueDate?: Date;
-  dueDateStatus?: number;
+  effort?: number; // 1, 2, 3, 5, 8, 13 (Fibonacci)
+  dueDate?: string; // ISO date string
+  status?: TaskStatus; // 0=TODO, 1=IN_PROGRESS, 2=IN_REVIEW, 3=DONE
+  priority?: TaskPriority; // 1=Low, 2=Medium, 3=High
+  categoryIds?: number[];
 }
 
 export interface UpdateTaskRequest {

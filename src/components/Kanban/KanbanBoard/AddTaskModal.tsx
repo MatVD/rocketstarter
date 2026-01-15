@@ -3,9 +3,12 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Modal from "../../UI/Modal";
 import { useTaskStore } from "../../../store/task.store";
+import { useUserStore } from "../../../store/user.store";
 import { useToast } from "../../../contexts/ToastContext";
 import { COLORS } from "../../../constants/colors";
 import { TaskPriority } from "../../../types";
+import { Award } from "lucide-react";
+import { createReward } from "../../../api/rewards";
 
 interface AddTaskModalProps {
   isOpen: boolean;
@@ -21,6 +24,7 @@ export default function AddTaskModal({
   stepId,
 }: AddTaskModalProps) {
   const { createNewTask } = useTaskStore();
+  const { user } = useUserStore();
   const { showSuccess, showError } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -29,6 +33,7 @@ export default function AddTaskModal({
     description: "",
     priority: 1 as TaskPriority, // Medium default
     effort: 1,
+    reward: "",
     link: "",
     image: "",
   });
@@ -40,28 +45,58 @@ export default function AddTaskModal({
       return;
     }
 
+    if (!user?.address) {
+      showError("You must be logged in to create a task");
+      return;
+    }
+
+    // Validate reward if provided
+    if (formData.reward && parseFloat(formData.reward) <= 0) {
+      showError("Reward must be a positive number");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
+      // Step 1: Create the task
       const result = await createNewTask({
         projectId,
         stepId,
         title: formData.title,
         description: formData.description,
         priority: formData.priority,
-        createdAt: new Date(),
+        taskOwner: user.address, // The creator is the task owner (who pays)
         effort: formData.effort,
-        link: formData.link,
-        image: formData.image,
+        ...(formData.link && formData.link.trim() && { link: formData.link.trim() }),
+        ...(formData.image && formData.image.trim() && { image: formData.image.trim() }),
         status: 0, // Todo
       });
 
       if (result) {
+        // Step 2: Create the reward if specified
+        if (formData.reward && parseFloat(formData.reward) > 0) {
+          try {
+            await createReward({
+              taskId: result.id,
+              type: "token",
+              value: formData.reward,
+            });
+          } catch (rewardError) {
+            // Task created but reward failed - show warning
+            showError(
+              "Task created but failed to add reward. You can add it later."
+            );
+            console.error("Reward creation failed:", rewardError);
+          }
+        }
+
         showSuccess("Task created successfully");
         setFormData({
           title: "",
           description: "",
           priority: 1,
           effort: 1,
+          reward: "",
           link: "",
           image: "",
         });
@@ -165,6 +200,35 @@ export default function AddTaskModal({
               <option value={21}>21</option>
             </select>
           </div>
+        </div>
+
+        {/* Reward Section */}
+        <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4 border-2 border-orange-200 dark:border-orange-800">
+          <div className="flex items-center gap-2 mb-3">
+            <Award className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+            <label className="text-sm font-semibold text-orange-900 dark:text-orange-100">
+              Task Reward
+            </label>
+          </div>
+          <div className="relative">
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              value={formData.reward}
+              onChange={(e) =>
+                setFormData({ ...formData, reward: e.target.value })
+              }
+              className={`w-full px-3 py-2 pr-16 border rounded-lg ${COLORS.form.input.bg} ${COLORS.form.input.border} ${COLORS.form.input.text} focus:ring-2 focus:ring-orange-500 text-lg font-semibold`}
+              placeholder="0.00"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-orange-600 dark:text-orange-400 font-bold">
+              KUD
+            </span>
+          </div>
+          <p className="text-xs text-orange-700 dark:text-orange-300 mt-2">
+            💡 You will be the <strong>Task Owner</strong> and responsible for paying this reward when the task is completed.
+          </p>
         </div>
 
         <div>

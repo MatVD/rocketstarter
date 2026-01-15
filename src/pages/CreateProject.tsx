@@ -6,6 +6,7 @@ import { useProjectStore, useStepStore } from "../store";
 import { useUserStore } from "../store/user.store";
 import { useToast } from "../contexts/ToastContext";
 import { CreateProjectRequest } from "../types";
+import { updateProject } from "../api/projects";
 import StepIndicator from "../components/CreateProject/StepIndicator";
 import Step1ProjectInfo from "../components/CreateProject/Step1ProjectInfo";
 import Step2StepsConfig from "../components/CreateProject/Step2StepsConfig";
@@ -126,7 +127,7 @@ export default function CreateProject() {
       const projectData: CreateProjectRequest = {
         name: formData.name.trim(),
         description: formData.description?.trim() || undefined,
-        logo: formData.logo?.trim() ? formData.logo.trim() : undefined,
+        logoUrl: formData.logo?.trim() || undefined,
         whitelist: whitelist.length > 0 ? whitelist : undefined,
         status: formData.status,
       };
@@ -150,7 +151,21 @@ export default function CreateProject() {
       navigate(`/projects/${createdProject.id}`);
     } catch (error) {
       console.error("Failed to create project:", error);
-      showError("Failed to create project. Please try again.");
+      
+      // Handle specific error messages from backend
+      let errorMessage = "Failed to create project. Please try again.";
+      
+      if (error instanceof Error) {
+        if (error.message.includes("nom existe déjà") || 
+            error.message.includes("name already exists") ||
+            error.message.toLowerCase().includes("duplicate")) {
+          errorMessage = "A project with this name already exists. Please choose a different name.";
+        } else if (error.message) {
+          errorMessage = `Failed to create project: ${error.message}`;
+        }
+      }
+      
+      showError(errorMessage);
     } finally {
       setSaving(false);
     }

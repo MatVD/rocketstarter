@@ -1,4 +1,4 @@
-import { Calendar, Clock, Plus, User, PanelRight } from "lucide-react";
+import { Calendar, Clock, Plus, User, PanelRight, Award } from "lucide-react";
 import { memo, useState } from "react";
 import { Task, User as UserType } from "../../../../types";
 import {
@@ -91,7 +91,7 @@ function TaskCardContentComponent({
   return (
     <>
       <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {/* Priority badge */}
           {typeof task.priority !== "undefined" &&
             getPriorityLabel(task.priority) !== "" && (
@@ -107,6 +107,26 @@ function TaskCardContentComponent({
                 }`}
               >
                 {getPriorityLabel(task.priority)}
+              </span>
+            )}
+
+          {/* Reward badge */}
+          {task.rewards &&
+            task.rewards.length > 0 &&
+            task.rewards.some(
+              (r) => r.type === "token" && parseFloat(r.value) > 0
+            ) && (
+              <span
+                className="flex items-center gap-1 px-2 py-0.5 rounded-md border text-xs font-semibold select-none bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800"
+                title="Task Reward"
+              >
+                <Award className="w-3 h-3" />
+                {task.rewards
+                  .filter((r) => r.type === "token")
+                  .reduce((sum, r) => sum + parseFloat(r.value), 0)
+                  .toFixed(2)}{" "}
+                KUD
+                {task.rewards.length > 1 && " +"}
               </span>
             )}
 

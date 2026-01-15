@@ -5,3 +5,4 @@ export * from "./tasks";
 export * from "./users";
 export * from "./steps";
 export * from "./categories";
+export * from "./rewards";
