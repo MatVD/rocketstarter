@@ -20,6 +20,10 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // Cookie is sent automatically - no manual header needed
+    console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`, {
+      data: config.data,
+      withCredentials: config.withCredentials,
+    });
     return config;
   },
   (error) => {
@@ -49,7 +53,15 @@ api.interceptors.response.use(
       }
     } else if (error.response?.status >= 500) {
       // Handle server errors
-      logError("API Client", `Server error: ${error.response?.data}`);
+      const errorData = error.response?.data;
+      console.error("Server error details:", {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: errorData,
+        url: error.config?.url,
+        method: error.config?.method,
+      });
+      logError("API Client", `Server error: ${JSON.stringify(errorData)}`);
     } else if (error.code === "ECONNREFUSED") {
       // Handle connection errors
       logError("API Client", "Backend server is not running");

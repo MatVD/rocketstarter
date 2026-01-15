@@ -7,35 +7,27 @@ import api from "./client";
 export const createReward = async (
   rewardData: CreateRewardRequest
 ): Promise<Reward> => {
-  const response = await api.post<{ success: boolean; data: Reward }>(
-    "/rewards",
-    rewardData
-  );
-  return response.data.data;
+  const response = await api.post<Reward>("/rewards", rewardData);
+  return response.data;
 };
 
 /**
  * Get all rewards for a specific task
  */
 export const getTaskRewards = async (taskId: number): Promise<Reward[]> => {
-  const response = await api.get<{ success: boolean; data: Reward[] }>(
-    `/rewards/task/${taskId}`
-  );
-  return response.data.data;
+  const response = await api.get<Reward[]>(`/rewards/task/${taskId}`);
+  return response.data;
 };
 
 /**
- * Update a reward
+ * Update a reward (only if onChain: false)
  */
 export const updateReward = async (
   rewardId: number,
   updates: Partial<CreateRewardRequest>
 ): Promise<Reward> => {
-  const response = await api.patch<{ success: boolean; data: Reward }>(
-    `/rewards/${rewardId}`,
-    updates
-  );
-  return response.data.data;
+  const response = await api.patch<Reward>(`/rewards/${rewardId}`, updates);
+  return response.data;
 };
 
 /**

@@ -74,11 +74,13 @@ export const COLORS = {
   // Form colors
   form: {
     input: {
-      bg: "bg-white dark:bg-gray-700",
+      bg: "bg-gray-100 dark:bg-gray-800",
       border: "border-gray-300 dark:border-gray-600",
       text: "text-gray-900 dark:text-white",
       placeholder: "placeholder-gray-500 dark:placeholder-gray-400",
       focus: "focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+      disabled: "bg-gray-200 dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-600 cursor-not-allowed",
+      readOnly: "bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400",
     },
     label: "text-gray-700 dark:text-gray-300",
     error: "text-red-600 dark:text-red-400",

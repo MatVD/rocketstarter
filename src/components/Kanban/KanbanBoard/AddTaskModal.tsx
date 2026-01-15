@@ -65,7 +65,7 @@ export default function AddTaskModal({
         title: formData.title,
         description: formData.description,
         priority: formData.priority,
-        taskOwner: user.address, // The creator is the task owner (who pays)
+        taskOwner: user.address.toLowerCase(), // Normalize to lowercase for backend comparison
         effort: formData.effort,
         ...(formData.link && formData.link.trim() && { link: formData.link.trim() }),
         ...(formData.image && formData.image.trim() && { image: formData.image.trim() }),
@@ -73,20 +73,35 @@ export default function AddTaskModal({
       });
 
       if (result) {
+        console.log("Task created:", result);
+        console.log("Current user:", user?.address);
+        console.log("Task owner:", result.taskOwner);
+        
         // Step 2: Create the reward if specified
         if (formData.reward && parseFloat(formData.reward) > 0) {
           try {
-            await createReward({
+            const rewardPayload = {
               taskId: result.id,
-              type: "token",
+              type: "token" as const,
               value: formData.reward,
-            });
+            };
+            
+            console.log("Creating reward:", rewardPayload);
+            
+            const reward = await createReward(rewardPayload);
+            
+            console.log("Reward created successfully:", reward);
           } catch (rewardError) {
             // Task created but reward failed - show warning
-            showError(
-              "Task created but failed to add reward. You can add it later."
-            );
             console.error("Reward creation failed:", rewardError);
+            
+            // Extract error message
+            let errorMsg = "Task created but failed to add reward.";
+            if (rewardError instanceof Error) {
+              errorMsg += ` ${rewardError.message}`;
+            }
+            
+            showError(errorMsg);
           }
         }
 

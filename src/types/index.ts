@@ -94,7 +94,11 @@ export interface Reward {
   contractAddress?: string; // Ethereum contract address
   details?: string;
   taskId: number;
-  createdAt: Date;
+  onChain: boolean; // false = draft (editable), true = published (immutable)
+  transactionHash?: string; // Blockchain tx hash (null if draft)
+  blockNumber?: number; // Block number (null if draft)
+  publishedAt?: string; // Publication date (null if draft)
+  createdAt: string; // ISO date string
 }
 
 export interface CreateRewardRequest {
