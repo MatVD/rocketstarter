@@ -14,6 +14,7 @@ import { filterTasks } from "../utils/taskFilterUtils";
 import { useTaskFilters } from "../hooks/useTaskFilters";
 import AddTaskModal from "../components/Kanban/KanbanBoard/AddTaskModal";
 import { COLORS } from "../constants/colors";
+import ProjectOverview from "../components/Project/ProjectOverview";
 
 interface BuildProps {
   activeStepId?: number | null;
@@ -98,6 +99,9 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
   return (
     <DataBoundary isLoading={tasksLoading} error={tasksError} dataType="tasks">
       <div className="p-4 md:p-10 lg:p-12 space-y-6">
+        {/* Project Overview Section */}
+        <ProjectOverview project={selectedProject} tasks={tasks} />
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -109,9 +113,9 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
                 <Hammer className="w-6 h-6 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                   Build
-                </h1>
+                </h2>
                 <p className="text-gray-600 dark:text-gray-400">
                   Manage tasks for the current step
                 </p>
