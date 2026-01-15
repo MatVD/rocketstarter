@@ -13,25 +13,25 @@ export const getPriorityLabel = (priority?: 0 | 1 | 2): string => {
 };
 
 // Priority color mapping helper
-export const getPriorityStyle = (priority?: 0 | 1 | 2 | 3) => {
+export const getPriorityStyle = (priority?: 0 | 1 | 2) => {
   switch (priority) {
-    case 1:
+    case 0: // Low
       return {
-        bg: COLORS.status.error.bg,
-        text: COLORS.status.error.text,
-        border: COLORS.status.error.border,
+        bg: COLORS.status.neutral.bg,
+        text: COLORS.status.neutral.text,
+        border: COLORS.status.neutral.border,
       };
-    case 2:
+    case 1: // Medium
       return {
         bg: COLORS.status.warning.bg,
         text: COLORS.status.warning.text,
         border: COLORS.status.warning.border,
       };
-    case 3:
+    case 2: // High
       return {
-        bg: COLORS.status.success.bg,
-        text: COLORS.status.success.text,
-        border: COLORS.status.success.border,
+        bg: COLORS.status.error.bg,
+        text: COLORS.status.error.text,
+        border: COLORS.status.error.border,
       };
     default:
       return {
@@ -42,11 +42,11 @@ export const getPriorityStyle = (priority?: 0 | 1 | 2 | 3) => {
   }
 }
 
-export const getPriorityValue = (priorityLabel: string): 0 | 1 | 2 | 3 => {
+export const getPriorityValue = (priorityLabel: string): 0 | 1 | 2 => {
   const entry = Object.entries(PRIORITY_LEVELS).find(
     ([, value]) => value.label.toLowerCase() === priorityLabel.toLowerCase()
   );
-  return entry ? (parseInt(entry[0]) as 0 | 1 | 2 | 3) : 0;
+  return entry ? (parseInt(entry[0]) as 0 | 1 | 2) : 0;
 };
 
 export const getPriorityOptions = () => {

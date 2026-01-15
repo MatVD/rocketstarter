@@ -20,10 +20,6 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // Cookie is sent automatically - no manual header needed
-    console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`, {
-      data: config.data,
-      withCredentials: config.withCredentials,
-    });
     return config;
   },
   (error) => {

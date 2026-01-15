@@ -23,7 +23,7 @@ export default function AddTaskModal({
   projectId,
   stepId,
 }: AddTaskModalProps) {
-  const { createNewTask } = useTaskStore();
+  const { createNewTask, fetchTasks } = useTaskStore();
   const { user } = useUserStore();
   const { showSuccess, showError } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,6 +58,19 @@ export default function AddTaskModal({
 
     setIsSubmitting(true);
     try {
+      // Calculate dueDate based on option
+      let calculatedDueDate: string | undefined = undefined;
+      if (formData.dueDateOption === "duration" && formData.duration) {
+        const days = parseInt(formData.duration);
+        if (!isNaN(days) && days > 0) {
+          const futureDate = new Date();
+          futureDate.setDate(futureDate.getDate() + days);
+          calculatedDueDate = futureDate.toISOString();
+        }
+      } else if (formData.dueDateOption === "date" && formData.dueDate) {
+        calculatedDueDate = new Date(formData.dueDate).toISOString();
+      }
+
       // Step 1: Create the task
       const result = await createNewTask({
         projectId,
@@ -67,16 +80,13 @@ export default function AddTaskModal({
         priority: formData.priority,
         taskOwner: user.address.toLowerCase(), // Normalize to lowercase for backend comparison
         effort: formData.effort,
+        dueDate: calculatedDueDate,
         ...(formData.link && formData.link.trim() && { link: formData.link.trim() }),
         ...(formData.image && formData.image.trim() && { image: formData.image.trim() }),
         status: 0, // Todo
       });
 
       if (result) {
-        console.log("Task created:", result);
-        console.log("Current user:", user?.address);
-        console.log("Task owner:", result.taskOwner);
-        
         // Step 2: Create the reward if specified
         if (formData.reward && parseFloat(formData.reward) > 0) {
           try {
@@ -86,24 +96,15 @@ export default function AddTaskModal({
               value: formData.reward,
             };
             
-            console.log("Creating reward:", rewardPayload);
-            
-            const reward = await createReward(rewardPayload);
-            
-            console.log("Reward created successfully:", reward);
+            await createReward(rewardPayload);
           } catch (rewardError) {
-            // Task created but reward failed - show warning
             console.error("Reward creation failed:", rewardError);
-            
-            // Extract error message
-            let errorMsg = "Task created but failed to add reward.";
-            if (rewardError instanceof Error) {
-              errorMsg += ` ${rewardError.message}`;
-            }
-            
-            showError(errorMsg);
+            showError("Task created but failed to add reward.");
           }
         }
+
+        // Step 3: Refresh tasks to load the rewards relation
+        await fetchTasks(projectId.toString());
 
         showSuccess("Task created successfully");
         setFormData({
@@ -114,6 +115,9 @@ export default function AddTaskModal({
           reward: "",
           link: "",
           image: "",
+          dueDate: "",
+          dueDateOption: "duration",
+          duration: "7",
         });
         onClose();
       }
@@ -272,6 +276,66 @@ export default function AddTaskModal({
             className={`w-full px-3 py-2 border rounded-lg ${COLORS.form.input.bg} ${COLORS.form.input.border} ${COLORS.form.input.text} focus:ring-2 focus:ring-blue-500`}
             placeholder="https://..."
           />
+        </div>
+
+        {/* Due Date Section */}
+        <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            Deadline (Optional)
+          </label>
+          
+          <div className="flex gap-2 mb-3">
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, dueDateOption: "duration" })}
+              className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                formData.dueDateOption === "duration"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+              }`}
+            >
+              Duration (days)
+            </button>
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, dueDateOption: "date" })}
+              className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                formData.dueDateOption === "date"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+              }`}
+            >
+              Specific Date
+            </button>
+          </div>
+
+          {formData.dueDateOption === "duration" ? (
+            <div>
+              <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                Complete in (days)
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={formData.duration}
+                onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                className={`w-full px-3 py-2 border rounded-lg ${COLORS.form.input.bg} ${COLORS.form.input.border} ${COLORS.form.input.text} focus:ring-2 focus:ring-blue-500`}
+                placeholder="7"
+              />
+            </div>
+          ) : (
+            <div>
+              <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                Due date
+              </label>
+              <input
+                type="date"
+                value={formData.dueDate}
+                onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                className={`w-full px-3 py-2 border rounded-lg ${COLORS.form.input.bg} ${COLORS.form.input.border} ${COLORS.form.input.text} focus:ring-2 focus:ring-blue-500`}
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700 mt-auto">

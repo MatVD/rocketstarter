@@ -11,6 +11,10 @@ import { stripHtml } from "../../../../utils/stringUtils";
 import { useTaskStore } from "../../../../store";
 import { useToast } from "../../../../contexts/ToastContext";
 import TaskDetailsModal from "../TaskDetailsModal";
+import {
+  getTimeRemaining,
+  getTimeRemainingStyle,
+} from "../../../../utils/dueDateUtils";
 
 interface TaskCardContentProps {
   task: Task;
@@ -129,6 +133,22 @@ function TaskCardContentComponent({
                 {task.rewards.length > 1 && " +"}
               </span>
             )}
+
+          {/* Time Remaining Badge - Visible to everyone */}
+          {task.dueDate && (() => {
+            const timeInfo = getTimeRemaining(task.dueDate);
+            if (!timeInfo) return null;
+            const style = getTimeRemainingStyle(timeInfo.status);
+            return (
+              <span
+                className={`flex items-center gap-1 px-2 py-0.5 rounded-md border text-xs font-medium select-none ${style.bg} ${style.text} ${style.border}`}
+                title={`Due: ${new Date(task.dueDate).toLocaleDateString()}`}
+              >
+                <Clock className="w-3 h-3" />
+                {timeInfo.text}
+              </span>
+            );
+          })()}
 
           {/* Project and Step info for Builder mode */}
           {variant === "simple" && (projectName || stepName) && (

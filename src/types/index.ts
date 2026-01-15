@@ -118,6 +118,7 @@ export interface Task {
   image?: string;
   description?: string;
   link?: string;
+  deliverableLink?: string; // Submission link (only visible to taskOwner and builder)
   taskOwner?: string;
   builder?: string; // User address
   rewards?: Reward[]; // One-to-Many relation
