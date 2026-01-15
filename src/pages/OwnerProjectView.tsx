@@ -4,17 +4,16 @@ import { useEffect, useState } from "react";
 import TaskFilterBar from "../components/UI/TaskFilterBar";
 import KanbanBoard from "../components/Kanban/KanbanBoard/KanbanBoard";
 import DataBoundary from "../components/UI/DataBoundary";
-import { flowSteps } from "../data/mockData";
 import { User } from "../types";
 import { useParams } from "react-router-dom";
-import { useProjectStore, useTaskStore, useUserStore } from "../store";
-import StepNavigation from "../components/Kanban/StepNavigation/StepNavigation";
+import { useProjectStore, useTaskStore, useUserStore, useStepStore } from "../store";
 import StepDetails from "../components/Kanban/StepDetails/StepDetails";
 import { filterTasks } from "../utils/taskFilterUtils";
 import { useTaskFilters } from "../hooks/useTaskFilters";
 import AddTaskModal from "../components/Kanban/KanbanBoard/AddTaskModal";
 import { COLORS } from "../constants/colors";
 import ProjectOverview from "../components/Project/ProjectOverview";
+import ModernStepNavigation from "../components/Kanban/StepNavigation/ModernStepNavigation";
 
 interface BuildProps {
   activeStepId?: number | null;
@@ -42,16 +41,30 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
   const tasksError = useTaskStore((state) => state.tasksError);
   const fetchTasks = useTaskStore((state) => state.fetchTasks);
 
+  const steps = useStepStore((state) => state.steps);
+  const stepsLoading = useStepStore((state) => state.stepsLoading);
+  const stepsError = useStepStore((state) => state.stepsError);
+  const fetchSteps = useStepStore((state) => state.fetchSteps);
+
   const [filters, setFilters] = useTaskFilters(projectId);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const [currentStepId, setCurrentStepId] = useState<number | null>(null);
 
-  // Only fetch project-specific data
+  // Fetch project-specific data (project, tasks, steps)
   useEffect(() => {
     if (projectId) {
       fetchProject(projectId);
       fetchTasks(projectId);
+      fetchSteps(projectId);
     }
-  }, [projectId, fetchProject, fetchTasks]);
+  }, [projectId, fetchProject, fetchTasks, fetchSteps]);
+
+  // Set initial step when steps are loaded
+  useEffect(() => {
+    if (steps.length > 0 && currentStepId === null) {
+      setCurrentStepId(steps[0].id);
+    }
+  }, [steps, currentStepId]);
 
   // Wait for user to be loaded before rendering content
   if (userLoading || !user) {
@@ -84,23 +97,46 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
     );
   }
 
-  // Find the current step based on activeStepId, default to first step if none provided
-  const currentStep = activeStepId
-    ? flowSteps.find((step) => step.id === activeStepId) || flowSteps[0]
-    : flowSteps[0];
+  // Find the current step based on currentStepId
+  const currentStep = currentStepId
+    ? steps.find((step) => step.id === currentStepId) || steps[0]
+    : steps[0];
 
-  // Filter tasks for the current step
-  const currentStepTasks = tasks.filter(
-    (task) => task.stepId === currentStep.id
+  // CRITICAL: Filter tasks by projectId first, then by stepId
+  const projectTasks = tasks.filter(
+    (task) => task.projectId === selectedProject.id
   );
+  
+  const currentStepTasks = currentStep
+    ? projectTasks.filter((task) => task.stepId === currentStep.id)
+    : projectTasks;
 
   const filteredTasks = filterTasks(currentStepTasks, filters, user);
 
+  console.log('[OwnerProjectView] Task filtering:', {
+    projectId: selectedProject.id,
+    totalTasksInStore: tasks.length,
+    projectTasks: projectTasks.length,
+    currentStepId: currentStep?.id,
+    currentStepTasks: currentStepTasks.length,
+    afterUserFilters: filteredTasks.length,
+    stepsCount: steps.length
+  });
+
   return (
-    <DataBoundary isLoading={tasksLoading} error={tasksError} dataType="tasks">
+    <DataBoundary isLoading={tasksLoading || stepsLoading} error={tasksError || stepsError} dataType="tasks">
       <div className="p-4 md:p-10 lg:p-12 space-y-6">
         {/* Project Overview Section */}
-        <ProjectOverview project={selectedProject} tasks={tasks} />
+        <ProjectOverview project={selectedProject} tasks={projectTasks} />
+
+        {/* Modern Step Navigation */}
+        {steps.length > 0 && (
+          <ModernStepNavigation
+            steps={steps}
+            currentStepId={currentStepId}
+            onStepChange={setCurrentStepId}
+          />
+        )}
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -114,10 +150,10 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
               </div>
               <div>
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
-                  Build
+                  Tasks
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Manage tasks for the current step
+                  {currentStep ? `Manage tasks for ${currentStep.name}` : 'Manage project tasks'}
                 </p>
               </div>
             </div>
@@ -133,18 +169,14 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
           </div>
         </motion.div>
 
-        {/* Step Navigation */}
-        {onStepChange && (
+        {/* Step Navigation - Keep old one if onStepChange prop exists (backward compat) */}
+        {onStepChange && steps.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <StepNavigation
-              currentStep={currentStep}
-              allSteps={flowSteps}
-              onStepChange={onStepChange}
-            />
+            {/* Legacy navigation can be removed later */}
           </motion.div>
         )}
 
