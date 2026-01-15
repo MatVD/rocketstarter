@@ -51,15 +51,32 @@ export const logout = async (): Promise<void> => {
 };
 
 /**
- * Logout using sendBeacon (guaranteed to send even if page closes)
- * Use this when navigating away immediately after logout
+ * Logout with keepalive (guaranteed to complete even if page closes)
+ * Returns a promise that resolves when logout completes
  */
-export const logoutBeacon = (): void => {
+export const logoutKeepAlive = async (): Promise<void> => {
   const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api/v1";
   const url = `${baseURL}/auth/logout`;
   
-  // sendBeacon sends POST with credentials
-  navigator.sendBeacon(url);
+  console.log('[Auth API] Starting logout request to:', url);
   
-  console.log('[Auth API] Logout beacon sent to:', url);
+  try {
+    // fetch with keepalive guarantees completion during page unload
+    const response = await fetch(url, {
+      method: 'POST',
+      credentials: 'include', // Send cookies
+      keepalive: true, // CRITICAL: Request continues even if page unloads
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    if (!response.ok) {
+      console.error('[Auth API] Logout failed with status:', response.status);
+    } else {
+      console.log('[Auth API] Logout completed successfully');
+    }
+  } catch (err) {
+    console.error('[Auth API] Logout keepalive error:', err);
+  }
 };

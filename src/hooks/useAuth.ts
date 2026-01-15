@@ -50,12 +50,12 @@ export function useAuth() {
       if ((!address || !isConnected) && (currentUser || currentIsAuthenticated)) {
         console.log('[useAuth] Wallet disconnected but user still in store, starting logout...');
         
-        // Use synchronous logout with beacon to guarantee request completion
-        store.logoutSync();
+        // Wait for logout to complete (ensures cookie is deleted)
+        await store.logoutSync();
         
-        console.log('[useAuth] State cleared with beacon, redirecting to onboarding...');
+        console.log('[useAuth] Logout complete, redirecting to onboarding...');
         
-        // Navigate immediately - beacon guarantees the logout request will complete
+        // Navigate after logout completes
         window.location.href = '/onboarding';
         return;
       }

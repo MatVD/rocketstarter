@@ -4,7 +4,7 @@
 import { create } from "zustand";
 import { UpdateUserRequest, User } from "../types";
 import { getUsers, getUser, getUserByAddress, updateUser } from "../api/users";
-import { logout as logoutAPI, logoutBeacon } from "../api/auth";
+import { logout as logoutAPI, logoutKeepAlive } from "../api/auth";
 
 // --- Setters extraits pour stabilité des références ---
 const setUser = (set: any) => (user: User | undefined) => set({ user });
@@ -36,14 +36,14 @@ const logout = (set: any) => async () => {
   }
 };
 
-// Synchronous logout with beacon for immediate navigation
-const logoutSync = (set: any) => () => {
-  console.log('[UserStore] Starting sync logout with beacon...');
+// Async logout with keepalive (waits for completion)
+const logoutSync = (set: any) => async () => {
+  console.log('[UserStore] Starting logout with keepalive...');
   
-  // Send logout beacon (guaranteed to reach server even during page unload)
-  logoutBeacon();
+  // Wait for logout to complete (cookie deletion)
+  await logoutKeepAlive();
   
-  // Clear state immediately
+  // Clear state after logout completes
   set({
     user: undefined,
     isAuthenticated: false,
@@ -51,7 +51,7 @@ const logoutSync = (set: any) => () => {
     onboardingStep: 1
   });
   
-  console.log('[UserStore] Sync logout complete, beacon sent');
+  console.log('[UserStore] Logout complete, state cleared');
 };
 
 const fetchUsers = (set: any) => async () => {
@@ -122,7 +122,7 @@ interface UserState {
   setOnboardingStep: (step: 1 | 2 | 3) => void;
   setIsAuthenticating: (isAuth: boolean) => void;
   logout: () => Promise<void>;
-  logoutSync: () => void; // Synchronous logout with beacon
+  logoutSync: () => Promise<void>; // Async logout with keepalive
 
   fetchUsers: () => Promise<void>;
   fetchUser: (id: string) => Promise<void>;
