@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Building2, CheckCircle2, ListTodo, Award, Calendar } from "lucide-react";
+import { Building2, CheckCircle2, ListTodo, Award, Calendar, ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
 import { COLORS } from "../../constants/colors";
 import { Project, Task } from "../../types";
 import { formatDate } from "../../utils/dateUtils";
@@ -10,11 +11,19 @@ interface ProjectOverviewProps {
 }
 
 export default function ProjectOverview({ project, tasks }: ProjectOverviewProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
   // Calculate task statistics
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter((task) => task.status === 3).length;
   const inProgressTasks = tasks.filter((task) => task.status === 1).length;
   const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+  // Determine if description is long (more than 300 characters)
+  const isLongDescription = project.description && project.description.length > 300;
+  const displayDescription = isExpanded || !isLongDescription 
+    ? project.description 
+    : project.description?.substring(0, 300) + "...";
 
   return (
     <motion.div
@@ -26,17 +35,56 @@ export default function ProjectOverview({ project, tasks }: ProjectOverviewProps
       {/* Project Header */}
       <div className="flex items-start justify-between mb-6">
         <div className="flex items-start gap-4">
-          <div className={`p-3 rounded-lg ${COLORS.primary[100]}`}>
-            <Building2 className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-          </div>
+          {project.logo ? (
+            <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-gray-700">
+              <img 
+                src={project.logo} 
+                alt={`${project.name} logo`}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback to icon if image fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const parent = target.parentElement;
+                  if (parent) {
+                    parent.innerHTML = `<div class="w-full h-full flex items-center justify-center ${COLORS.primary[100]}"><svg class="w-8 h-8 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></div>`;
+                  }
+                }}
+              />
+            </div>
+          ) : (
+            <div className={`p-3 rounded-lg ${COLORS.primary[100]}`}>
+              <Building2 className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+            </div>
+          )}
           <div className="flex-1">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               {project.name}
             </h1>
             {project.description && (
-              <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base">
-                {project.description}
-              </p>
+              <div>
+                <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base whitespace-pre-line">
+                  {displayDescription}
+                </p>
+                {isLongDescription && (
+                  <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="mt-2 flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                  >
+                    {isExpanded ? (
+                      <>
+                        <span>Show less</span>
+                        <ChevronUp className="w-4 h-4" />
+                      </>
+                    ) : (
+                      <>
+                        <span>Read more</span>
+                        <ChevronDown className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
             )}
           </div>
         </div>

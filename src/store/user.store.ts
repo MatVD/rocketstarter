@@ -18,28 +18,22 @@ const setIsAuthenticating = (set: any) => (isAuth: boolean) => set({ isAuthentic
 
 // --- Fonctions asynchrones extraites pour stabilité et testabilité ---
 const logout = (set: any) => async () => {
-  console.log('[UserStore] Starting async logout...');
   try {
     await logoutAPI();
-    console.log('[UserStore] Logout API call successful');
   } catch (error) {
     console.error("[UserStore] Logout error:", error);
   } finally {
-    console.log('[UserStore] Clearing user state');
     set({
       user: undefined,
       isAuthenticated: false,
       onboardingComplete: false,
       onboardingStep: 1
     });
-    console.log('[UserStore] Async logout complete');
   }
 };
 
 // Async logout with keepalive (waits for completion)
 const logoutSync = (set: any) => async () => {
-  console.log('[UserStore] Starting logout with keepalive...');
-  
   // Wait for logout to complete (cookie deletion)
   await logoutKeepAlive();
   
@@ -50,8 +44,6 @@ const logoutSync = (set: any) => async () => {
     onboardingComplete: false,
     onboardingStep: 1
   });
-  
-  console.log('[UserStore] Logout complete, state cleared');
 };
 
 const fetchUsers = (set: any) => async () => {

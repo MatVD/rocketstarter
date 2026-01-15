@@ -33,7 +33,7 @@ export interface Project {
   updatedAt: Date;
   bank: string; // DECIMAL stored as string to preserve precision
   whitelist: string[];
-  logoUrl?: string;
+  logo?: string; // Changed from logoUrl to match backend
   slug?: string;
   categoryIds?: number[];
 }
@@ -41,7 +41,7 @@ export interface Project {
 export interface CreateProjectRequest {
   name: string;
   description?: string;
-  logoUrl?: string;
+  logo?: string; // Changed from logoUrl to match backend
   bank?: string; // DECIMAL as string, optional (default 0 on backend)
   whitelist?: string[]; // Array of Ethereum addresses
   status?: 0 | 1 | 2 | 3; // ProjectStatus enum
@@ -51,7 +51,7 @@ export interface CreateProjectRequest {
 export interface UpdateProjectRequest {
   name?: string;
   description?: string;
-  logoUrl?: string;
+  logo?: string; // Changed from logoUrl to match backend
   whitelist?: string[]; // Array of Ethereum addresses
   status?: 0 | 1 | 2 | 3; // ProjectStatus enum
   categoryIds?: number[]; // IDs of categories to associate

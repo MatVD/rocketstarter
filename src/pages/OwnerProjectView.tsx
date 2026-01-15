@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
-import { Hammer, Plus } from "lucide-react";
+import { Hammer, Plus, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import TaskFilterBar from "../components/UI/TaskFilterBar";
 import KanbanBoard from "../components/Kanban/KanbanBoard/KanbanBoard";
 import DataBoundary from "../components/UI/DataBoundary";
 import { User } from "../types";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useProjectStore, useTaskStore, useUserStore, useStepStore } from "../store";
 import StepDetails from "../components/Kanban/StepDetails/StepDetails";
 import { filterTasks } from "../utils/taskFilterUtils";
@@ -30,6 +30,7 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
   const userError = useUserStore((state) => state.userError);
   
   const { projectId } = useParams<{ projectId: string }>();
+  const navigate = useNavigate();
   
   const projectsLoading = useProjectStore((state) => state.projectsLoading);
   const projectsError = useProjectStore((state) => state.projectsError);
@@ -113,16 +114,6 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
 
   const filteredTasks = filterTasks(currentStepTasks, filters, user);
 
-  console.log('[OwnerProjectView] Task filtering:', {
-    projectId: selectedProject.id,
-    totalTasksInStore: tasks.length,
-    projectTasks: projectTasks.length,
-    currentStepId: currentStep?.id,
-    currentStepTasks: currentStepTasks.length,
-    afterUserFilters: filteredTasks.length,
-    stepsCount: steps.length
-  });
-
   return (
     <DataBoundary isLoading={tasksLoading || stepsLoading} error={tasksError || stepsError} dataType="tasks">
       <div className="p-4 md:p-10 lg:p-12 space-y-6">
@@ -157,15 +148,29 @@ export default function Build({ activeStepId, onStepChange }: BuildProps) {
                 </p>
               </div>
             </div>
-            {user && user.role === "Owner" && (
-              <button
-                onClick={() => setIsAddTaskModalOpen(true)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${COLORS.button.primary}`}
-              >
-                <Plus className="w-5 h-5" />
-                <span>Add Task</span>
-              </button>
-            )}
+            <div className="flex items-center gap-3">
+              {/* Settings button - visible only to project owner */}
+              {user && selectedProject.owner.toLowerCase() === user.address.toLowerCase() && (
+                <button
+                  onClick={() => navigate(`/projects/${projectId}/settings`)}
+                  className="flex items-center space-x-2 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <Settings className="w-5 h-5" />
+                  <span>Settings</span>
+                </button>
+              )}
+              
+              {/* Add Task button - visible only to owners */}
+              {user && user.role === "Owner" && (
+                <button
+                  onClick={() => setIsAddTaskModalOpen(true)}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${COLORS.button.primary}`}
+                >
+                  <Plus className="w-5 h-5" />
+                  <span>Add Task</span>
+                </button>
+              )}
+            </div>
           </div>
         </motion.div>
 

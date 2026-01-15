@@ -58,8 +58,6 @@ export const logoutKeepAlive = async (): Promise<void> => {
   const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api/v1";
   const url = `${baseURL}/auth/logout`;
   
-  console.log('[Auth API] Starting logout request to:', url);
-  
   try {
     // fetch with keepalive guarantees completion during page unload
     const response = await fetch(url, {
@@ -73,8 +71,6 @@ export const logoutKeepAlive = async (): Promise<void> => {
     
     if (!response.ok) {
       console.error('[Auth API] Logout failed with status:', response.status);
-    } else {
-      console.log('[Auth API] Logout completed successfully');
     }
   } catch (err) {
     console.error('[Auth API] Logout keepalive error:', err);

@@ -5,6 +5,7 @@ import AllProjects from "./pages/AllProjects";
 import MyProjects from "./pages/MyProjects";
 import CreateProject from "./pages/CreateProject";
 import OwnerProjectView from "./pages/OwnerProjectView";
+import ProjectSettings from "./pages/ProjectSettings";
 import Profile from "./pages/Profile";
 import { AppLayout } from "./components/AppLayout";
 import { useAuth } from "./hooks/useAuth";
@@ -62,6 +63,14 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <OwnerProjectView />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects/:id/settings"
+          element={
+            <ProtectedRoute>
+              <ProjectSettings />
             </ProtectedRoute>
           }
         />

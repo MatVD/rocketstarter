@@ -42,10 +42,8 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     set({ projectsLoading: true, projectsError: null });
     try {
       const data = await getProjects();
-      console.log('[ProjectStore] fetchProjects response:', data);
       set({ projects: data, projectsLoading: false });
     } catch (err) {
-      console.error('[ProjectStore] fetchProjects error:', err);
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch projects";
       set({ projectsError: errorMessage, projectsLoading: false });
     }
@@ -128,10 +126,8 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     set({ projectsLoading: true, projectsError: null });
     try {
       const data = await getProjectsByOwner(ownerId);
-      console.log('[ProjectStore] fetchProjectsByOwner response:', data);
       set({ projects: data, projectsLoading: false });
     } catch (err) {
-      console.error('[ProjectStore] fetchProjectsByOwner error:', err);
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch projects by owner";
       set({ projectsError: errorMessage, projectsLoading: false });
     }

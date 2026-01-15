@@ -31,8 +31,11 @@ export default function MyProjects() {
   const myProjects = useMemo(() => {
     if (!user) return [];
 
+    // Normalize addresses to lowercase for comparison (backend stores lowercase)
+    const userAddressLower = user.address.toLowerCase();
+
     // Projects where user is owner
-    const ownedProjects = projects.filter((p) => p.owner === user.address);
+    const ownedProjects = projects.filter((p) => p.owner.toLowerCase() === userAddressLower);
     
     // Projects where user has assigned tasks
     const assignedProjectIds = Array.from(new Set(assignedTasks.map((t) => t.projectId)));
